@@ -2,7 +2,7 @@
 #include <Mmdeviceapi.h>
 #include <iostream>
 #include <string>
-#include "gui.h"
+#include "MicSpammerWindow.h"
 
 #include <QApplication>
 

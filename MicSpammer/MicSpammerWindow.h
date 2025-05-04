@@ -5,11 +5,15 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QBoxLayout>
+#include <QToolBar>
 #include <QPushButton>
+#include <QFileDialog>
+#include "FileBrowserWidget.h"
 
 
-#ifndef GUI_H
-#define GUI_H
+
+#ifndef MICSPAMMERWINDOW_H
+#define MICSPAMMERWINDOW_H
 
 class MicSpammerWindow final : public QMainWindow {
 Q_OBJECT
@@ -19,13 +23,14 @@ public:
 private:
     int _window_x, _window_y;
 
+    // Handler Functions
+    void onOpenFolder();
     // GUI Elements
     QWidget     *mainWidget;
-    QHBoxLayout *mainLayout;
-    QHBoxLayout *top_barHLayout;
-    QPushButton *btn1;
-    QPushButton *btn2;
-    QPushButton *btn3;
+    QVBoxLayout *mainLayout;
+    FileBrowserWidget *browser;
+    QToolBar *toolbar;
+    QPushButton *openFolderButton;
 };
 
-#endif //GUI_H
+#endif //MICSPAMMERWINDOW_H

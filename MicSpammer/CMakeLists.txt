@@ -9,8 +9,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(MicSpammer
         main.cpp
-        gui.h
-        gui.cpp
+        MicSpammerWindow.h
+        MicSpammerWindow.cpp
+        FileBrowserWidget.cpp
+        FileBrowserWidget.h
 )
 
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
