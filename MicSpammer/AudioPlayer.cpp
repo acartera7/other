@@ -2,20 +2,16 @@
 // Created by Andrei on 5/4/2025.
 //
 #include "AudioPlayer.h"
-#include <windows.h>
-#include <iostream>
+#include "WasapiManager.h"
 
 AudioPlayer::AudioPlayer(QObject *parent)
     : QObject(parent){
 
-}
-
-void AudioPlayer::initializeWasapi() {
-    // Initialize WASAPI and set up audio rendering similar to your main.cpp initialization
+    pAudioClient = WasapiManager::getInstance().getAudioClient();
 }
 
 void AudioPlayer::play(const QString &filePath) {
-    //loadAudioFile(filePath);
+    loadAudioFile(filePath);
     // Start playback using WASAPI stream
 }
 
@@ -25,4 +21,8 @@ void AudioPlayer::stop() {
 
 void AudioPlayer::setVolume(float volume) {
     // Adjust volume via WASAPI if supported
+}
+
+void AudioPlayer::loadAudioFile(const QString &filePath) {
+
 }

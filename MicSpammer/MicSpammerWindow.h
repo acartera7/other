@@ -29,6 +29,7 @@ private:
     void onPlay();
     void onStop();
     void onVolumeChanged(int volume);
+    void onFileSelected(const QString &filePath);
 
     QString selectedFilePath;
     AudioPlayer *audioPlayer;

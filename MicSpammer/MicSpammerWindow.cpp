@@ -24,6 +24,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setRange(0, 100); // Volume range 0-100
     volumeSlider->setFixedWidth(100);
+    volumeSlider->setValue(80);
     openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
@@ -60,10 +61,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(volumeSlider, &QSlider::valueChanged, this, &MicSpammerWindow::onVolumeChanged);
 
     // File actions
-    connect(browser, &FileBrowserWidget::fileSelected, this, [selectedFilePtr = &selectedFilePath](const QString &filePath){
-        *selectedFilePtr = filePath;
-        qDebug() << "File selected:" << filePath;
-    });
+    connect(browser, &FileBrowserWidget::fileSelected, this, &MicSpammerWindow::onFileSelected);
     connect(browser, &FileBrowserWidget::playSound, this, &MicSpammerWindow::onPlay);
 
 }
@@ -89,5 +87,10 @@ void MicSpammerWindow::onStop() {
 void MicSpammerWindow::onVolumeChanged(int volume) {
     audioPlayer->setVolume(volume / 100.0f);  // Scale to 0-1
 }
+
+void MicSpammerWindow::onFileSelected(const QString &filePath) {
+    selectedFilePath = filePath;
+}
+
 
 MicSpammerWindow::~MicSpammerWindow() = default;

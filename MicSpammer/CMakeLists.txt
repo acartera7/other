@@ -15,6 +15,8 @@ add_executable(MicSpammer
         FileBrowserWidget.h
         AudioPlayer.cpp
         AudioPlayer.h
+        WasapiManager.cpp
+        WasapiManager.h
 )
 
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
