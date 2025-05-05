@@ -13,6 +13,8 @@ add_executable(MicSpammer
         MicSpammerWindow.cpp
         FileBrowserWidget.cpp
         FileBrowserWidget.h
+        AudioPlayer.cpp
+        AudioPlayer.h
 )
 
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")

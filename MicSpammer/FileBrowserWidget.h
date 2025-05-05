@@ -17,7 +17,8 @@ public:
     void setRootDirectory(const QString &path);
 
     signals:
-        void folderSelected(const QString &path); // emit when a folder is selected
+        void fileSelected(const QString &filePath);
+        void playSound();
 
 private:
     QFileSystemModel *treeModel, *dirModel;

@@ -8,8 +8,9 @@
 #include <QToolBar>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QSlider>
 #include "FileBrowserWidget.h"
-
+#include "AudioPlayer.h"
 
 
 #ifndef MICSPAMMERWINDOW_H
@@ -25,12 +26,23 @@ private:
 
     // Handler Functions
     void onOpenFolder();
+    void onPlay();
+    void onStop();
+    void onVolumeChanged(int volume);
+
+    QString selectedFilePath;
+    AudioPlayer *audioPlayer;
+
     // GUI Elements
     QWidget     *mainWidget;
     QVBoxLayout *mainLayout;
+
     FileBrowserWidget *browser;
     QToolBar *toolbar;
-    QPushButton *openFolderButton;
+
+    QPushButton *openFolderButton, *playButton, *stopButton;
+
+    QSlider *volumeSlider;
 };
 
 #endif //MICSPAMMERWINDOW_H

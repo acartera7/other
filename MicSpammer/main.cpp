@@ -5,12 +5,11 @@
 #include "MicSpammerWindow.h"
 
 #include <QApplication>
-
+static IMMDeviceEnumerator* pEnumerator = nullptr;
+static IMMDevice* pDevice = nullptr;
+static IAudioClient* pAudioClient = nullptr;
 
 HRESULT InitializeAudio() {
-    IMMDeviceEnumerator* pEnumerator = nullptr;
-    IMMDevice* pDevice = nullptr;
-    IAudioClient* pAudioClient = nullptr;
 
     // Initialize COM
     CoInitialize(nullptr);
@@ -37,14 +36,14 @@ HRESULT InitializeAudio() {
     if (FAILED(hr)) return hr;
 
     std::cout << "Audio Initialized!" << std::endl;
+    return hr;
+}
 
-    // Cleanup
+void CleanupAudio() {
     pEnumerator->Release();
     pDevice->Release();
     pAudioClient->Release();
     CoUninitialize();
-
-    return hr;
 }
 
 int main(int argc, char *argv[]) {

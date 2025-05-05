@@ -43,7 +43,7 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     listView->hide();
     listView->setEnabled(false);  // Start disabled
 
-    // Click handler
+    // Change listView
     connect(treeView, &QTreeView::clicked, this, [this](const QModelIndex &index){
         if (listView->isHidden()) {
             listView->show();  // Hide list view
@@ -51,10 +51,19 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
         }
         QString path = treeModel->fileInfo(index).absoluteFilePath();
         listView->setRootIndex(dirModel->setRootPath(path));
-        emit folderSelected(path);
         qDebug() << "Folder selected:" << path;
     });
 
+    // File Selected
+    connect(listView, &QListView::clicked, this, [this](const QModelIndex &index){
+        QString selectedFilePath = dirModel->fileInfo(index).absoluteFilePath();
+        emit fileSelected(selectedFilePath);
+    });
+
+    // File Selected and playback
+    connect(listView, &QListView::doubleClicked, this, [this](const QModelIndex &index){
+        emit playSound(); // Trigger playback
+    });
 
     QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
     splitter->addWidget(treeView);
@@ -85,6 +94,4 @@ void FileBrowserWidget::setRootDirectory(const QString &path) {
 
     QModelIndex listIndex = dirModel->index(path);
     listView->setRootIndex(listIndex);
-
-    emit folderSelected(path);
 }
