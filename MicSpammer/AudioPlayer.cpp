@@ -3,6 +3,7 @@
 //
 #include "AudioPlayer.h"
 #include "WasapiManager.h"
+#include "MediaManager.h"
 
 AudioPlayer::AudioPlayer(QObject *parent)
     : QObject(parent){
@@ -10,10 +11,16 @@ AudioPlayer::AudioPlayer(QObject *parent)
     pAudioClient = WasapiManager::getInstance().getAudioClient();
 }
 
-void AudioPlayer::play(const QString &filePath) {
-    loadAudioFile(filePath);
-    // Start playback using WASAPI stream
+void AudioPlayer::play(const QString& filePath) {
+    MediaManager& media = MediaManager::getInstance();
+    IMFSourceReader* stream = media.getFileStream(filePath);
+
+    if (!stream) return;
+
+    pAudioClient->Start();
+    // Write streamed data to buffer...
 }
+
 
 void AudioPlayer::stop() {
     // Stop playback
@@ -24,5 +31,13 @@ void AudioPlayer::setVolume(float volume) {
 }
 
 void AudioPlayer::loadAudioFile(const QString &filePath) {
+
+}
+
+void AudioPlayer::setupAudioStream() {
+
+}
+
+void AudioPlayer::writeAudioData() {
 
 }

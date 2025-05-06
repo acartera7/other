@@ -2,13 +2,17 @@
 // Created by Andrei on 5/4/2025.
 //
 #pragma once
-#include <Audioclient.h>
-#include <QThread>
+#include <QWidget>
+
+#define NO_DSHOW_STRSAFE
 
 #include <Mmdeviceapi.h>
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
+#include <Audioclient.h>
+
+#undef TIMECODE_SAMPLE
 
 #ifndef AUDIOPLAYER_H
 #define AUDIOPLAYER_H

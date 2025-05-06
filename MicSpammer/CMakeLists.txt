@@ -17,12 +17,15 @@ add_executable(MicSpammer
         AudioPlayer.h
         WasapiManager.cpp
         WasapiManager.h
+        MediaManager.cpp
+        MediaManager.h
 )
 
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 # Add wxWidgets directories
 set(Qt6_DIR "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6")
+find_package(OpenMP)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 #include_directories(${wxWidgets_DIR}/include)
@@ -33,6 +36,10 @@ target_link_libraries(MicSpammer PRIVATE
         Qt6::Widgets
         Ole32.lib               # WASAPI dependencies
         Uuid.lib
+        mfplat
+        mf
+        mfreadwrite
+        mfuuid
 )
 
 # Post-build step: copy Qt DLLs to the build directory
