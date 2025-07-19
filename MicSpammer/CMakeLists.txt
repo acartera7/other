@@ -24,7 +24,7 @@ add_executable(MicSpammer
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 # Add wxWidgets directories
-set(Qt6_DIR "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6")
+set(Qt6_DIR "C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6")
 find_package(OpenMP)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
