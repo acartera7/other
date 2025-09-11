@@ -1,0 +1,516 @@
+!This program cannot be run in DOS mode.
+Rich
+.text
+`.rdata
+@.data
+.rsrc
+_^][
+L$0Ph
+T$4R
+L$4Ph
+_^]2
+_^]2
+\$ S
+	_^]3
+_^][
+uTSWh
+u	_^]2
+	_^]2
+u	_^]2
+_^][
+0<a|
+r	_^
+h`"@
+hP#@
+SUV3
+L$8Vhp
+D$4RP
+_^][d
+L$ Ph
+D$ RP
+RPSh
+_^][
+D$\SUVWj
+L$tj
+_^]2
+T$hj
+D$$j
+L$hj
+T$Dj(RS
+T$Lf
+D$Nf
+L$hj
+D$lP
+_^]2
+_^]2
+D$Hj
+|$pW
+_^]2
+_^]2
+D$,PW
+L$,j
+L$4QR
+L$4j
+T$xh
+D$tj
+L$4Q
+T$xh
+D$tj
+L$4Q
+L$4j
+D$@j
+WQRj
+L$4QR
+SUVWh
+@j.P
+L$XPh
+D$PRP
+T$XQh
+T$LQh
+L$PPQ
+D$XRh
+_^]3
+D$ R
+L$pPQ
+T$PR
+D$LP
+_][V
+SVWh
+L$hh
+T$hj
+D$0j
+L$(Q
+T$(R
+D$4j
+Qj	P
+L$hh
+T$hj
+T$hh
+D$hW
+L$Th
+h0>@
+T$ j
+_^[d
+VPj(
+L$4h
+T$8h
+D$ j
+L$ Q
+T$ R
+D$(j
+SUVW
+VVVP
+D$ j
+_^][
+L$0j@QEj
+L$4P
+T$xQR
+D$pPh
+SUVW
+D$ D
+T$hQj
+1A< t
+1A< t
+;F s	
+A(;A,r
+F$;F(s
+HPQAQ
+A(9A$s
+@% t
+D0%@t<hp
+QQSVW
+D00;
+;A s
+QSVW
+QQSVWd
+4SVW
+X_^[]
+SVWUj
+]_^[
+t.;t$$t(
+^_[3
+^_[]
+SUVW
+_^][
+^s:R
+GIt#
+tzVS
+GIt%
+t/Ku
+^[_3
+SVWu
+^}%95
+_9=H
+YYhD
+u!;E
+Y</Yt
+tD+E
+XSVW
+~&WP
+SVW3
+Yu!j
+eYt,F
+SVt'
+80t<
+VWt*
+Sj0W
+8-PS
+_^[]
+8csm
+u,9x
+X_^]
+uV9~
+YY_^[
+VWt!
+sO;>|C;~
+u Vj
+8csm
+u SW
+_^[]
+?csm
+8csm
+YYPW
+QQSVW
+QQSVW
+QQSVW
+wDVSU
+_^][
+uFWWj
+[Sh<
+"WWSh8
+9} u
+E WW
+tMWWS
+t@9}
+VSh 
+_WPS
+HHtpHHtl
+ Yt	f
+RPWV
+$ < u	
+SUVW
+_^][
+QQSV
+btHHt.
+SUV3
+_^][
+I9L$
+90tr
+0B=x
+Wj@Y3
+t7SW
+    
+@AA;
+_^][
+X_[^
+<"u%
+F<"t
+t9UW
+?=t"U
+QQS3
+PSSW
+8"uD
+8"uF@
+8"u,
+@@f9
+@@f9
+SS@SSPVSS
+t#SSUP
+t$$VSS
+_^][YY
+DSUVWh
+_^][
+VC20XC00U
+SVWU
+tEVU
+t3x<
+]_^[
+t&:a
+u+Vj
+j?I_
+u	9}
+ulSj
+uY;]
+pD#U
+j #M
+j?^;
+X_^[
+SVWj 
+t!CS
+SVWj 
+1_^[
+PPPP
+PPPP
+@PWV
+_^[]
+SVWf
+8csm
+Yt	V
+^Vh<
+PVh8
+VWss
+t-Ht!Ht
+5t.;
+QSUVW3
+<f9-
+PUj?
+PUj?
+>:uNFV
+>:u#FV
+_^][Y
+SVW3
+Qf9=
+WQPWS
+,f9=
+WWWj
+WWSj
+WWWj
+VWuBh8
+\SVW
++ttHHtd
+	j	XO
+u.hT
+HHtYHHtF
+[_^]
+@}>j
+<8=u
+tAVW
+QSUV
+WWWWj
+t/WWUPj
+_^][Y
+0SVW
+_u@W
+PWPSS
+PWPSS
+9] u
+t	9]
+tySS
+t-VW
+QQSVW3
+tUj=
+t@9u
+uT9}
+89=0
+8<=t
+^][_
+GAIsProcessorFeaturePresent
+KERNEL32
+e+000
+ (8PX
+700WP
+`h````
+ppxxxx
+(null)
+runtime error 
+TLOSS error
+SING error
+DOMAIN error
+R6028
+- unable to initialize heap
+R6027
+- not enough space for lowio initialization
+R6026
+- not enough space for stdio initialization
+R6025
+- pure virtual function call
+R6024
+- not enough space for _onexit/atexit table
+R6019
+- unable to open console device
+R6018
+- unexpected heap error
+R6017
+- unexpected multithread lock error
+R6016
+- not enough space for thread data
+abnormal program termination
+R6009
+- not enough space for environment
+R6008
+- not enough space for arguments
+R6002
+- floating point not loaded
+Microsoft Visual C++ Runtime Library
+Runtime Error!
+Program: 
+<program name unknown>
+SunMonTueWedThuFriSat
+JanFebMarAprMayJunJulAugSepOctNovDec
+GetLastActivePopup
+GetActiveWindow
+MessageBoxA
+user32.dll
+1#QNAN
+1#INF
+1#IND
+1#SNAN
+CreateFileA
+CloseHandle
+WriteFile
+FindClose
+FindFirstFileA
+FindNextFileA
+GlobalUnlock
+GlobalLock
+GlobalAlloc
+ReadFile
+GetLastError
+FreeLibrary
+GetProcAddress
+LoadLibraryA
+GetCurrentProcess
+FormatMessageA
+CreateProcessA
+GetExitCodeProcess
+WaitForSingleObject
+GetModuleFileNameA
+KERNEL32.dll
+SetForegroundWindow
+ShowWindow
+CreateDialogParamA
+PostQuitMessage
+DestroyWindow
+SendMessageA
+GetDlgItem
+UpdateWindow
+InvalidateRect
+GetClientRect
+ReleaseDC
+GetDC
+EndPaint
+MessageBoxA
+BeginPaint
+EndDialog
+SendDlgItemMessageA
+DialogBoxParamA
+DispatchMessageA
+TranslateMessage
+PeekMessageA
+LoadStringA
+GetMessageA
+ExitWindowsEx
+SetWindowTextA
+USER32.dll
+DeleteObject
+CreateDIBitmap
+RealizePalette
+SelectPalette
+CreatePalette
+DeleteDC
+StretchBlt
+SetStretchBltMode
+GetObjectA
+SelectObject
+CreateCompatibleDC
+GDI32.dll
+RegQueryValueExA
+RegOpenKeyExA
+RegSetValueExA
+RegCreateKeyExA
+AdjustTokenPrivileges
+LookupPrivilegeValueA
+OpenProcessToken
+ADVAPI32.dll
+ShellExecuteA
+SHELL32.dll
+COMCTL32.dll
+RtlUnwind
+ExitProcess
+TerminateProcess
+GetCurrentDirectoryA
+GetFullPathNameA
+GetDriveTypeA
+SetEnvironmentVariableA
+SetCurrentDirectoryA
+GetTimeZoneInformation
+GetSystemTime
+GetLocalTime
+DeleteFileA
+GetModuleHandleA
+GetStartupInfoA
+GetCommandLineA
+GetVersion
+HeapAlloc
+HeapFree
+HeapReAlloc
+HeapSize
+WideCharToMultiByte
+MultiByteToWideChar
+LCMapStringA
+LCMapStringW
+GetCPInfo
+GetACP
+GetOEMCP
+UnhandledExceptionFilter
+FreeEnvironmentStringsA
+FreeEnvironmentStringsW
+GetEnvironmentStrings
+GetEnvironmentStringsW
+SetHandleCount
+GetStdHandle
+GetFileType
+HeapDestroy
+HeapCreate
+VirtualFree
+FlushFileBuffers
+VirtualAlloc
+IsBadWritePtr
+SetUnhandledExceptionFilter
+IsBadReadPtr
+IsBadCodePtr
+GetStringTypeA
+GetStringTypeW
+SetFilePointer
+SetStdHandle
+SetEndOfFile
+CompareStringA
+CompareStringW
+launcher.bmp
+\patches\
+patches\*.%s
+InstallPath
+SKU%d
+patches\*.*
+Realize Pal Fail: %d
+Select Pal Fail: %d
+patchget.dat
+GrabPatches
+File 'launcher.cfg' is corrupt
+Error
+You must run the game from its install directory.
+Launcher config file missing
+.lcf
+launcher.txt
+Patchfile vanished?
+.web
+.exn
+Version
+ERR 
+D:\dev\launcher\patch.cpp
+SKU is missing from config file!
+"%s" .
+RTPatchApply32@12
+patchw32.dll
+.rtp
+ERROR
+EXEPatch
+SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+.exe
+SeShutdownPrivilege
+Patch Erorr: %s
+patch.err
+.?AVstreambuf@@
+.?AVtype_info@@
+kU'9
+HMXB
+?Zd;
+?/L[
+S;uD
+z?aUY
+D?$?
+U>c{
+zc%C1
+.:3q
+-64OS
+NKeb
