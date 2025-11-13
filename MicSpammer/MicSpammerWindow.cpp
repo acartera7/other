@@ -15,7 +15,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
 
-    AudioPlayer *audioPlayer = new AudioPlayer(this);
+    //AudioPlayer *audioPlayer = new AudioPlayer(this);
 
     // Toolbar & Button
     toolbar = new QToolBar(this);

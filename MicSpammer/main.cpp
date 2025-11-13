@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     auto result = WasapiManager::getInstance().initialize();
     if (FAILED(result)) {
         std::cerr << "Failed to initialize audio." << std::endl;
-        return -1;
+        return -20;
     }
     return a.exec();
 }
