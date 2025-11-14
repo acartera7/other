@@ -58,6 +58,7 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     connect(listView, &QListView::clicked, this, [this](const QModelIndex &index){
         QString selectedFilePath = dirModel->fileInfo(index).absoluteFilePath();
         emit fileSelected(selectedFilePath);
+        qDebug() << "File selected:" << selectedFilePath;
     });
 
     // File Selected and playback
