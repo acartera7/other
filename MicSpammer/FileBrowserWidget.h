@@ -8,7 +8,9 @@
 
 #include <QListView>
 #include <QFileSystemModel>
+#include <QSplitter>
 #include <QTreeView>
+#include <QVBoxLayout>
 
 class FileBrowserWidget : public QWidget {
     Q_OBJECT
@@ -24,5 +26,7 @@ private:
     QFileSystemModel *treeModel, *dirModel;
     QTreeView *treeView;
     QListView *listView;
+    QSplitter *splitter;
+    QVBoxLayout *layout;
 };
 #endif //FILEBROWSERWIDGET_H

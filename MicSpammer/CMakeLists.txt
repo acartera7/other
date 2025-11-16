@@ -33,6 +33,8 @@ add_executable(MicSpammer
         WasapiManager.h
         MediaManager.cpp
         MediaManager.h
+        NumpadWidget.cpp
+        NumpadWidget.h
 )
 
 #set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")

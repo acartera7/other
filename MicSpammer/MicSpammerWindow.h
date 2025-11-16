@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QSlider>
 #include "FileBrowserWidget.h"
+#include "NumpadWidget.h"
 #include "AudioPlayer.h"
 
 
@@ -36,14 +37,19 @@ private:
 
     // GUI Elements
     QWidget     *mainWidget;
-    QVBoxLayout *mainLayout;
+    QVBoxLayout *mainVLayout;
 
     FileBrowserWidget *browser;
+    NumpadWidget *numpad;
     QToolBar *toolbar;
 
     QPushButton *openFolderButton, *playButton, *stopButton;
-
+    QWidget *spacer, *toolbar_rightContainer, *mainContent_container;
+    QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *volumeSlider;
+    QSplitter *mainContent_splitter;
 };
+
+
 
 #endif //MICSPAMMERWINDOW_H

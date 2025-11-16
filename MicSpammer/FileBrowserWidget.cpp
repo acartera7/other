@@ -28,8 +28,6 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     treeView->setColumnHidden(1, true); // hide Size
     treeView->setColumnHidden(2, true); // hide Type
     treeView->setColumnHidden(3, true); // hide Modified
-    treeView->hide();
-    treeView->setEnabled(false);  // Start disabled
     //treeView->setMaximumWidth(300); // optional
 
     // --- List View (Right)
@@ -40,8 +38,21 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     listView = new QListView(this);
     listView->setRootIndex(QModelIndex());
     listView->setModel(dirModel);
+    listView->setSelectionMode(QAbstractItemView::SingleSelection);
+    listView->setDragEnabled(true);
+    listView->setDragDropMode(QAbstractItemView::DragOnly);
+    listView->setDefaultDropAction(Qt::CopyAction);
     listView->hide();
-    listView->setEnabled(false);  // Start disabled
+    listView->setEnabled(false);  // Start disable
+
+    splitter = new QSplitter(Qt::Horizontal, this);
+    splitter->addWidget(treeView);
+    splitter->addWidget(listView);
+    splitter->setStretchFactor(1, 1); // make right pane grow more
+
+    layout = new QVBoxLayout(this);
+    layout->addWidget(splitter);
+    setLayout(layout);
 
     // Change listView
     connect(treeView, &QTreeView::clicked, this, [this](const QModelIndex &index){
@@ -65,30 +76,16 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     connect(listView, &QListView::doubleClicked, this, [this](const QModelIndex &index){
         emit playSound(); // Trigger playback
     });
-
-    QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
-    splitter->addWidget(treeView);
-    splitter->addWidget(listView);
-    splitter->setStretchFactor(1, 1); // make right pane grow more
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(splitter);
-    setLayout(layout);
 }
 
 void FileBrowserWidget::setRootDirectory(const QString &path) {
     if (path.isEmpty()) {
-        treeView->hide();  // Hide tree view
-        treeView->setEnabled(false);  // Disable tree view
         listView->hide();
         listView->setEnabled(false);
         return;
     }
     listView->hide();
     listView->setEnabled(false);
-
-    treeView->show();
-    treeView->setEnabled(true);  // Enable tree view
 
     QModelIndex treeIndex = treeModel->index(path);
     treeView->setRootIndex(treeIndex);

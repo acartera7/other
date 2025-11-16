@@ -6,12 +6,12 @@
 #include <QSplitter>
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
-    : QMainWindow(parent), _window_x(800),_window_y(500), mainLayout(){
+    : QMainWindow(parent), _window_x(800),_window_y(500), mainVLayout(){
 
     mainWidget = new QWidget();
     setCentralWidget(mainWidget);
 
-    mainLayout = new QVBoxLayout();
+    mainVLayout = new QVBoxLayout();
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
 
@@ -28,31 +28,53 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
-    QWidget *spacer = new QWidget(this);
+    spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // toolbar layout container
-    QWidget *rightContainer  = new QWidget(this);
-    QHBoxLayout *rightLayout  = new QHBoxLayout();
-    rightLayout->addWidget(playButton);
-    rightLayout->addSpacing(10); // Spacing between play & stop
-    rightLayout->addWidget(stopButton);
-    rightLayout->addSpacing(15); // Spacing between stop & volume slider
-    rightLayout->addWidget(volumeSlider);
-    rightLayout->setContentsMargins(0, 0, 0, 0); // Removes extra margins
-    rightContainer->setLayout(rightLayout);
+    toolbar_rightContainer  = new QWidget(this);
+    toolbar_rightHLayout  = new QHBoxLayout();
+    toolbar_rightHLayout->addWidget(playButton);
+    toolbar_rightHLayout->addSpacing(10); // Spacing between play & stop
+    toolbar_rightHLayout->addWidget(stopButton);
+    toolbar_rightHLayout->addSpacing(15); // Spacing between stop & volume slider
+    toolbar_rightHLayout->addWidget(volumeSlider);
+    toolbar_rightHLayout->setContentsMargins(0, 0, 0, 0); // Removes extra margins
+    toolbar_rightContainer->setLayout(toolbar_rightHLayout);
 
     // Add widgets to toolbar
     toolbar->addWidget(openFolderButton);
     toolbar->addWidget(spacer);
-    toolbar->addWidget(rightContainer);
+    toolbar->addWidget(toolbar_rightContainer);
     addToolBar(Qt::TopToolBarArea, toolbar);
-    //QDir(QDir::homePath()).filePath("Music")
-    browser = new FileBrowserWidget(this);
+    // add toolbar to the window
+    mainVLayout->addWidget(toolbar);
 
-    mainLayout->addWidget(toolbar);
-    mainLayout->addWidget(browser);
-    centralWidget()->setLayout(mainLayout);
+    //QDir(QDir::homePath()).filePath("Music")
+
+    //create and fill horizontal main_content widget below toolbar
+    mainContent_container  = new QWidget(this);
+    mainContent_HLayout  = new QHBoxLayout();
+    //create left hand browser
+    browser = new FileBrowserWidget(this);
+    // create right hand numpad
+    numpad = new NumpadWidget(this);
+
+    mainContent_splitter = new QSplitter(Qt::Horizontal, this);
+    mainContent_splitter->show();
+    mainContent_splitter->setHandleWidth(2);
+    mainContent_splitter->setObjectName("mainContent_splitter");
+    mainContent_splitter->setStyleSheet(
+        "QSplitter#mainContent_splitter::handle { background-color: lightgray; } "
+    );
+    mainContent_splitter->setSizes({400, 400});
+    mainContent_splitter->addWidget(browser);
+    mainContent_splitter->addWidget(numpad);
+    mainContent_HLayout->addWidget(mainContent_splitter);
+
+    mainContent_container->setLayout(mainContent_HLayout);
+    mainVLayout->addWidget(mainContent_container);
+    centralWidget()->setLayout(mainVLayout);
 
     // Toolbar buttons actions
     connect(openFolderButton, &QPushButton::clicked, this, &MicSpammerWindow::onOpenFolder);
