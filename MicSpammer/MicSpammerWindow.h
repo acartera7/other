@@ -22,6 +22,10 @@ Q_OBJECT
 public:
     explicit MicSpammerWindow(QWidget *parent = nullptr);
     ~MicSpammerWindow();
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     int _window_x, _window_y;
 

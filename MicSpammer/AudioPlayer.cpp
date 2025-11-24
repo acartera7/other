@@ -12,12 +12,13 @@ AudioPlayer::AudioPlayer(QObject *parent)
 }
 
 void AudioPlayer::play(const QString& filePath) {
-    MediaManager& media = MediaManager::getInstance();
-    IMFSourceReader* stream = media.getFileStream(filePath);
+    qDebug() << "AudioPlayer: Play file:" << filePath;
+    //MediaManager& media = MediaManager::getInstance();
+    //IMFSourceReader* stream = media.getFileStream(filePath);
 
-    if (!stream) return;
-
-    pAudioClient->Start();
+    //if (!stream) return;
+//
+    //pAudioClient->Start();
     // Write streamed data to buffer...
 }
 

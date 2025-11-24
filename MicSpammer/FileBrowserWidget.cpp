@@ -3,11 +3,7 @@
 //
 
 #include "FileBrowserWidget.h"
-#include <QVBoxLayout>
-#include <QDir>
-#include <QDebug>
-#include <QHeaderView>
-#include <QSplitter>
+
 
 FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     : QWidget(parent)

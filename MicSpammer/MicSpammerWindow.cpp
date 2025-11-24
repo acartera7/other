@@ -15,7 +15,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
 
-    //AudioPlayer *audioPlayer = new AudioPlayer(this);
+    audioPlayer = new AudioPlayer(this);
 
     // Toolbar & Button
     toolbar = new QToolBar(this);
@@ -85,7 +85,14 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     // File actions
     connect(browser, &FileBrowserWidget::fileSelected, this, &MicSpammerWindow::onFileSelected);
     connect(browser, &FileBrowserWidget::playSound, this, &MicSpammerWindow::onPlay);
+    connect(numpad, &NumpadWidget::numpadTriggered,
+        audioPlayer, [this](int key, const QString &filePath) {
+            audioPlayer->play(filePath);
+        });
 
+    connect(numpad, &NumpadWidget::pageChanged, this, [](int page) {
+        qDebug() << "Switched to page:" << page;
+    });
 }
 
 void MicSpammerWindow::onOpenFolder() {
@@ -98,7 +105,6 @@ void MicSpammerWindow::onOpenFolder() {
 void MicSpammerWindow::onPlay() {
     if (!selectedFilePath.isEmpty()) {
         audioPlayer->play(selectedFilePath);  // Play last selected file
-        qDebug() << "Play file:" << selectedFilePath;
     }
 }
 
@@ -114,5 +120,25 @@ void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
 }
 
-
 MicSpammerWindow::~MicSpammerWindow() = default;
+
+// MicSpammerWindow.cpp
+void MicSpammerWindow::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+    case Qt::Key_Plus:  numpad->nextPage();     break;
+    case Qt::Key_Minus: numpad->prevPage();     break;
+    case Qt::Key_1:     numpad->triggerKey(1);  break;
+    case Qt::Key_2:     numpad->triggerKey(2);  break;
+    case Qt::Key_3:     numpad->triggerKey(3);  break;
+    case Qt::Key_4:     numpad->triggerKey(4);  break;
+    case Qt::Key_5:     numpad->triggerKey(5);  break;
+    case Qt::Key_6:     numpad->triggerKey(6);  break;
+    case Qt::Key_7:     numpad->triggerKey(7);  break;
+    case Qt::Key_8:     numpad->triggerKey(8);  break;
+    case Qt::Key_9:     numpad->triggerKey(9);  break;
+
+    default:
+        QMainWindow::keyPressEvent(event);
+        break;
+    }
+}

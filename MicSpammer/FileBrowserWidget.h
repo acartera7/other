@@ -5,12 +5,15 @@
 #ifndef FILEBROWSERWIDGET_H
 #define FILEBROWSERWIDGET_H
 
-
+#include <QDir>
+#include <QDebug>
+#include <QHeaderView>
 #include <QListView>
 #include <QFileSystemModel>
 #include <QSplitter>
 #include <QTreeView>
 #include <QVBoxLayout>
+
 
 class FileBrowserWidget : public QWidget {
     Q_OBJECT

@@ -5,25 +5,50 @@
 #include "NumpadWidget.h"
 
 NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
-    gridLayout = new QGridLayout(this);
-    setAcceptDrops(true);
+    mainLayout = new QVBoxLayout(this);
+
+    // Page indicator bar
+    indicatorLayout = new QHBoxLayout();
+    prevPageButton = new QPushButton("◀", this);
+    nextPageButton = new QPushButton("▶", this);
+    pageIndicator = new QLabel(this);
+
+    pageIndicator->setAlignment(Qt::AlignCenter);
+    pageIndicator->setStyleSheet("background-color: #333; color: white; padding: 4px;");
+
+    indicatorLayout->addWidget(prevPageButton);
+    indicatorLayout->addWidget(pageIndicator, 1); // stretch
+    indicatorLayout->addWidget(nextPageButton);
+
+    gridLayout = new QGridLayout();
     setupButtons();
-    setLayout(gridLayout);
+
+    mainLayout->addLayout(indicatorLayout);
+    mainLayout->addLayout(gridLayout);
+    setLayout(mainLayout);
+
+    setAcceptDrops(true);
+    updatePageIndicator();
+
+    // Connect navigation buttons
+    connect(prevPageButton, &QPushButton::clicked, this, &NumpadWidget::prevPage);
+    connect(nextPageButton, &QPushButton::clicked, this, &NumpadWidget::nextPage);
 }
+
 
 void NumpadWidget::setupButtons() {
     int key = 1;
     for (int row = 3; row > 0; --row) {
         for (int col = 0; col < 3; ++col) {
             QPushButton *btn = new QPushButton(QString::number(key), this);
-            btn->setFixedSize(50,50);
             btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            btn->setAcceptDrops(false);
             gridLayout->addWidget(btn, row, col);
             buttons[key] = btn;
 
             connect(btn, &QPushButton::clicked, this, [this, key]() {
-                if (mappings.contains(key)) {
-                    emit numpadTriggered(key, mappings[key]);
+                if (pageMappings[currentPage].contains(key)) {
+                    emit numpadTriggered(key, pageMappings[currentPage][key].filePath);
                 }
             });
             btn->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -35,63 +60,77 @@ void NumpadWidget::setupButtons() {
             ++key;
         }
     }
-    //gridLayout->setSpacing(0);
-    //gridLayout->setContentsMargins(0, 0, 0, 0);
-    //for (int i = 0; i < 3; ++i) {
-    //    gridLayout->setColumnStretch(i, 1);
-    //    gridLayout->setRowStretch(i, 1);
-    //}
+    gridLayout->setSpacing(0);
+    gridLayout->setContentsMargins(0, 0, 0, 0);
+
+
+}
+
+void NumpadWidget::updatePageIndicator() const {
+    pageIndicator->setText(
+        QString("Page %1 / %2   (Use + / - or ◀ ▶)")
+        .arg(currentPage).arg(maxPages)
+    );
 }
 
 void NumpadWidget::setMapping(int numpadKey, const QString &filePath) {
-    mappings[numpadKey] = filePath;
+    NumpadItem item;
+    item.filePath = filePath;
+    item.customLabel = QFileInfo(filePath).fileName(); // default label
+    pageMappings[currentPage][numpadKey] = item;
+
     if (buttons.contains(numpadKey)) {
-        buttons[numpadKey]->setText(QString::number(numpadKey) + "\n" + QFileInfo(filePath).fileName());
+        buttons[numpadKey]->setText(QString::number(numpadKey) + "\n" + item.customLabel);
     }
 }
 
 QString NumpadWidget::getMapping(int numpadKey) const {
-    return mappings.value(numpadKey, QString());
+    if (pageMappings[currentPage].contains(numpadKey)) {
+        return pageMappings[currentPage][numpadKey].filePath;
+    }
+    return QString();
 }
 
-void NumpadWidget::keyPressEvent(QKeyEvent *event) {
-    int key = -1;
-    switch (event->key()) {
-        case Qt::Key_1: key = 1; break;
-        case Qt::Key_2: key = 2; break;
-        case Qt::Key_3: key = 3; break;
-        case Qt::Key_4: key = 4; break;
-        case Qt::Key_5: key = 5; break;
-        case Qt::Key_6: key = 6; break;
-        case Qt::Key_7: key = 7; break;
-        case Qt::Key_8: key = 8; break;
-        case Qt::Key_9: key = 9; break;
-        default:
-        break;
+// NumpadWidget.cpp
+void NumpadWidget::triggerKey(int key) {
+    animateButtonPress(key);  // visual feedback
+    if (pageMappings[currentPage].contains(key)) {
+        emit numpadTriggered(key, pageMappings[currentPage][key].filePath);
     }
-    if (key != -1 && mappings.contains(key)) {
-        emit numpadTriggered(key, mappings[key]);
-    }
-
 }
 
 void NumpadWidget::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasUrls()) {
-        event->acceptProposedAction();
+        event->acceptProposedAction();   // Always accept URLs
+    } else {
+        event->ignore();
     }
 }
 
 void NumpadWidget::dropEvent(QDropEvent *event) {
-    if (event->mimeData()->hasUrls()) {
-        QString filePath = event->mimeData()->urls().first().toLocalFile();
-        QWidget *child = childAt(event->position().toPoint());
+    if (!event->mimeData()->hasUrls()) {
+        event->ignore();
+        return;
+    }
+
+    QString filePath = event->mimeData()->urls().first().toLocalFile();
+
+    // Translate position into the grid layout area
+    QPoint pos = event->position().toPoint();
+    QWidget *child = childAt(pos);
+
+    if (auto *btn = qobject_cast<QPushButton*>(child)) {
         for (auto it = buttons.begin(); it != buttons.end(); ++it) {
-            if (it.value() == child) {
+            if (it.value() == btn) {
                 setMapping(it.key(), filePath);
-                break;
+                event->acceptProposedAction();
+                return;
             }
         }
     }
+
+    // If not dropped on a button, ignore
+    event->ignore();
 }
 
 void NumpadWidget::showContextMenu(QPoint pos, int key) {
@@ -110,13 +149,56 @@ void NumpadWidget::renameButton(int key) {
         tr("Rename Button"),
         tr("Enter new label:"),
         QLineEdit::Normal,
-        buttons[key]->text(),
+        pageMappings[currentPage][key].customLabel,
         &ok);
 
     if (ok && !text.isEmpty()) {
-        buttons[key]->setText(text);
-        // Optionally store separately from file mapping
-        mappings[key] = mappings[key]; // keep file path
-        // You might want a separate map for custom labels later
+        pageMappings[currentPage][key].customLabel = text;
+        buttons[key]->setText(QString::number(key) + "\n" + text);
+    }
+}
+
+void NumpadWidget::loadPage(int page) {
+    // Clear button labels
+    for (auto it = buttons.begin(); it != buttons.end(); ++it) {
+        int key = it.key();
+        QPushButton *btn = it.value();
+        if (pageMappings[page].contains(key)) {
+            const NumpadItem &item = pageMappings[page][key];
+            QString label = item.customLabel.isEmpty()
+                ? QFileInfo(item.filePath).fileName()
+                : item.customLabel;
+            btn->setText(QString::number(key) + "\n" + label);
+        } else {
+            btn->setText(QString::number(key));
+        }
+    }
+    updatePageIndicator();
+}
+
+// NumpadWidget.cpp
+void NumpadWidget::nextPage() {
+    if (currentPage < maxPages) {
+        ++currentPage;
+        loadPage(currentPage);
+        emit pageChanged(currentPage);
+    }
+}
+
+void NumpadWidget::prevPage() {
+    if (currentPage > 1) {
+        --currentPage;
+        loadPage(currentPage);
+        emit pageChanged(currentPage);
+    }
+}
+
+void NumpadWidget::animateButtonPress(int key) {
+    if (buttons.contains(key)) {
+        QPushButton *btn = buttons[key];
+        btn->setDown(true);  // show pressed state
+        QTimer::singleShot(150, btn, [btn]() {
+            btn->setDown(false);  // release after 150ms
+        });
     }
 }
