@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>assets/long_arrow_left_icon.png</file>
+        <file>assets/long_arrow_right_icon.png</file>
+    </qresource>
+</RCC>

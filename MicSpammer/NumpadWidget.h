@@ -17,6 +17,8 @@
 #include <QMap>
 #include <QLabel>
 #include <QTimer>
+#include <QPixmap>
+#include <QIcon>
 
 struct NumpadItem {
     QString filePath;

@@ -10,16 +10,25 @@ endif()
 
 # Common flags for all builds
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter")
-
-# Debug-specific flags
+# Debug-specific flas
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
-
 # Optional: Release-specific flags
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-
 # Enable AUTOMOC and ensure correct include dirs
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+#set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
+set(Qt6_INSTALL_DIR "C:/Qt/6.10.0/mingw_64" CACHE PATH "Path to Qt installation")
+set(DLL_DIR "${Qt6_INSTALL_DIR}/bin")
+set(PLAT_DIR "${Qt6_INSTALL_DIR}/plugins/platforms")
+set(Qt6_DIR "${Qt6_INSTALL_DIR}/lib/cmake/Qt6")
+
+find_package(OpenMP)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+
+# Compile the resource file
+qt_add_resources(app_resources resources.qrc)
 
 add_executable(MicSpammer
         main.cpp
@@ -35,16 +44,8 @@ add_executable(MicSpammer
         MediaManager.h
         NumpadWidget.cpp
         NumpadWidget.h
+        ${app_resources}
 )
-
-#set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
-set(Qt6_INSTALL_DIR "C:/Qt/6.10.0/mingw_64" CACHE PATH "Path to Qt installation")
-set(DLL_DIR "${Qt6_INSTALL_DIR}/bin")
-set(PLAT_DIR "${Qt6_INSTALL_DIR}/plugins/platforms")
-set(Qt6_DIR "${Qt6_INSTALL_DIR}/lib/cmake/Qt6")
-
-find_package(OpenMP)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 # Link the WASAPI libraries
 target_link_libraries(MicSpammer PRIVATE

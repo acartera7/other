@@ -5,12 +5,33 @@
 #include "NumpadWidget.h"
 
 NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
+
     mainLayout = new QVBoxLayout(this);
 
     // Page indicator bar
     indicatorLayout = new QHBoxLayout();
-    prevPageButton = new QPushButton("◀", this);
-    nextPageButton = new QPushButton("▶", this);
+    prevPageButton = new QPushButton(this);
+    nextPageButton = new QPushButton(this);
+    QPixmap leftArrow(":/icons/long_arrow_left_icon.png");
+    QPixmap rightArrow(":/icons/long_arrow_right_icon.png");
+    qDebug() << "Pixmap valid?" << !leftArrow.isNull()
+         << "Size:" << leftArrow.size();
+
+    prevPageButton->setIcon(QIcon(leftArrow));
+    nextPageButton->setIcon(QIcon(rightArrow));
+
+    // Control icon size separately
+    //prevPageButton->setIconSize(QSize(24, 24));
+    //nextPageButton->setIconSize(QSize(24, 24));
+    prevPageButton->setIconSize(leftArrow.rect().size());
+    nextPageButton->setIconSize(rightArrow.rect().size());
+
+    // Optional: make buttons flat so they don’t look bulky
+    //prevPageButton->setFlat(true);
+    //nextPageButton->setFlat(true);
+
+    //prevPageButton->setObjectName("PrevPageButton");
+    //nextPageButton->setObjectName("PextPageButton");
     pageIndicator = new QLabel(this);
 
     pageIndicator->setAlignment(Qt::AlignCenter);
@@ -71,6 +92,10 @@ void NumpadWidget::updatePageIndicator() const {
         QString("Page %1 / %2   (Use + / - or ◀ ▶)")
         .arg(currentPage).arg(maxPages)
     );
+
+    // Disable arrows at limits
+    prevPageButton->setEnabled(currentPage > 1);
+    nextPageButton->setEnabled(currentPage < maxPages);
 }
 
 void NumpadWidget::setMapping(int numpadKey, const QString &filePath) {
