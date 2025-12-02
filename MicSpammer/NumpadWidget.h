@@ -37,7 +37,7 @@ public:
     void dropEvent(QDropEvent *event) override;
     void nextPage();
     void prevPage();
-    int currentPageNumber() const { return currentPage; }
+    [[nodiscard]] int currentPageNumber() const { return currentPage; }
     void triggerKey(int key);
     void animateButtonPress(int key);
 

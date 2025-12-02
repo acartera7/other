@@ -12,6 +12,8 @@
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
+#include <QFileSystemModel>
+#include <QSplitter>
 
 
 #ifndef MICSPAMMERWINDOW_H
@@ -25,6 +27,8 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
 
 private:
     int _window_x, _window_y;

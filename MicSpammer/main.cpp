@@ -6,8 +6,10 @@
 
 
 int main(int argc, char *argv[]) {
+
     QApplication a(argc, argv);
     MicSpammerWindow w;
+
     w.show();
     auto result = WasapiManager::getInstance().initialize();
     if (FAILED(result)) {

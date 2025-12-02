@@ -12,10 +12,12 @@ NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
     indicatorLayout = new QHBoxLayout();
     prevPageButton = new QPushButton(this);
     nextPageButton = new QPushButton(this);
-    QPixmap leftArrow(":/icons/long_arrow_left_icon.png");
-    QPixmap rightArrow(":/icons/long_arrow_right_icon.png");
+    QPixmap leftArrow(":/icons/assets/long_arrow_left_icon.png");
+    QPixmap rightArrow(":/icons/assets/long_arrow_right_icon.png");
     qDebug() << "Pixmap valid?" << !leftArrow.isNull()
          << "Size:" << leftArrow.size();
+
+    // Get the current text option
 
     prevPageButton->setIcon(QIcon(leftArrow));
     nextPageButton->setIcon(QIcon(rightArrow));
@@ -23,8 +25,8 @@ NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
     // Control icon size separately
     //prevPageButton->setIconSize(QSize(24, 24));
     //nextPageButton->setIconSize(QSize(24, 24));
-    prevPageButton->setIconSize(leftArrow.rect().size());
-    nextPageButton->setIconSize(rightArrow.rect().size());
+    prevPageButton->setIconSize(leftArrow.rect().size()/2);
+    nextPageButton->setIconSize(rightArrow.rect().size()/2);
 
     // Optional: make buttons flat so they don’t look bulky
     //prevPageButton->setFlat(true);
@@ -36,6 +38,7 @@ NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
 
     pageIndicator->setAlignment(Qt::AlignCenter);
     pageIndicator->setStyleSheet("background-color: #333; color: white; padding: 4px;");
+    pageIndicator->setTextFormat(Qt::PlainText);
 
     indicatorLayout->addWidget(prevPageButton);
     indicatorLayout->addWidget(pageIndicator, 1); // stretch
@@ -89,7 +92,7 @@ void NumpadWidget::setupButtons() {
 
 void NumpadWidget::updatePageIndicator() const {
     pageIndicator->setText(
-        QString("Page %1 / %2   (Use + / - or ◀ ▶)")
+        QString("Page %1 / %2   (  Use   + / -   or   🠄 🠆  )")
         .arg(currentPage).arg(maxPages)
     );
 

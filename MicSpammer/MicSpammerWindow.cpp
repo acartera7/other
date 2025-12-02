@@ -2,11 +2,15 @@
 // Created by Andrei on 4/29/2025.
 //
 #include "MicSpammerWindow.h"
-#include <QFileSystemModel>
-#include <QSplitter>
+
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent), _window_x(800),_window_y(500), mainVLayout(){
+
+
+
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
 
     mainWidget = new QWidget();
     setCentralWidget(mainWidget);
@@ -141,4 +145,14 @@ void MicSpammerWindow::keyPressEvent(QKeyEvent *event) {
         QMainWindow::keyPressEvent(event);
         break;
     }
+}
+
+void MicSpammerWindow::focusInEvent(QFocusEvent *event) {
+    qDebug() << "MicSpammerWindow got focus";
+    QWidget::focusInEvent(event);
+}
+
+void MicSpammerWindow::focusOutEvent(QFocusEvent *event) {
+    qDebug() << "MicSpammerWindow lost focus";
+    QWidget::focusOutEvent(event);
 }

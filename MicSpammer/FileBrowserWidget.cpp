@@ -8,6 +8,8 @@
 FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     : QWidget(parent)
 {
+
+    setFocusPolicy(Qt::NoFocus);
     // Model shared between both views
     treeModel = new QFileSystemModel(this);
     treeModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -50,6 +52,9 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     layout->addWidget(splitter);
     setLayout(layout);
 
+    setFocusProxy(treeView);
+    setFocusProxy(listView);
+
     // Change listView
     connect(treeView, &QTreeView::clicked, this, [this](const QModelIndex &index){
         if (listView->isHidden()) {
@@ -88,4 +93,14 @@ void FileBrowserWidget::setRootDirectory(const QString &path) {
 
     QModelIndex listIndex = dirModel->index(path);
     listView->setRootIndex(listIndex);
+}
+
+void FileBrowserWidget::focusInEvent(QFocusEvent *event) {
+    qDebug() << "FileBrowserWidget got focus";
+    QWidget::focusInEvent(event);
+}
+
+void FileBrowserWidget::focusOutEvent(QFocusEvent *event) {
+    qDebug() << "FileBrowserWidget lost focus";
+    QWidget::focusOutEvent(event);
 }

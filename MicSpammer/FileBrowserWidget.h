@@ -24,6 +24,9 @@ public:
     signals:
         void fileSelected(const QString &filePath);
         void playSound();
+protected:
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
 
 private:
     QFileSystemModel *treeModel, *dirModel;
