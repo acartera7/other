@@ -24,6 +24,7 @@ public:
     IAudioClient* getAudioClient() const;
     const std::vector<AudioDeviceInfo>& getDevices() const;
     HRESULT setDeviceById(const std::wstring& deviceId);
+    std::wstring getCurrentDeviceName() const;
 
 private:
     WasapiManager() = default;  // Private constructor (singleton)

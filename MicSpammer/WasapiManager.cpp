@@ -3,8 +3,11 @@
 //
 
 #include "WasapiManager.h"
+#include <setupapi.h>
+#include <initguid.h>  // Put this in to get rid of linker errors.
 #include <Functiondiscoverykeys_devpkey.h>
 #include <iostream>
+
 
 WasapiManager& WasapiManager::getInstance() {
     static WasapiManager instance;
@@ -106,6 +109,26 @@ HRESULT WasapiManager::setDeviceById(const std::wstring& deviceId)
     pAudioClient = pNewClient;
 
     return S_OK;
+}
+
+std::wstring WasapiManager::getCurrentDeviceName() const {
+    if (!pCurrentDevice) return L"(no device)";
+
+    IPropertyStore* pProps = nullptr;
+    HRESULT hr = pCurrentDevice->OpenPropertyStore(STGM_READ, &pProps);
+    if (FAILED(hr)) return L"(error)";
+
+    PROPVARIANT varName;
+    PropVariantInit(&varName);
+    hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
+    std::wstring name = L"(unknown)";
+    if (SUCCEEDED(hr)) {
+        name = varName.pwszVal;
+    }
+    PropVariantClear(&varName);
+    pProps->Release();
+
+    return name;
 }
 
 WasapiManager::~WasapiManager() {

@@ -19,13 +19,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
-set(Qt6_INSTALL_DIR "C:/Qt/6.10.0/mingw_64" CACHE PATH "Path to Qt installation")
+set(Qt6_INSTALL_DIR "C:/Qt/6.10.1/mingw_64" CACHE PATH "Path to Qt installation")
 set(DLL_DIR "${Qt6_INSTALL_DIR}/bin")
 set(PLAT_DIR "${Qt6_INSTALL_DIR}/plugins/platforms")
 set(Qt6_DIR "${Qt6_INSTALL_DIR}/lib/cmake/Qt6")
 
+
 find_package(OpenMP)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
 
 # Compile the resource file
 qt_add_resources(app_resources resources.qrc)
@@ -45,6 +46,8 @@ add_executable(MicSpammer
         NumpadWidget.cpp
         NumpadWidget.h
         ${app_resources}
+        AudioLoader.cpp
+        AudioLoader.h
 )
 
 # Link the WASAPI libraries
@@ -52,6 +55,7 @@ target_link_libraries(MicSpammer PRIVATE
         Qt6::Core               # Qt
         Qt6::Gui
         Qt6::Widgets
+        Qt6::Multimedia
         Ole32.lib               # WASAPI dependencies
         Uuid.lib
         mfplat

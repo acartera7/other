@@ -12,6 +12,7 @@
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
+#include "WasapiManager.h"
 #include <QFileSystemModel>
 #include <QSplitter>
 
@@ -56,6 +57,7 @@ private:
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *volumeSlider;
     QSplitter *mainContent_splitter;
+    QLabel *deviceLabel;
 };
 
 

@@ -3,6 +3,15 @@
 //
 #pragma once
 #include <QWidget>
+#include <QFile>
+#include <QDataStream>
+
+#include <QAudioDecoder>
+#include <QAudioBuffer>
+#include <QDebug>
+
+#include <vector>
+#include <cstring>
 
 #define NO_DSHOW_STRSAFE
 
@@ -17,6 +26,13 @@
 #ifndef AUDIOPLAYER_H
 #define AUDIOPLAYER_H
 
+
+struct LoadedWav {
+    std::vector<BYTE> pcm;
+    WAVEFORMATEX format;
+    bool ok = false;
+};
+
 class AudioPlayer : public QObject {
     Q_OBJECT
 public:
@@ -29,6 +45,7 @@ private:
     void loadAudioFile(const QString &filePath);
     void setupAudioStream();
     void writeAudioData();
+    LoadedWav loadWavFile(const QString &filePath);
 
     IMFSourceReader* pSourceReader = nullptr;  // Media Foundation reader
     IMFMediaType* pMediaType = nullptr;

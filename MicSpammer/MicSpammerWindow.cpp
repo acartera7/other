@@ -4,6 +4,7 @@
 #include "MicSpammerWindow.h"
 
 
+
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent), _window_x(800),_window_y(500), mainVLayout(){
 
@@ -35,6 +36,11 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
+    QString deviceName = QString::fromStdWString(
+        WasapiManager::getInstance().getCurrentDeviceName()
+    );
+    deviceLabel = new QLabel(deviceName, this);
+
     // toolbar layout container
     toolbar_rightContainer  = new QWidget(this);
     toolbar_rightHLayout  = new QHBoxLayout();
@@ -48,6 +54,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
 
     // Add widgets to toolbar
     toolbar->addWidget(openFolderButton);
+    toolbar->addWidget(deviceLabel);
     toolbar->addWidget(spacer);
     toolbar->addWidget(toolbar_rightContainer);
     addToolBar(Qt::TopToolBarArea, toolbar);

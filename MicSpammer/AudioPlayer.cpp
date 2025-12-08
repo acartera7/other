@@ -3,16 +3,24 @@
 //
 #include "AudioPlayer.h"
 #include "WasapiManager.h"
+#include "AudioLoader.h"
 //#include "MediaManager.h" DEPRECATED
 
 AudioPlayer::AudioPlayer(QObject *parent)
     : QObject(parent){
 
-    pAudioClient = WasapiManager::getInstance().getAudioClient();
-    if (pAudioClient != nullptr)
-    {
-        pAudioClient->GetMixFormat();
-    }
+    AudioLoader* loader = new AudioLoader(this);
+    connect(loader, &AudioLoader::pcmReady, this, [=](const QByteArray& data, const QAudioFormat& format) {
+        // Here you have PCM data and format info
+        // Convert if needed, then push into WASAPI render buffer
+        playPcmWithWasapi(data, format);
+    });
+    //pAudioClient = WasapiManager::getInstance().getAudioClient();
+    //if (pAudioClient != nullptr)
+    //{
+    //    WAVEFORMATEX *ppDeviceFormat;
+    //    pAudioClient->GetMixFormat(&ppDeviceFormat);
+    //}
 }
 
 void AudioPlayer::play(const QString& filePath) {
@@ -49,4 +57,7 @@ void AudioPlayer::setupAudioStream() {
 
 void AudioPlayer::writeAudioData() {
 
+}
+
+LoadedWav AudioPlayer::loadWavFile(const QString &filePath) {
 }
