@@ -3,12 +3,16 @@
 //
 #include "AudioPlayer.h"
 #include "WasapiManager.h"
-#include "MediaManager.h"
+//#include "MediaManager.h" DEPRECATED
 
 AudioPlayer::AudioPlayer(QObject *parent)
     : QObject(parent){
 
     pAudioClient = WasapiManager::getInstance().getAudioClient();
+    if (pAudioClient != nullptr)
+    {
+        pAudioClient->GetMixFormat();
+    }
 }
 
 void AudioPlayer::play(const QString& filePath) {
@@ -20,6 +24,10 @@ void AudioPlayer::play(const QString& filePath) {
 //
     //pAudioClient->Start();
     // Write streamed data to buffer...
+    pRenderClient = nullptr;
+    HRESULT hr = pAudioClient->GetService(__uuidof(IAudioRenderClient),
+                                          (void**)&pRenderClient);
+    if (FAILED(hr)) return;
 }
 
 
