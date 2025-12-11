@@ -15,8 +15,13 @@ AudioLoader::AudioLoader(QObject *parent) {
 }
 
 void AudioLoader::loadFile(const QString &path) {
+    qDebug() << QString("Loading file: %1.").arg(path);
     decoder->setSource(QUrl(path));
     decoder->start();
+}
+
+AudioLoader::~AudioLoader() {
+    delete decoder;
 }
 
 void AudioLoader::onBufferReady() {
@@ -30,5 +35,5 @@ void AudioLoader::onBufferReady() {
 }
 
 void AudioLoader::onFinished() {
-    qDebug() << "Decoding finished.";
+    qDebug() << "File Loaded.";
 }

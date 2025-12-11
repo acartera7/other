@@ -129,6 +129,7 @@ void MicSpammerWindow::onVolumeChanged(int volume) {
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
+    audioPlayer->loadAudioFile(filePath);
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;

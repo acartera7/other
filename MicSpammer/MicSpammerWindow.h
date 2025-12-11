@@ -9,12 +9,14 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QSlider>
+#include <QFileSystemModel>
+#include <QSplitter>
+
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
+#include "AudioLoader.h"
 #include "WasapiManager.h"
-#include <QFileSystemModel>
-#include <QSplitter>
 
 
 #ifndef MICSPAMMERWINDOW_H

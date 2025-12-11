@@ -16,10 +16,10 @@
 #define NO_DSHOW_STRSAFE
 
 #include <Mmdeviceapi.h>
-#include <mfapi.h>
-#include <mfidl.h>
-#include <mfreadwrite.h>
 #include <Audioclient.h>
+
+#include "AudioLoader.h"
+#include "WasapiManager.h"
 
 #undef TIMECODE_SAMPLE
 
@@ -28,7 +28,7 @@
 
 
 struct LoadedWav {
-    std::vector<BYTE> pcm;
+    std::vector<BYTE> data;
     WAVEFORMATEX format;
     bool ok = false;
 };
@@ -37,20 +37,22 @@ class AudioPlayer : public QObject {
     Q_OBJECT
 public:
     explicit AudioPlayer(QObject *parent = nullptr);
+    ~AudioPlayer() override;
     void play(const QString &filePath);
     void stop();
     void setVolume(float volume);
+    void loadAudioFile(const QString &filePath);
+
 
 private:
-    void loadAudioFile(const QString &filePath);
     void setupAudioStream();
     void writeAudioData();
-    LoadedWav loadWavFile(const QString &filePath);
 
-    IMFSourceReader* pSourceReader = nullptr;  // Media Foundation reader
-    IMFMediaType* pMediaType = nullptr;
     IAudioClient* pAudioClient = nullptr;
     IAudioRenderClient* pRenderClient = nullptr;
+    AudioLoader *loader;
+    LoadedWav loadedFile;
+
 };
 
 
