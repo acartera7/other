@@ -81,6 +81,12 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${DLL_DIR}/Qt6Gui.dll"
         $<TARGET_FILE_DIR:MicSpammer>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${DLL_DIR}/Qt6Multimedia.dll"
+        $<TARGET_FILE_DIR:MicSpammer>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${DLL_DIR}/Qt6Network.dll"
+        $<TARGET_FILE_DIR:MicSpammer>
         COMMENT "Copying Qt DLLs and platform plugin to build directory"
 )
 
