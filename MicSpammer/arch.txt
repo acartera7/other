@@ -1,0 +1,26 @@
+QT_DEBUG_PLUGINS=1
+
+🛠️ Recommended Architecture
+Mic worker thread
+
+Captures mic input with IAudioCaptureClient.
+
+Writes it into VB‑Cable’s render buffer continuously.
+
+Runs until stopAllAudio is set.
+
+Soundboard fire‑and‑forget threads
+
+Each one loads a file, decodes PCM, and feeds it into VB‑Cable’s render buffer.
+
+They don’t touch mic input at all.
+
+WASAPI mixes them with the mic stream automatically.
+
+Global stop flag
+
+std::atomic<bool> stopAllAudio.
+
+Checked in every loop (mic + soundboard).
+
+When set, all threads exit gracefully.

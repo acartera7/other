@@ -44,7 +44,7 @@ private:
     void onFileSelected(const QString &filePath);
 
     QString selectedFilePath;
-    AudioPlayer *audioPlayer;
+    AudioPlayer& audioPlayer;
 
     // GUI Elements
     QWidget     *mainWidget;

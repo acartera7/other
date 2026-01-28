@@ -9,6 +9,7 @@
 #include <QAudioDecoder>
 #include <QAudioBuffer>
 #include <QDebug>
+#include <QThread>
 
 #include <vector>
 #include <cstring>
@@ -36,8 +37,11 @@ struct LoadedWav {
 class AudioPlayer : public QObject {
     Q_OBJECT
 public:
-    explicit AudioPlayer(QObject *parent = nullptr);
-    ~AudioPlayer() override;
+    static AudioPlayer& getInstance();
+
+    AudioPlayer(const AudioPlayer&) = delete;
+    AudioPlayer& operator=(const AudioPlayer&) = delete;
+
     void play(const QString &filePath);
     void stop();
     void setVolume(float volume);
@@ -45,13 +49,18 @@ public:
 
 
 private:
+    AudioPlayer(QObject *parent = nullptr);
+    ~AudioPlayer() override;
     void setupAudioStream();
-    void writeAudioData();
+    void writeAudioData(IAudioRenderClient* renderClient = nullptr);
 
-    IAudioClient* pAudioClient = nullptr;
-    IAudioRenderClient* pRenderClient = nullptr;
+    IAudioClient* _pAudioClient = nullptr;
+    IAudioRenderClient* _pRenderClient = nullptr;
     AudioLoader *loader;
     LoadedWav loadedFile;
+
+    std::vector<QThread*> activeThreads;      // keep track of threads playing sound
+    std::atomic<bool> stopAllAudio{false};  // shared flag for stopping audio
 
 };
 

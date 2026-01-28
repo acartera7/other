@@ -6,7 +6,7 @@
 
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
-    : QMainWindow(parent), _window_x(800),_window_y(500), mainVLayout(){
+    : QMainWindow(parent),  _window_x(800),_window_y(500), audioPlayer(AudioPlayer::getInstance()), mainVLayout() {
 
 
 
@@ -19,8 +19,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     mainVLayout = new QVBoxLayout();
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
-
-    audioPlayer = new AudioPlayer(this);
 
     // Toolbar & Button
     toolbar = new QToolBar(this);
@@ -97,8 +95,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(browser, &FileBrowserWidget::fileSelected, this, &MicSpammerWindow::onFileSelected);
     connect(browser, &FileBrowserWidget::playSound, this, &MicSpammerWindow::onPlay);
     connect(numpad, &NumpadWidget::numpadTriggered,
-        audioPlayer, [this](int key, const QString &filePath) {
-            audioPlayer->play(filePath);
+        this, [this](int key, const QString &filePath) {
+            audioPlayer.play(filePath);
         });
 
     connect(numpad, &NumpadWidget::pageChanged, this, [](int page) {
@@ -115,21 +113,21 @@ void MicSpammerWindow::onOpenFolder() {
 
 void MicSpammerWindow::onPlay() {
     if (!selectedFilePath.isEmpty()) {
-        audioPlayer->play(selectedFilePath);  // Play last selected file
+        audioPlayer.play(selectedFilePath);  // Play last selected file
     }
 }
 
 void MicSpammerWindow::onStop() {
-    audioPlayer->stop();
+    audioPlayer.stop();
 }
 
 void MicSpammerWindow::onVolumeChanged(int volume) {
-    audioPlayer->setVolume(volume / 100.0f);  // Scale to 0-1
+    audioPlayer.setVolume(volume / 100.0f);  // Scale to 0-1
 }
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
-    audioPlayer->loadAudioFile(filePath);
+    audioPlayer.loadAudioFile(filePath);
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;
