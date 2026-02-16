@@ -51,6 +51,8 @@ add_executable(MicSpammer
         ${app_resources}
         AudioLoader.cpp
         AudioLoader.h
+        SoundInstance.cpp
+        SoundInstance.h
 )
 
 # Link the WASAPI libraries

@@ -31,9 +31,12 @@ void AudioLoader::onBufferReady() {
     QByteArray pcm(reinterpret_cast<const char*>(buffer.constData<char>()),
                    buffer.byteCount());
 
-    emit pcmReady(pcm, buffer.format());
+    accumulatedData.append(pcm);
+    accumulatedFormat = buffer.format();
 }
 
 void AudioLoader::onFinished() {
     qDebug() << "File Loaded.";
+    emit pcmReady(accumulatedData, accumulatedFormat);
+    accumulatedData.clear();
 }

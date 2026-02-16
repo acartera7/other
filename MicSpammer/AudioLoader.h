@@ -24,5 +24,7 @@ private slots:
 
 private:
     QAudioDecoder* decoder;
+    QByteArray accumulatedData;
+    QAudioFormat accumulatedFormat;
 };
 #endif //MICSPAMMER_AUDIOLOADER_H
