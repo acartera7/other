@@ -13,6 +13,7 @@ class AudioLoader : public QObject {
 public:
     explicit AudioLoader(QObject* parent = nullptr);
     void loadFile(const QString& path);
+    void setDecoderFormat(const QAudioFormat &audioFormat);
     ~AudioLoader() override;
 
     signals:
@@ -25,6 +26,6 @@ private slots:
 private:
     QAudioDecoder* decoder;
     QByteArray accumulatedData;
-    QAudioFormat accumulatedFormat;
+    QAudioFormat _audioFormat;
 };
 #endif //MICSPAMMER_AUDIOLOADER_H

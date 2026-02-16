@@ -2,66 +2,56 @@
 // Created by Andrei on 5/4/2025.
 //
 #include "AudioPlayer.h"
+#include <QStandardPaths>
 
 AudioPlayer & AudioPlayer::getInstance() {
     static AudioPlayer instance;
     return instance;
 }
 
-AudioPlayer::AudioPlayer(QObject *parent)
-    : QObject(parent){
-
-    loader = new AudioLoader(this);
-
-    _pAudioClient = WasapiManager::getInstance().getAudioClient();
-    _pAudioClient->Start();
-
+AudioPlayer::AudioPlayer(QObject *parent) :
+        QObject(parent),
+        _volume(1.0f){
+    pCurrentDevice = WasapiManager::getInstance().getCurrentDevice(); // TODO account for device change
 }
 
 AudioPlayer::~AudioPlayer() {
-    delete loader;
-    _pAudioClient->Stop();
+    stopAll();
 }
 
 void AudioPlayer::play(const QString& filePath) {
 
     qDebug() << "AudioPlayer: Play file:" << filePath;
 
-    if (!loadedFile.ok) {
-        qDebug() << "AudioPlayer: No File Loaded";
-        return;
-    }
+    auto* instance = new SoundInstance(filePath, pCurrentDevice, _volume, this);
+    connect(instance, &SoundInstance::finished, this, &AudioPlayer::onInstanceFinished);
 
-
-    activeThreads.push_back(t); //TODO remove
+    activeInstances.push_back(instance);
+    instance->start();
 }
 
 
-void AudioPlayer::stop() {
-    // Stop playback
-    stopAllAudio = true;
-    for (auto t : activeThreads) {
-        t->quit();
-        t->wait();
-        delete t;
+void AudioPlayer::stopAll() {
+    qDebug() << "AudioPlayer: Stop all sounds";
+    for (auto* instance : activeInstances) {
+        instance->stop();
+        instance->deleteLater();
     }
-    activeThreads.clear();
-    stopAllAudio = false;
+    activeInstances.clear();
+}
+
+void AudioPlayer::onInstanceFinished(SoundInstance* instance) {
+    //qDebug() << "AudioPlayer: Instance " << instance->getFileName() << " finished.";
+    activeInstances.erase(
+        std::remove(activeInstances.begin(), activeInstances.end(), instance),
+        activeInstances.end()
+    );
+    instance->deleteLater();
 }
 
 void AudioPlayer::setVolume(float volume) {
-    // Adjust volume via WASAPI if supported
+    _volume = volume;
+    for (auto* instance : activeInstances) {
+        instance->setVolume(volume);
+    }
 }
-
-void AudioPlayer::setupAudioStream() {
-
-}
-
-void AudioPlayer::writeAudioData(IAudioRenderClient* renderClient) {
-
-}
-
-void AudioPlayer::loadAudioFile(const QString &filePath) {
-    loader->loadFile(filePath);
-}
-

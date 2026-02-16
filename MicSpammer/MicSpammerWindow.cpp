@@ -27,7 +27,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setRange(0, 100); // Volume range 0-100
     volumeSlider->setFixedWidth(100);
-    volumeSlider->setValue(80);
     openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
@@ -102,6 +101,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(numpad, &NumpadWidget::pageChanged, this, [](int page) {
         qDebug() << "Switched to page:" << page;
     });
+
+    volumeSlider->setValue(80);
 }
 
 void MicSpammerWindow::onOpenFolder() {
@@ -118,16 +119,30 @@ void MicSpammerWindow::onPlay() {
 }
 
 void MicSpammerWindow::onStop() {
-    audioPlayer.stop();
+    audioPlayer.stopAll();
 }
 
 void MicSpammerWindow::onVolumeChanged(int volume) {
-    audioPlayer.setVolume(volume / 100.0f);  // Scale to 0-1
+    // Clamp to avoid log(0)
+    if (volume <= 0) {
+        audioPlayer.setVolume(0.0f);
+        return;
+    }
+
+    // Map 0–100 slider to -40 dB .. 0 dB range
+    float minDb = -40.0f;   // silence threshold
+    float maxDb = 0.0f;
+
+    float db = minDb + (volume / 100.0f) * (maxDb - minDb);
+
+    // Convert dB to linear gain
+    float gain = powf(10.0f, db / 20.0f);
+
+    audioPlayer.setVolume(gain);
 }
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
-    audioPlayer.loadAudioFile(filePath);
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;

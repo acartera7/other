@@ -8,24 +8,31 @@
 #include <qobject.h>
 #include <qqueue.h>
 #include <audioclient.h>
+#include <Mmdeviceapi.h>
+#include <qaudioformat.h>
 
-#include "AudioLoader.h"
-#include "AudioPlayer.h"
+#include <QThread>
+#include <QMutex>
+#include <atomic>
+
+#include  "AudioLoader.h"
 
 class SoundInstance : public QObject {
     Q_OBJECT
 public:
-    explicit SoundInstance(const QString& path, IAudioClient* client, QObject *parent);
-    ~SoundInstance();
+    explicit SoundInstance(const QString& path, IMMDevice* device, float volume, QObject *parent);
+    ~SoundInstance() override;
 
     void start();   // start loading + playback
     void stop();    // request stop
+    QString getFileName();
+    void setVolume(float volume);
 
 signals:
     void finished(SoundInstance *self); // clean up;
 
 private slots:
-    void onPcmReady(const QByteArray& data, const QAudioFormat& format);
+    void onPcmReady(const QByteArray& data);
 
 private:
     void startPlaybackThread();
@@ -34,14 +41,26 @@ private:
     QString filePath;
     AudioLoader* loader = nullptr;
 
-    //QQueue<QByteArray> pcmQueue; //TODO make audio streaming
+    // =========== PRELOAD MODEL =========== (current implementation)
     std::vector<BYTE> pcmData;
-    WAVEFORMATEX wfx{};
     bool loadedOK = false;
 
-    std::atomic<bool> stopFlag{false};
+    // =========== STREAMING MODEL =========== //TODO make audio streaming
+    //QQueue<QByteArray> pcmQueue;
+    //QMutex queueMutex
+    // Format will be set once from the first buffer
+    // QAudioFormat streamFormat;
+    // bool streamingMode = false; // flag to switch between preload vs streaming
+
+    std::atomic<bool> stopFlag;
+    std::atomic<float> _volume;
     QThread* playbackThread = nullptr;
-    IAudioClient* audioClient = nullptr;
+    IAudioClient* _pAudioClient = nullptr;
+
+    QAudioFormat _qFormat;
+
+    UINT32 bufferFrameCount = 0;
+    UINT32 bytesPerFrame = 0;
 
 };
 

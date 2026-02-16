@@ -4,23 +4,19 @@
 #pragma once
 #include <QWidget>
 #include <QFile>
-#include <QDataStream>
 
-#include <QAudioDecoder>
-#include <QAudioBuffer>
 #include <QDebug>
 #include <QThread>
 
 #include <vector>
 #include <cstring>
 
+#include "SoundInstance.h"
+#include "WasapiManager.h"
 #define NO_DSHOW_STRSAFE
 
 #include <Mmdeviceapi.h>
 #include <Audioclient.h>
-
-#include "AudioLoader.h"
-#include "WasapiManager.h"
 
 #undef TIMECODE_SAMPLE
 
@@ -28,11 +24,11 @@
 #define AUDIOPLAYER_H
 
 
-struct LoadedWav {
-    std::vector<BYTE> data;
-    WAVEFORMATEX format;
-    bool ok = false;
-};
+//struct LoadedWav {
+//    std::vector<BYTE> data;
+//    WAVEFORMATEX format;
+//    bool ok = false;
+//};
 
 class AudioPlayer : public QObject {
     Q_OBJECT
@@ -43,25 +39,19 @@ public:
     AudioPlayer& operator=(const AudioPlayer&) = delete;
 
     void play(const QString &filePath);
-    void stop();
+    void stopAll();
     void setVolume(float volume);
-    void loadAudioFile(const QString &filePath);
 
+private slots:
+    void onInstanceFinished(SoundInstance* instance);
 
 private:
-    AudioPlayer(QObject *parent = nullptr);
+    explicit AudioPlayer(QObject *parent = nullptr);
     ~AudioPlayer() override;
-    void setupAudioStream();
-    void writeAudioData(IAudioRenderClient* renderClient = nullptr);
 
-    IAudioClient* _pAudioClient = nullptr;
-    IAudioRenderClient* _pRenderClient = nullptr;
-    AudioLoader *loader;
-    LoadedWav loadedFile;
-
-    std::vector<QThread*> activeThreads;      // keep track of threads playing sound
-    std::atomic<bool> stopAllAudio{false};  // shared flag for stopping audio
-
+    IMMDevice* pCurrentDevice = nullptr;
+    std::vector<SoundInstance*> activeInstances;      // keep track of threads playing sound
+    float _volume;
 };
 
 

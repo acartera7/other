@@ -62,6 +62,7 @@ target_link_libraries(MicSpammer PRIVATE
         Qt6::Widgets
         Qt6::Multimedia
         Ole32.lib               # WASAPI dependencies
+        ksuser.lib              # WAVEFORMATEXTENSIBLE
         Uuid.lib
         mfplat
         mf

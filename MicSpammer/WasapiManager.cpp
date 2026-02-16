@@ -17,13 +17,13 @@ WasapiManager& WasapiManager::getInstance() {
 HRESULT WasapiManager::initialize() {
     CoInitialize(nullptr);
     HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
-                                  __uuidof(IMMDeviceEnumerator), reinterpret_cast<void**>(&pEnumerator));
+                                  __uuidof(IMMDeviceEnumerator), reinterpret_cast<void**>(&_pEnumerator));
     if (FAILED(hr)) return hr;
 
     // Enumerate both render and capture devices
     for (EDataFlow flow : { eRender, eCapture }) {
         IMMDeviceCollection* pDevices = nullptr;
-        hr = pEnumerator->EnumAudioEndpoints(flow, DEVICE_STATE_ACTIVE, &pDevices);
+        hr = _pEnumerator->EnumAudioEndpoints(flow, DEVICE_STATE_ACTIVE, &pDevices);
         if (SUCCEEDED(hr)) {
             UINT count = 0;
             pDevices->GetCount(&count);
@@ -59,18 +59,18 @@ HRESULT WasapiManager::initialize() {
     }
 
     // initialize current output device with the default
-    hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pCurrentDevice);
+    hr = _pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_pCurrentDevice);
     if (FAILED(hr)) return hr;
 
-    hr = pCurrentDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
-                           reinterpret_cast<void**>(&pAudioClient));
+    hr = _pCurrentDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
+                           reinterpret_cast<void**>(&_pAudioClient));
     if (FAILED(hr)) return hr;
 
     WAVEFORMATEX* pwfx = nullptr;
-    hr = pAudioClient->GetMixFormat(&pwfx);
+    hr = _pAudioClient->GetMixFormat(&pwfx);
     if (FAILED(hr)) return hr;
 
-    hr = pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, pwfx, nullptr);
+    hr = _pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, pwfx, nullptr);
     if (FAILED(hr)) return hr;
 
     std::cout << "WASAPI Initialized" << std::endl;
@@ -78,18 +78,18 @@ HRESULT WasapiManager::initialize() {
 }
 
 void WasapiManager::cleanup() {
-    if (pAudioClient) pAudioClient->Release();
-    if (pCurrentDevice) pCurrentDevice->Release();
-    if (pEnumerator) pEnumerator->Release();
+    if (_pAudioClient) _pAudioClient->Release();
+    if (_pCurrentDevice) _pCurrentDevice->Release();
+    if (_pEnumerator) _pEnumerator->Release();
     CoUninitialize();
 }
 
 HRESULT WasapiManager::setDeviceById(const std::wstring& deviceId)
 {
-    if (!pEnumerator) return E_FAIL;
+    if (!_pEnumerator) return E_FAIL;
 
     IMMDevice* pNewDevice = nullptr;
-    HRESULT hr = pEnumerator->GetDevice(deviceId.c_str(), &pNewDevice);
+    HRESULT hr = _pEnumerator->GetDevice(deviceId.c_str(), &pNewDevice);
     if (FAILED(hr)) return hr;
 
     IAudioClient* pNewClient = nullptr;
@@ -101,21 +101,21 @@ HRESULT WasapiManager::setDeviceById(const std::wstring& deviceId)
     }
 
     // Release old
-    if (pAudioClient) pAudioClient->Release();
-    if (pCurrentDevice) pCurrentDevice->Release();
+    if (_pAudioClient) _pAudioClient->Release();
+    if (_pCurrentDevice) _pCurrentDevice->Release();
 
     // Update current
-    pCurrentDevice = pNewDevice;
-    pAudioClient = pNewClient;
+    _pCurrentDevice = pNewDevice;
+    _pAudioClient = pNewClient;
 
     return S_OK;
 }
 
 std::wstring WasapiManager::getCurrentDeviceName() const {
-    if (!pCurrentDevice) return L"(no device)";
+    if (!_pCurrentDevice) return L"(no device)";
 
     IPropertyStore* pProps = nullptr;
-    HRESULT hr = pCurrentDevice->OpenPropertyStore(STGM_READ, &pProps);
+    HRESULT hr = _pCurrentDevice->OpenPropertyStore(STGM_READ, &pProps);
     if (FAILED(hr)) return L"(error)";
 
     PROPVARIANT varName;
@@ -135,5 +135,6 @@ WasapiManager::~WasapiManager() {
     cleanup();
 }
 
-IAudioClient* WasapiManager::getAudioClient() const { return pAudioClient; }
+IAudioClient* WasapiManager::getAudioClient() const { return _pAudioClient; }
 const std::vector<AudioDeviceInfo>& WasapiManager::getDevices() const { return deviceList; }
+IMMDevice * WasapiManager::getCurrentDevice() const {return _pCurrentDevice;}

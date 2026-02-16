@@ -16,8 +16,15 @@ AudioLoader::AudioLoader(QObject *parent) {
 
 void AudioLoader::loadFile(const QString &path) {
     qDebug() << QString("Loading file: %1.").arg(path);
-    decoder->setSource(QUrl(path));
+    decoder->setSource(QUrl::fromLocalFile(path));
     decoder->start();
+}
+
+void AudioLoader::setDecoderFormat(const QAudioFormat &audioFormat) {
+    decoder->setAudioFormat(audioFormat);
+    if (!decoder->audioFormat().isValid()) {
+        qDebug() << "Decoder rejected format, will fall back.";
+    }
 }
 
 AudioLoader::~AudioLoader() {
@@ -28,15 +35,25 @@ void AudioLoader::onBufferReady() {
     QAudioBuffer buffer = decoder->read();
     if (!buffer.isValid()) return;
 
+    //qDebug() << "Buffer format:"
+    //     << buffer.format().sampleRate()
+    //     << "Hz,"
+    //     << buffer.format().channelCount()
+    //     << "ch,"
+    //     << buffer.format().bytesPerSample()*8
+    //     << "bits,"
+    //     << "byteCount=" << buffer.byteCount();
+
     QByteArray pcm(reinterpret_cast<const char*>(buffer.constData<char>()),
                    buffer.byteCount());
 
     accumulatedData.append(pcm);
-    accumulatedFormat = buffer.format();
+    if (!_audioFormat.isValid())
+        _audioFormat = buffer.format();
 }
 
 void AudioLoader::onFinished() {
     qDebug() << "File Loaded.";
-    emit pcmReady(accumulatedData, accumulatedFormat);
+    emit pcmReady(accumulatedData, _audioFormat);
     accumulatedData.clear();
 }

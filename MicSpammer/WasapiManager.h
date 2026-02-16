@@ -1,6 +1,8 @@
 //
 // Created by Andrei on 5/4/2025.
 //
+
+#pragma once
 #include <Audioclient.h>
 #include <Mmdeviceapi.h>
 #include <string>
@@ -23,6 +25,7 @@ public:
 
     IAudioClient* getAudioClient() const;
     const std::vector<AudioDeviceInfo>& getDevices() const;
+    IMMDevice* getCurrentDevice() const;
     HRESULT setDeviceById(const std::wstring& deviceId);
     std::wstring getCurrentDeviceName() const;
 
@@ -30,9 +33,9 @@ private:
     WasapiManager() = default;  // Private constructor (singleton)
     ~WasapiManager();
 
-    IMMDeviceEnumerator* pEnumerator = nullptr;
-    IMMDevice* pCurrentDevice = nullptr;
-    IAudioClient* pAudioClient = nullptr;
+    IMMDeviceEnumerator* _pEnumerator = nullptr;
+    IMMDevice* _pCurrentDevice = nullptr;
+    IAudioClient* _pAudioClient = nullptr;
 
     std::vector<AudioDeviceInfo> deviceList;
 };

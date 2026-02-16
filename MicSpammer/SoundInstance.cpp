@@ -2,55 +2,108 @@
 // Created by Victus on 2/8/2026.
 //
 
-#include "SoundInstance.h"
 #include <QDebug>
+#include <QFileInfo>
+#include "SoundInstance.h"
 
-SoundInstance::SoundInstance(const QString& path, IAudioClient* client, QObject *parent)
-    :   QObject(parent),
+SoundInstance::SoundInstance(const QString& path, IMMDevice* device, float volume, QObject *parent) :
+        QObject(parent),
         filePath(path),
-        audioClient(client) {
+        stopFlag(false),
+        _volume(volume){
+
+    HRESULT hr = device->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&_pAudioClient);
+
+    if (FAILED(hr) || !_pAudioClient) {
+        QFileInfo f(filePath);
+        qDebug() << QString("Failed to activate audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+        return;
+    }
+
+    // Initialize audio client in shared mode
+
+    WAVEFORMATEX* audioClientFmt = nullptr;
+    _pAudioClient->GetMixFormat(&audioClientFmt);
+    if (FAILED(hr) || !audioClientFmt) {
+        QFileInfo f(filePath);
+        qDebug() << QString("Failed to get mix format for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+    }
+
+    REFERENCE_TIME bufferDuration = 100000;
+    hr = _pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
+                                 0,
+                                 bufferDuration,
+                                 0,
+                                 audioClientFmt,
+                                 nullptr);
+
+    if (FAILED(hr)) {
+        QFileInfo f(filePath);
+        qDebug() << QString("Failed to initialize audioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+    }
+
+    _pAudioClient->GetBufferSize(&bufferFrameCount);
+    bytesPerFrame = audioClientFmt->nBlockAlign;
+
+    QAudioFormat qFormat;
+    qFormat.setSampleRate(audioClientFmt->nSamplesPerSec);
+    qFormat.setChannelCount(audioClientFmt->nChannels);
+    qFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
+    //qFormat.setSampleFormat(QAudioFormat::Float);
+
+    if (audioClientFmt->wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
+        WAVEFORMATEXTENSIBLE* wfext = reinterpret_cast<WAVEFORMATEXTENSIBLE*>(audioClientFmt);
+        if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) {
+            qFormat.setSampleFormat(QAudioFormat::Float);
+        } else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) {
+            qFormat.setSampleFormat(QAudioFormat::Int16);
+        }
+    } else if (audioClientFmt->wFormatTag == WAVE_FORMAT_IEEE_FLOAT) {
+        qFormat.setSampleFormat(QAudioFormat::Float);
+    } else {
+        qFormat.setSampleFormat(QAudioFormat::Int16);
+    }
 
     loader = new AudioLoader(this);
+    loader->setDecoderFormat(qFormat);
+    _qFormat = qFormat;
+
 
     connect(loader, &AudioLoader::pcmReady, this, &SoundInstance::onPcmReady);
-
+    CoTaskMemFree(audioClientFmt);
 }
 SoundInstance::~SoundInstance() {
     stop();
+    _pAudioClient->Release();
 }
 
 void SoundInstance::start() {
     loader->loadFile(filePath);
 }
+
 void SoundInstance::stop() {
     stopFlag = true;
+
+    if (_pAudioClient)
+        _pAudioClient->Stop(); // <-- instant halt
 
     if (playbackThread) {
         playbackThread->quit();
         playbackThread->wait();
         playbackThread = nullptr;
-        //playbackThread->deleteLater();
     }
 }
 
-void SoundInstance::finished(SoundInstance *self) {
-
+QString SoundInstance::getFileName() {
+    return filePath;
 }
 
-void SoundInstance::onPcmReady(const QByteArray& data, const QAudioFormat& format) {
+void SoundInstance::setVolume(float volume) {
+    _volume = volume;
+}
+
+void SoundInstance::onPcmReady(const QByteArray& data) {
     // called once when file fully decoded
-
-    wfx.nSamplesPerSec  = format.sampleRate();          // sample rate
-    wfx.nChannels       = format.channelCount();        // num channels
-    wfx.wBitsPerSample  = format.bytesPerSample() * 8;  // 16-bit or 8-bit
-    wfx.nBlockAlign     = (wfx.nChannels * wfx.wBitsPerSample) / 8; //frame size in bytes
-    wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-    wfx.cbSize          = 0;
-
-    if (format.sampleFormat() == QAudioFormat::Float)
-        wfx.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
-    else
-        wfx.wFormatTag = WAVE_FORMAT_PCM;
 
     pcmData = std:: vector<BYTE>(data.begin(), data.end());
     loadedOK = true;
@@ -59,18 +112,26 @@ void SoundInstance::onPcmReady(const QByteArray& data, const QAudioFormat& forma
 }
 
 void SoundInstance::startPlaybackThread() {
-    if (loadedOK || !audioClient)
+    if (!loadedOK || !_pAudioClient)
         return;
 
     playbackThread = QThread::create([this]() {
         // Each thread needs it's on render client
         IAudioRenderClient* renderClient = nullptr;
-        HRESULT hr = audioClient->GetService(__uuidof(IAudioRenderClient), (void**)&renderClient);
+        HRESULT hr = _pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)&renderClient);
 
         if (FAILED(hr) || !renderClient)
             return;
 
+        hr = _pAudioClient->Start();
+        if (FAILED(hr)) {
+            QFileInfo f(filePath);
+            qDebug() << QString("Failed to start the audioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+        }
+
         writeAudioData(renderClient); // blocking loop
+
+        _pAudioClient->Stop();
         renderClient->Release();
     });
 
@@ -84,16 +145,14 @@ void SoundInstance::writeAudioData(IAudioRenderClient* renderClient) {
     if (!renderClient)
         return;
 
-    UINT32 bufferFrameCount = 0;
-    audioClient->GetBufferSize(&bufferFrameCount);
+    _pAudioClient->GetBufferSize(&bufferFrameCount);
 
-    UINT32 bytesPerFrame = wfx.nBlockAlign;
     size_t totalBytes = pcmData.size();
     size_t bytesConsumed = 0;
 
     while (!stopFlag && bytesConsumed < totalBytes) {
         UINT32 padding = 0;
-        audioClient->GetCurrentPadding(&padding);
+        _pAudioClient->GetCurrentPadding(&padding);
         UINT32 framesAvailable = bufferFrameCount - padding;
         if (framesAvailable == 0) {
             QThread::msleep(1);
@@ -104,17 +163,45 @@ void SoundInstance::writeAudioData(IAudioRenderClient* renderClient) {
         HRESULT hr = renderClient->GetBuffer(framesAvailable, &pData);
         if (FAILED(hr)) break;
 
-        size_t bytesToWrite = framesAvailable * bytesPerFrame;;
+        size_t bytesToWrite = framesAvailable * bytesPerFrame;
         size_t bytesRemaining = totalBytes - bytesConsumed;
         if (bytesToWrite > bytesRemaining) {
             bytesToWrite = bytesRemaining;
             framesAvailable = (UINT32)(bytesToWrite / bytesPerFrame);
         }
 
-        memcpy(pData, pcmData.data() + bytesConsumed, bytesToWrite);
+        //memcpy(pData, pcmData.data() + bytesConsumed, bytesToWrite);
+
+        // Apply volume scaling here
+        float volume = _volume.load();
+
+        if (_qFormat.sampleFormat() == QAudioFormat::Float) {
+            const float* src = reinterpret_cast<const float*>(pcmData.data() + bytesConsumed);
+            float* dst = reinterpret_cast<float*>(pData);
+            size_t samples = bytesToWrite / sizeof(float);
+
+            for (size_t i = 0; i < samples; ++i) {
+                dst[i] = src[i] * volume;
+            }
+        } else {
+            const int16_t* src = reinterpret_cast<const int16_t*>(pcmData.data() + bytesConsumed);
+            int16_t* dst = reinterpret_cast<int16_t*>(pData);
+            size_t samples = bytesToWrite / sizeof(int16_t);
+
+            for (size_t i = 0; i < samples; ++i) {
+                int sample = static_cast<int>(src[i] * volume);
+                if (sample > 32767) sample = 32767;
+                if (sample < -32768) sample = -32768;
+                dst[i] = static_cast<int16_t>(sample);
+            }
+        }
         bytesConsumed += bytesToWrite;
 
-        renderClient->ReleaseBuffer(framesAvailable, 0);
+        hr = renderClient->ReleaseBuffer(framesAvailable, 0);
+        if (FAILED(hr)) {
+            QFileInfo f(filePath);
+            qDebug() << QString("Failed to release buffer for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+        }
     }
 }
 
