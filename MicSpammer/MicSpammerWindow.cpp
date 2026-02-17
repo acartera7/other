@@ -134,6 +134,13 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
         qDebug() << "Switched to page:" << page;
     });
 
+    connect(micComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &MicSpammerWindow::onMicDeviceChanged);
+    connect(monitorComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &MicSpammerWindow::onMonitorDeviceChanged);
+    connect(sendComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &MicSpammerWindow::onSendDeviceChanged);
+
     volumeSlider->setValue(80);
 }
 
@@ -175,6 +182,15 @@ void MicSpammerWindow::onVolumeChanged(int volume) {
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
+}
+
+void MicSpammerWindow::onMicDeviceChanged() {
+}
+
+void MicSpammerWindow::onMonitorDeviceChanged() {
+}
+
+void MicSpammerWindow::onSendDeviceChanged() {
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;
