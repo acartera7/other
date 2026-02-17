@@ -9,14 +9,13 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent),  _window_x(800),_window_y(500), audioPlayer(AudioPlayer::getInstance()), mainVLayout() {
 
 
-
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
 
-    mainWidget = new QWidget();
+    mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
 
-    mainVLayout = new QVBoxLayout();
+    mainVLayout = new QVBoxLayout(this);
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
 
@@ -33,14 +32,47 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    QString deviceName = QString::fromStdWString(
-        WasapiManager::getInstance().getCurrentDeviceName()
-    );
-    deviceLabel = new QLabel(deviceName, this);
+    // Devices selection dropdown
+    micComboBox = new QComboBox(this);
+    monitorComboBox = new QComboBox(this);
+    sendComboBox = new QComboBox(this);
 
-    // toolbar layout container
+    micComboBox->addItem("--None--", QVariant("None"));
+    micComboBox->setCurrentIndex(-1);
+    monitorComboBox->addItem("--None--", QVariant("None"));
+    monitorComboBox->setCurrentIndex(-1);
+    sendComboBox->addItem("--None--", QVariant("None"));
+    sendComboBox->setCurrentIndex(-1);
+
+    deviceList = WasapiManager::getInstance().getDevices();
+    for (size_t i = 0; i < deviceList.size(); i++) {
+        const auto& info = deviceList.at(i);
+        QString name = QString::fromStdWString(info.name);
+        if (info.flow == eCapture) {
+            micComboBox->addItem(name, QVariant(QString::fromStdWString(info.id)));
+        } else if (info.flow == eRender) {
+            monitorComboBox->addItem(name, QVariant(QString::fromStdWString(info.id)));
+            sendComboBox->addItem(name, QVariant(QString::fromStdWString(info.id)));
+        }
+    }
+
+    toolbar_devicesFLayout = new QFormLayout(this);
+
+    micDeviceLabel = new QLabel("Microphone Device:",this);
+    monitorDeviceLabel = new QLabel("Monitoring Device:",this);
+    sendDeviceLabel = new QLabel("Output Device",this);
+
+    toolbar_devicesFLayout->addRow(micDeviceLabel, micComboBox);
+    toolbar_devicesFLayout->addRow(monitorDeviceLabel, monitorComboBox);
+    toolbar_devicesFLayout->addRow(sendDeviceLabel, sendComboBox);
+
+    //devices left part devices drop down container
+    toolbar_devicesContainer = new QWidget(this);
+    toolbar_devicesContainer->setLayout(toolbar_devicesFLayout);
+
+    // toolbar right part layout container
     toolbar_rightContainer  = new QWidget(this);
-    toolbar_rightHLayout  = new QHBoxLayout();
+    toolbar_rightHLayout  = new QHBoxLayout(this);
     toolbar_rightHLayout->addWidget(playButton);
     toolbar_rightHLayout->addSpacing(10); // Spacing between play & stop
     toolbar_rightHLayout->addWidget(stopButton);
@@ -51,7 +83,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
 
     // Add widgets to toolbar
     toolbar->addWidget(openFolderButton);
-    toolbar->addWidget(deviceLabel);
+    toolbar->addWidget(toolbar_devicesContainer);
     toolbar->addWidget(spacer);
     toolbar->addWidget(toolbar_rightContainer);
     addToolBar(Qt::TopToolBarArea, toolbar);
@@ -62,7 +94,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
 
     //create and fill horizontal main_content widget below toolbar
     mainContent_container  = new QWidget(this);
-    mainContent_HLayout  = new QHBoxLayout();
+    mainContent_HLayout  = new QHBoxLayout(this);
     //create left hand browser
     browser = new FileBrowserWidget(this);
     // create right hand numpad

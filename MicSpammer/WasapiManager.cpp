@@ -62,23 +62,13 @@ HRESULT WasapiManager::initialize() {
     hr = _pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_pCurrentDevice);
     if (FAILED(hr)) return hr;
 
-    hr = _pCurrentDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
-                           reinterpret_cast<void**>(&_pAudioClient));
-    if (FAILED(hr)) return hr;
 
-    WAVEFORMATEX* pwfx = nullptr;
-    hr = _pAudioClient->GetMixFormat(&pwfx);
-    if (FAILED(hr)) return hr;
-
-    hr = _pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, pwfx, nullptr);
-    if (FAILED(hr)) return hr;
 
     std::cout << "WASAPI Initialized" << std::endl;
     return hr;
 }
 
 void WasapiManager::cleanup() {
-    if (_pAudioClient) _pAudioClient->Release();
     if (_pCurrentDevice) _pCurrentDevice->Release();
     if (_pEnumerator) _pEnumerator->Release();
     CoUninitialize();
@@ -101,12 +91,10 @@ HRESULT WasapiManager::setDeviceById(const std::wstring& deviceId)
     }
 
     // Release old
-    if (_pAudioClient) _pAudioClient->Release();
     if (_pCurrentDevice) _pCurrentDevice->Release();
 
     // Update current
     _pCurrentDevice = pNewDevice;
-    _pAudioClient = pNewClient;
 
     return S_OK;
 }
@@ -135,6 +123,5 @@ WasapiManager::~WasapiManager() {
     cleanup();
 }
 
-IAudioClient* WasapiManager::getAudioClient() const { return _pAudioClient; }
 const std::vector<AudioDeviceInfo>& WasapiManager::getDevices() const { return deviceList; }
 IMMDevice * WasapiManager::getCurrentDevice() const {return _pCurrentDevice;}

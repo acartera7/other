@@ -164,12 +164,16 @@ void NumpadWidget::dropEvent(QDropEvent *event) {
 void NumpadWidget::showContextMenu(QPoint pos, int key) {
     QMenu menu;
     QAction *renameAction = menu.addAction("Rename");
+    QAction *removeAction = menu.addAction("Remove");
 
     QAction *selected = menu.exec(buttons[key]->mapToGlobal(pos));
     if (selected == renameAction) {
         renameButton(key);
+    } else if (selected == removeAction) {
+        removeButtonMapping(key);
     }
 }
+
 
 void NumpadWidget::renameButton(int key) {
     bool ok;
@@ -185,6 +189,14 @@ void NumpadWidget::renameButton(int key) {
         buttons[key]->setText(QString::number(key) + "\n" + text);
     }
 }
+
+void NumpadWidget::removeButtonMapping(int key) {
+    if (pageMappings[currentPage].contains(key)) {
+        pageMappings[currentPage].remove(key);
+        buttons[key]->setText(QString::number(key)); // reset to default label
+    }
+}
+
 
 void NumpadWidget::loadPage(int page) {
     // Clear button labels

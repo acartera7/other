@@ -23,7 +23,6 @@ public:
     HRESULT initialize();
     void cleanup();
 
-    IAudioClient* getAudioClient() const;
     const std::vector<AudioDeviceInfo>& getDevices() const;
     IMMDevice* getCurrentDevice() const;
     HRESULT setDeviceById(const std::wstring& deviceId);
@@ -35,7 +34,6 @@ private:
 
     IMMDeviceEnumerator* _pEnumerator = nullptr;
     IMMDevice* _pCurrentDevice = nullptr;
-    IAudioClient* _pAudioClient = nullptr;
 
     std::vector<AudioDeviceInfo> deviceList;
 };

@@ -11,6 +11,8 @@
 #include <QSlider>
 #include <QFileSystemModel>
 #include <QSplitter>
+#include <QComboBox>
+#include <QFormLayout>
 
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
@@ -43,6 +45,10 @@ private:
     void onVolumeChanged(int volume);
     void onFileSelected(const QString &filePath);
 
+    void onMicDeviceChanged();
+    void onMonitorDeviceChanged();
+    void onSendDeviceChanged();
+
     QString selectedFilePath;
     AudioPlayer& audioPlayer;
 
@@ -55,11 +61,18 @@ private:
     QToolBar *toolbar;
 
     QPushButton *openFolderButton, *playButton, *stopButton;
-    QWidget *spacer, *toolbar_rightContainer, *mainContent_container;
+    QWidget *spacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *volumeSlider;
     QSplitter *mainContent_splitter;
-    QLabel *deviceLabel;
+
+    QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel;
+
+    QComboBox* micComboBox,*monitorComboBox, *sendComboBox;
+
+    QFormLayout *toolbar_devicesFLayout;
+
+    std::vector<AudioDeviceInfo> deviceList;
 };
 
 

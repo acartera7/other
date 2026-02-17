@@ -71,6 +71,7 @@ private:
 private slots:
     void showContextMenu(QPoint pos, int key);
     void renameButton(int key);
+    void removeButtonMapping(int key);
 };
 
 #endif //MICSPAMMER_NUMPADWIDGET_H
