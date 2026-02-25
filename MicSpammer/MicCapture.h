@@ -15,8 +15,13 @@
 class MicCapture : public QObject {
     Q_OBJECT
 public:
-    explicit MicCapture(IMMDevice* device, QObject *parent = nullptr);
-    ~MicCapture() override;
+    static MicCapture& getInstance();
+
+    MicCapture(const MicCapture&) = delete;
+    MicCapture& operator=(const MicCapture&) = delete;
+
+    void setCaptureDevice(const std::wstring &id);
+    void setOutputDevice(const std::wstring &id);
 
     void start();
     void stop();
@@ -25,17 +30,31 @@ signals:
     void micDataReady(const QByteArray &pcm);
 
 private:
-    void captureLoop();
+    explicit MicCapture(QObject *parent = nullptr);
+    ~MicCapture() override;
 
-    IMMDevice* micDevice = nullptr;
-    IAudioClient* audioClient = nullptr;
-    IAudioCaptureClient* captureClient = nullptr;
+    void captureLoop();
+    void releaseCaptureClient();
+    void releaseOutputClient();
+    void initCaptureClient(IMMDevice *device);
+    void initOutputClient(IMMDevice *device);
+
+    IMMDevice* captureDevice = nullptr;
+    IMMDevice* outputDevice = nullptr;
+
+    IAudioClient* captureAudioClient = nullptr;
+    IAudioCaptureClient* captureRenderClient = nullptr;
+
+    IAudioClient* outputAudioClient = nullptr;
+    IAudioRenderClient* outputRenderClient = nullptr;
 
     QThread* captureThread = nullptr;
     std::atomic<bool> stopFlag{false};
 
     UINT32 bufferFrameCount = 0;
-    WAVEFORMATEX *_mixFormat;
+    WAVEFORMATEX *captureMixFormat = nullptr;
+    WAVEFORMATEX *outputMixFormat = nullptr;
+
 };
 
 

@@ -16,6 +16,7 @@ WasapiManager& WasapiManager::getInstance() {
 
 HRESULT WasapiManager::initialize() {
     CoInitialize(nullptr);
+
     HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
                                   __uuidof(IMMDeviceEnumerator), reinterpret_cast<void**>(&_pEnumerator));
     if (FAILED(hr)) return hr;
@@ -58,65 +59,17 @@ HRESULT WasapiManager::initialize() {
         }
     }
 
-    // initialize current output device with the default
-    hr = _pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_pCurrentDevice);
-    if (FAILED(hr)) return hr;
-
-
-
     std::cout << "WASAPI Initialized" << std::endl;
     return hr;
 }
 
 void WasapiManager::cleanup() {
-    if (_pCurrentDevice) _pCurrentDevice->Release();
     if (_pEnumerator) _pEnumerator->Release();
     CoUninitialize();
 }
 
-HRESULT WasapiManager::setDeviceById(const std::wstring& deviceId)
-{
-    if (!_pEnumerator) return E_FAIL;
-
-    IMMDevice* pNewDevice = nullptr;
-    HRESULT hr = _pEnumerator->GetDevice(deviceId.c_str(), &pNewDevice);
-    if (FAILED(hr)) return hr;
-
-    IAudioClient* pNewClient = nullptr;
-    hr = pNewDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
-                              reinterpret_cast<void**>(&pNewClient));
-    if (FAILED(hr)) {
-        pNewDevice->Release();
-        return hr;
-    }
-
-    // Release old
-    if (_pCurrentDevice) _pCurrentDevice->Release();
-
-    // Update current
-    _pCurrentDevice = pNewDevice;
-
-    return S_OK;
-}
-
-std::wstring WasapiManager::getCurrentDeviceName() const {
-    if (!_pCurrentDevice) return L"(no device)";
-
-    IPropertyStore* pProps = nullptr;
-    HRESULT hr = _pCurrentDevice->OpenPropertyStore(STGM_READ, &pProps);
-    if (FAILED(hr)) return L"(error)";
-
-    PROPVARIANT varName;
-    PropVariantInit(&varName);
-    hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
-    std::wstring name = L"(unknown)";
-    if (SUCCEEDED(hr)) {
-        name = varName.pwszVal;
-    }
-    PropVariantClear(&varName);
-    pProps->Release();
-
-    return name;
+IMMDeviceEnumerator* WasapiManager::getEnumerator() const {
+    return _pEnumerator;
 }
 
 WasapiManager::~WasapiManager() {
@@ -124,4 +77,3 @@ WasapiManager::~WasapiManager() {
 }
 
 const std::vector<AudioDeviceInfo>& WasapiManager::getDevices() const { return deviceList; }
-IMMDevice * WasapiManager::getCurrentDevice() const {return _pCurrentDevice;}

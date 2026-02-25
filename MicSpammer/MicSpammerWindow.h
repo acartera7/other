@@ -17,7 +17,7 @@
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
-#include "AudioLoader.h"
+#include "MicCapture.h"
 #include "WasapiManager.h"
 
 
@@ -51,6 +51,7 @@ private:
 
     QString selectedFilePath;
     AudioPlayer& audioPlayer;
+    MicCapture& micCapture;
 
     // GUI Elements
     QWidget     *mainWidget;

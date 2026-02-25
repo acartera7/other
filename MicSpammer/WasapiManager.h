@@ -20,21 +20,19 @@ struct AudioDeviceInfo {
 class WasapiManager {
 public:
     static WasapiManager& getInstance();  // Singleton instance
+    WasapiManager(const WasapiManager&) = delete;
+    WasapiManager& operator=(const WasapiManager&) = delete;
+
     HRESULT initialize();
     void cleanup();
-
-    const std::vector<AudioDeviceInfo>& getDevices() const;
-    IMMDevice* getCurrentDevice() const;
-    HRESULT setDeviceById(const std::wstring& deviceId);
-    std::wstring getCurrentDeviceName() const;
+    [[nodiscard]] IMMDeviceEnumerator* getEnumerator() const;
+    [[nodiscard]] const std::vector<AudioDeviceInfo>& getDevices() const;
 
 private:
     WasapiManager() = default;  // Private constructor (singleton)
     ~WasapiManager();
 
     IMMDeviceEnumerator* _pEnumerator = nullptr;
-    IMMDevice* _pCurrentDevice = nullptr;
-
     std::vector<AudioDeviceInfo> deviceList;
 };
 

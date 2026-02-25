@@ -6,7 +6,9 @@
 
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
-    : QMainWindow(parent),  _window_x(800),_window_y(500), audioPlayer(AudioPlayer::getInstance()), mainVLayout() {
+    : QMainWindow(parent),  _window_x(800),_window_y(500),
+        audioPlayer(AudioPlayer::getInstance()),
+        micCapture(MicCapture::getInstance()) {
 
 
     setFocusPolicy(Qt::StrongFocus);
@@ -185,6 +187,7 @@ void MicSpammerWindow::onFileSelected(const QString &filePath) {
 }
 
 void MicSpammerWindow::onMicDeviceChanged() {
+
 }
 
 void MicSpammerWindow::onMonitorDeviceChanged() {

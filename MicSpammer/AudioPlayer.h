@@ -42,6 +42,9 @@ public:
     void stopAll();
     void setVolume(float volume);
 
+    void setMonitorDevice(const std::wstring& id);
+    void setOutputDevice(const std::wstring& id);
+
 private slots:
     void onInstanceFinished(SoundInstance* instance);
 
@@ -49,7 +52,20 @@ private:
     explicit AudioPlayer(QObject *parent = nullptr);
     ~AudioPlayer() override;
 
-    IMMDevice* pCurrentDevice = nullptr;
+    void releaseMonitorClient();
+    void releaseOutputClient();
+    void initMonitorClient(IMMDevice* device);
+    void initOutputClient(IMMDevice* device);
+
+    IMMDevice* monitorDevice = nullptr;
+    IMMDevice* outputDevice = nullptr;
+
+    IAudioClient* monitorAudioClient = nullptr;
+    IAudioRenderClient* monitorRenderClient = nullptr;
+
+    IAudioClient* outputAudioClient = nullptr;
+    IAudioRenderClient* outputRenderClient = nullptr;
+
     std::vector<SoundInstance*> activeInstances;      // keep track of threads playing sound
     float _volume;
 };
