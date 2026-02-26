@@ -20,9 +20,16 @@ AudioPlayer::~AudioPlayer() {
 
 void AudioPlayer::play(const QString& filePath) {
 
-    qDebug() << "AudioPlayer: Play file:" << filePath;
-    //TODO make sure device and clients are valid
-    auto* instance = new SoundInstance(filePath, monitorDevice, _volume, this);
+    //qDebug() << "AudioPlayer: Play file:" << filePath;
+    if (!monitorDevice && !outputDevice)  {
+        qDebug() << "AudioPlayer: Cannot play file, no monitor device or output device is set";
+        return;
+    }
+
+    if (!monitorDevice) qDebug() << "AudioPlayer: Warning, no monitor device is set";
+    if (!outputDevice) qDebug() << "AudioPlayer: Warning, no output device is set";
+
+    auto* instance = new SoundInstance(filePath, monitorDevice, outputDevice, _volume, this);
     connect(instance, &SoundInstance::finished, this, &AudioPlayer::onInstanceFinished);
 
     activeInstances.push_back(instance);
@@ -56,115 +63,31 @@ void AudioPlayer::setVolume(float volume) {
 }
 
 void AudioPlayer::setMonitorDevice(const std::wstring &id) {
-    releaseMonitorClient();
-
+    releaseMonitorDevice();
     if (id.empty()) return;
-
-    IMMDevice* device = nullptr;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &device);
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &monitorDevice);
     if (FAILED(hr)) {
         qDebug() << "AudioPlayer: Failed to set Monitor device";
         return;
     }
-    initOutputClient(device);
 }
 
 void AudioPlayer::setOutputDevice(const std::wstring &id) {
-    releaseMonitorClient();
-
+    releaseOutputDevice();
     if (id.empty()) return;
-
-    IMMDevice* device = nullptr;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &device);
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &outputDevice);
     if (FAILED(hr)) {
         qDebug() << "AudioPlayer: Failed to set Output device";
         return;
     }
-    initOutputClient(device);
 }
 
-void AudioPlayer::releaseMonitorClient() {
-    if (monitorRenderClient) { monitorRenderClient->Release(); monitorRenderClient = nullptr; }
-    if (monitorAudioClient) { monitorAudioClient->Release(); monitorAudioClient = nullptr; }
+void AudioPlayer::releaseMonitorDevice() {
     if (monitorDevice) { monitorDevice->Release(); monitorDevice = nullptr; }
 }
 
-void AudioPlayer::releaseOutputClient() {
-    if (outputRenderClient) { outputRenderClient->Release(); outputRenderClient = nullptr; }
-    if (outputAudioClient) { outputAudioClient->Release(); outputAudioClient = nullptr; }
+void AudioPlayer::releaseOutputDevice() {
     if (outputDevice) { outputDevice->Release(); outputDevice = nullptr; }
 }
 
-void AudioPlayer::initMonitorClient(IMMDevice *device) {
-    HRESULT hr = device->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
-                                  (void**)&monitorAudioClient);
-    if (FAILED(hr) || !monitorAudioClient) {
-        qDebug() << "AudioPlayer: Failed to activate monitorAudioClient.";
-        return;
-    }
 
-    WAVEFORMATEX* mixFormat = nullptr;
-    hr = monitorAudioClient->GetMixFormat(&mixFormat);
-    if (FAILED(hr) || !mixFormat) {
-        qDebug() << "AudioPlayer: Failed to get mix format in initMonitorClient.";
-        return;
-    }
-
-    REFERENCE_TIME bufferDuration = 100000;
-    hr = monitorAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                        0,
-                                        bufferDuration,
-                                        0,
-                                        mixFormat,
-                                        nullptr);
-    if (FAILED(hr)) {
-        qDebug() << "AudioPlayer: Failed to initialize monitorAudioClient.";
-        CoTaskMemFree(mixFormat);
-        return;
-    }
-
-    hr = monitorAudioClient->GetService(__uuidof(IAudioRenderClient),
-                                        (void**)&monitorRenderClient);
-    if (FAILED(hr) || !monitorRenderClient) {
-        qDebug() << "AudioPlayer: Failed to get monitorRenderClient.";
-    }
-
-    CoTaskMemFree(mixFormat);
-}
-
-void AudioPlayer::initOutputClient(IMMDevice *device) {
-    HRESULT hr = device->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,
-                                    (void**)&outputAudioClient);
-    if (FAILED(hr) || !outputAudioClient) {
-        qDebug() << "AudioPlayer: Failed to activate outputAudioClient.";
-        return;
-    }
-
-    WAVEFORMATEX* mixFormat = nullptr;
-    hr = outputAudioClient->GetMixFormat(&mixFormat);
-    if (FAILED(hr) || !mixFormat) {
-        qDebug() << "AudioPlayer: Failed to get mix format in initOutputClient.";
-        return;
-    }
-
-    REFERENCE_TIME bufferDuration = 100000;
-    hr = outputAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                       0,
-                                       bufferDuration,
-                                       0,
-                                       mixFormat,
-                                       nullptr);
-    if (FAILED(hr)) {
-        qDebug() << "AudioPlayer: Failed to initialize outputAudioClient.";
-        CoTaskMemFree(mixFormat);
-        return;
-    }
-
-    hr = outputAudioClient->GetService(__uuidof(IAudioRenderClient),
-                                       (void**)&outputRenderClient);
-    if (FAILED(hr) || !outputRenderClient) {
-        qDebug() << "AudioPlayer: Failed to get monitorRenderClient.";
-    }
-
-    CoTaskMemFree(mixFormat);
-}

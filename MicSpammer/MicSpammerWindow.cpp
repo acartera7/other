@@ -186,14 +186,20 @@ void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
 }
 
-void MicSpammerWindow::onMicDeviceChanged() {
-
+void MicSpammerWindow::onMicDeviceChanged(int index) {
+    QString id = micComboBox->itemData(index).toString();
+    micCapture.setCaptureDevice(id.toStdWString());
 }
 
-void MicSpammerWindow::onMonitorDeviceChanged() {
+void MicSpammerWindow::onMonitorDeviceChanged(int index) {
+    QString id = monitorComboBox->itemData(index).toString();
+    audioPlayer.setMonitorDevice(id.toStdWString());
 }
 
-void MicSpammerWindow::onSendDeviceChanged() {
+void MicSpammerWindow::onSendDeviceChanged(int index) {
+    QString id = sendComboBox->itemData(index).toString();
+    micCapture.setOutputDevice(id.toStdWString());
+    audioPlayer.setOutputDevice(id.toStdWString());
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;

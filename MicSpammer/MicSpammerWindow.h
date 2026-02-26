@@ -45,9 +45,9 @@ private:
     void onVolumeChanged(int volume);
     void onFileSelected(const QString &filePath);
 
-    void onMicDeviceChanged();
-    void onMonitorDeviceChanged();
-    void onSendDeviceChanged();
+    void onMicDeviceChanged(int index);
+    void onMonitorDeviceChanged(int index);
+    void onSendDeviceChanged(int index);
 
     QString selectedFilePath;
     AudioPlayer& audioPlayer;

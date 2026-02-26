@@ -20,7 +20,7 @@
 class SoundInstance : public QObject {
     Q_OBJECT
 public:
-    explicit SoundInstance(const QString& path, IMMDevice* device, float volume, QObject *parent);
+    explicit SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMDevice* outputDevice, float volume, QObject *parent);
     ~SoundInstance() override;
 
     void start();   // start loading + playback
@@ -35,8 +35,11 @@ private slots:
     void onPcmReady(const QByteArray& data);
 
 private:
+    HRESULT initMonitorAudioClient();
+    HRESULT initOutputAudioClient();
+
     void startPlaybackThread();
-    void writeAudioData(IAudioRenderClient* renderClient);
+    void writeAudioData(IAudioRenderClient* renderClient, IAudioRenderClient *outputRenderClient);
 
     QString filePath;
     AudioLoader* loader = nullptr;
@@ -54,14 +57,17 @@ private:
 
     std::atomic<bool> stopFlag;
     std::atomic<float> _volume;
+
     QThread* playbackThread = nullptr;
-    IAudioClient* _pAudioClient = nullptr;
+
+    IAudioClient* monitorAudioClient = nullptr;
+    IAudioClient* outputAudioClient = nullptr;
 
     QAudioFormat _qFormat;
 
-    UINT32 bufferFrameCount = 0;
     UINT32 bytesPerFrame = 0;
-
+    WAVEFORMATEX *monitorAudioFmt = nullptr;
+    WAVEFORMATEX *outputAudioFmt = nullptr;
 };
 
 

@@ -52,19 +52,11 @@ private:
     explicit AudioPlayer(QObject *parent = nullptr);
     ~AudioPlayer() override;
 
-    void releaseMonitorClient();
-    void releaseOutputClient();
-    void initMonitorClient(IMMDevice* device);
-    void initOutputClient(IMMDevice* device);
+    void releaseMonitorDevice();
+    void releaseOutputDevice();
 
     IMMDevice* monitorDevice = nullptr;
     IMMDevice* outputDevice = nullptr;
-
-    IAudioClient* monitorAudioClient = nullptr;
-    IAudioRenderClient* monitorRenderClient = nullptr;
-
-    IAudioClient* outputAudioClient = nullptr;
-    IAudioRenderClient* outputRenderClient = nullptr;
 
     std::vector<SoundInstance*> activeInstances;      // keep track of threads playing sound
     float _volume;
