@@ -39,7 +39,7 @@ private:
     HRESULT initOutputAudioClient();
 
     void startPlaybackThread();
-    void writeAudioData(IAudioRenderClient* renderClient, IAudioRenderClient *outputRenderClient);
+    void writeAudioData(IAudioClient *audioClient, IAudioRenderClient *renderClient);
 
     QString filePath;
     AudioLoader* loader = nullptr;
@@ -58,7 +58,8 @@ private:
     std::atomic<bool> stopFlag;
     std::atomic<float> _volume;
 
-    QThread* playbackThread = nullptr;
+    QThread* playbackThreadMonitor = nullptr;
+    QThread* playbackThreadOutput = nullptr;
 
     IAudioClient* monitorAudioClient = nullptr;
     IAudioClient* outputAudioClient = nullptr;

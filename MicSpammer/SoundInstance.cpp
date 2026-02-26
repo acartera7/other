@@ -76,6 +76,7 @@ SoundInstance::SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMD
 SoundInstance::~SoundInstance() {
     stop();
     monitorAudioClient->Release();
+    outputAudioClient->Release();
     CoTaskMemFree(monitorAudioFmt);
 }
 
@@ -87,13 +88,18 @@ void SoundInstance::start() {
 void SoundInstance::stop() {
     stopFlag = true;
 
-    if (monitorAudioClient)
-        monitorAudioClient->Stop(); // <-- instant halt
+    if (monitorAudioClient) monitorAudioClient->Stop(); // <-- instant halt
+    if (outputAudioClient) outputAudioClient->Stop(); // <-- instant halt
 
-    if (playbackThread) {
-        playbackThread->quit();
-        playbackThread->wait();
-        playbackThread = nullptr;
+    if (playbackThreadMonitor) {
+        playbackThreadMonitor->quit();
+        playbackThreadMonitor->wait();
+        playbackThreadMonitor = nullptr;
+    }
+    if (playbackThreadOutput) {
+        playbackThreadOutput->quit();
+        playbackThreadOutput->wait();
+        playbackThreadOutput = nullptr;
     }
 }
 
@@ -118,69 +124,62 @@ void SoundInstance::startPlaybackThread() {
     if (!loadedOK)
         return;
 
-    playbackThread = QThread::create([this]() {
-        // Each thread needs it's on render client
-        IAudioRenderClient* monitorRenderClient = nullptr;
-        if (monitorAudioClient) {
-
+    if (monitorAudioClient) {
+        playbackThreadMonitor = QThread::create([this]() {
+            IAudioRenderClient* monitorRenderClient = nullptr;
             HRESULT hr = monitorAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)&monitorRenderClient);
 
-            if (FAILED(hr) || !monitorRenderClient)
-                return;
+            if (FAILED(hr) || !monitorRenderClient) return;
 
             hr = monitorAudioClient->Start();
             if (FAILED(hr)) {
                 QFileInfo f(filePath);
                 qDebug() << QString("Failed to start the monitorAudioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
             }
-        }
-
-        IAudioRenderClient* outputRenderClient = nullptr;
-        if (outputAudioClient) {
-
+            writeAudioData(monitorAudioClient,monitorRenderClient); // blocking loop
+            monitorAudioClient->Stop();
+            monitorRenderClient->Release();
+        });
+        connect(playbackThreadMonitor, &QThread::finished, this, [this]() {
+            emit finished(this);
+        });
+        playbackThreadMonitor->start();
+    }
+    if (outputAudioClient) {
+        playbackThreadOutput = QThread::create([this]() {
+            IAudioRenderClient* outputRenderClient = nullptr;
             HRESULT hr = outputAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)&outputRenderClient);
 
-            if (FAILED(hr) || !outputRenderClient)
-                return;
+            if (FAILED(hr) || !outputRenderClient) return;
 
             hr = outputAudioClient->Start();
             if (FAILED(hr)) {
                 QFileInfo f(filePath);
                 qDebug() << QString("Failed to start the outputAudioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
             }
-        }
-
-        writeAudioData(monitorRenderClient,outputRenderClient); // blocking loop
-
-        if (monitorAudioClient) {
-            monitorAudioClient->Stop();
-            monitorRenderClient->Release();
-        }
-    });
-
-    connect(playbackThread, &QThread::finished, this, [this]() {
-        emit finished(this);
-    });
-    playbackThread->start();
+            writeAudioData(outputAudioClient,outputRenderClient); // blocking loop
+            outputAudioClient->Stop();
+            outputRenderClient->Release();
+        });
+        connect(playbackThreadOutput, &QThread::finished, this, [this]() {
+            emit finished(this);
+        });
+        playbackThreadOutput->start();
+    }
 }
 
-void SoundInstance::writeAudioData(IAudioRenderClient* monitorRenderClient,
-                                   IAudioRenderClient *outputRenderClient ) {
-
-    if (!monitorAudioClient && !outputAudioClient) return;
+void SoundInstance::writeAudioData(IAudioClient *audioClient,
+                                   IAudioRenderClient *renderClient) {
 
     UINT32 bufferFrameCount = 0;
-    if (monitorAudioClient) monitorAudioClient->GetBufferSize(&bufferFrameCount);
-    else if (outputAudioClient) outputAudioClient->GetBufferSize(&bufferFrameCount);
+    audioClient->GetBufferSize(&bufferFrameCount);
 
     size_t totalBytes = pcmData.size();
     size_t bytesConsumed = 0;
 
     while (!stopFlag && bytesConsumed < totalBytes) {
-
-        // for eac
         UINT32 padding = 0;
-        monitorAudioClient->GetCurrentPadding(&padding);
+        audioClient->GetCurrentPadding(&padding);
         UINT32 framesAvailable = bufferFrameCount - padding;
         if (framesAvailable == 0) {
             QThread::msleep(1);
@@ -200,35 +199,27 @@ void SoundInstance::writeAudioData(IAudioRenderClient* monitorRenderClient,
 
         //memcpy(pData, pcmData.data() + bytesConsumed, bytesToWrite);
 
-        // Apply volume scaling here
-        float volume = _volume.load();
-
+        // Copy + volume scale
         if (_qFormat.sampleFormat() == QAudioFormat::Float) {
             const float* src = reinterpret_cast<const float*>(pcmData.data() + bytesConsumed);
             float* dst = reinterpret_cast<float*>(pData);
             size_t samples = bytesToWrite / sizeof(float);
-
-            for (size_t i = 0; i < samples; ++i) {
-                dst[i] = src[i] * volume;
-            }
+            for (size_t i = 0; i < samples; ++i) dst[i] = src[i] * _volume;
         } else {
             const int16_t* src = reinterpret_cast<const int16_t*>(pcmData.data() + bytesConsumed);
             int16_t* dst = reinterpret_cast<int16_t*>(pData);
             size_t samples = bytesToWrite / sizeof(int16_t);
-
             for (size_t i = 0; i < samples; ++i) {
-                int sample = static_cast<int>(src[i] * volume);
-                if (sample > 32767) sample = 32767;
-                if (sample < -32768) sample = -32768;
-                dst[i] = static_cast<int16_t>(sample);
+                int sample = static_cast<int>(src[i] * _volume);
+                dst[i] = std::clamp(sample, -32768, 32767);
             }
         }
         bytesConsumed += bytesToWrite;
-
         hr = renderClient->ReleaseBuffer(framesAvailable, 0);
         if (FAILED(hr)) {
             QFileInfo f(filePath);
             qDebug() << QString("Failed to release buffer for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+            break;
         }
     }
 }
