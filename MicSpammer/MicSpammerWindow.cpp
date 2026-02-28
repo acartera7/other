@@ -25,9 +25,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     toolbar = new QToolBar(this);
     playButton = new QPushButton("Play", this);
     stopButton = new QPushButton("Stop", this);
-    volumeSlider = new QSlider(Qt::Horizontal, this);
-    volumeSlider->setRange(0, 100); // Volume range 0-100
-    volumeSlider->setFixedWidth(100);
+
     openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
@@ -58,19 +56,35 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
         }
     }
 
-    toolbar_devicesFLayout = new QFormLayout(this);
+    monitorVolumeSlider = new QSlider(Qt::Horizontal, this);
+    sendVolumeSlider = new QSlider(Qt::Horizontal, this);
+    monitorVolumeSlider->setRange(0, 100);
+    monitorVolumeSlider->setFixedWidth(100);
+    monitorVolumeSlider->setObjectName("MonitorVS");
+    sendVolumeSlider->setRange(0, 100);
+    sendVolumeSlider->setFixedWidth(100);
+    sendVolumeSlider->setObjectName("SendVS");
+
+    toolbar_devicesGridLayout = new QGridLayout(this);
 
     micDeviceLabel = new QLabel("Microphone Device:",this);
     monitorDeviceLabel = new QLabel("Monitoring Device:",this);
     sendDeviceLabel = new QLabel("Output Device",this);
 
-    toolbar_devicesFLayout->addRow(micDeviceLabel, micComboBox);
-    toolbar_devicesFLayout->addRow(monitorDeviceLabel, monitorComboBox);
-    toolbar_devicesFLayout->addRow(sendDeviceLabel, sendComboBox);
+    toolbar_devicesGridLayout->addWidget(micDeviceLabel, 0,0);
+    toolbar_devicesGridLayout->addWidget(micComboBox, 0,1);
+
+    toolbar_devicesGridLayout->addWidget(monitorDeviceLabel, 1,0);
+    toolbar_devicesGridLayout->addWidget(monitorComboBox, 1,1);
+    toolbar_devicesGridLayout->addWidget(monitorVolumeSlider, 1,2);
+
+    toolbar_devicesGridLayout->addWidget(sendDeviceLabel, 2,0);
+    toolbar_devicesGridLayout->addWidget(sendComboBox, 2,1);
+    toolbar_devicesGridLayout->addWidget(sendVolumeSlider, 2,2);
 
     //devices left part devices drop down container
     toolbar_devicesContainer = new QWidget(this);
-    toolbar_devicesContainer->setLayout(toolbar_devicesFLayout);
+    toolbar_devicesContainer->setLayout(toolbar_devicesGridLayout);
 
     // toolbar right part layout container
     toolbar_rightContainer  = new QWidget(this);
@@ -78,8 +92,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     toolbar_rightHLayout->addWidget(playButton);
     toolbar_rightHLayout->addSpacing(10); // Spacing between play & stop
     toolbar_rightHLayout->addWidget(stopButton);
-    toolbar_rightHLayout->addSpacing(15); // Spacing between stop & volume slider
-    toolbar_rightHLayout->addWidget(volumeSlider);
     toolbar_rightHLayout->setContentsMargins(0, 0, 0, 0); // Removes extra margins
     toolbar_rightContainer->setLayout(toolbar_rightHLayout);
 
@@ -122,13 +134,19 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(openFolderButton, &QPushButton::clicked, this, &MicSpammerWindow::onOpenFolder);
     connect(playButton, &QPushButton::clicked, this, &MicSpammerWindow::onPlay);
     connect(stopButton, &QPushButton::clicked, this, &MicSpammerWindow::onStop);
-    connect(volumeSlider, &QSlider::valueChanged, this, &MicSpammerWindow::onVolumeChanged);
-
+    connect(monitorVolumeSlider, &QSlider::valueChanged, this,
+        [this](int volume) {
+            MicSpammerWindow::onVolumeChanged(monitorVolumeSlider->objectName(), volume);
+        });
+    connect(sendVolumeSlider, &QSlider::valueChanged, this,
+        [this](int volume) {
+            MicSpammerWindow::onVolumeChanged(sendVolumeSlider->objectName(), volume);
+        });
     // File actions
     connect(browser, &FileBrowserWidget::fileSelected, this, &MicSpammerWindow::onFileSelected);
     connect(browser, &FileBrowserWidget::playSound, this, &MicSpammerWindow::onPlay);
-    connect(numpad, &NumpadWidget::numpadTriggered,
-        this, [this](int key, const QString &filePath) {
+    connect(numpad, &NumpadWidget::numpadTriggered,this,
+        [this](int key, const QString &filePath) {
             audioPlayer.play(filePath);
         });
 
@@ -143,7 +161,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(sendComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MicSpammerWindow::onSendDeviceChanged);
 
-    volumeSlider->setValue(80);
+    monitorVolumeSlider->setValue(80);
+    sendVolumeSlider->setValue(80);
 }
 
 void MicSpammerWindow::onOpenFolder() {
@@ -163,10 +182,16 @@ void MicSpammerWindow::onStop() {
     audioPlayer.stopAll();
 }
 
-void MicSpammerWindow::onVolumeChanged(int volume) {
+void MicSpammerWindow::onVolumeChanged(QString name, int volume) {
+
     // Clamp to avoid log(0)
     if (volume <= 0) {
-        audioPlayer.setVolume(0.0f);
+        if ( name == "MonitorVS") {
+            audioPlayer.setMonitorVolume(0.0f);
+        } else if (name == "SendVS") {
+            audioPlayer.setOutputVolume(0.0f);
+            //TODO add micCapture
+        }
         return;
     }
 
@@ -179,7 +204,12 @@ void MicSpammerWindow::onVolumeChanged(int volume) {
     // Convert dB to linear gain
     float gain = powf(10.0f, db / 20.0f);
 
-    audioPlayer.setVolume(gain);
+    if ( name == "MonitorVS") {
+        audioPlayer.setMonitorVolume(gain);
+    } else if (name == "SendVS") {
+        audioPlayer.setOutputVolume(gain);
+        //TODO add micCapture
+    }
 }
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {

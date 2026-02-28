@@ -17,16 +17,19 @@
 
 #include  "AudioLoader.h"
 
+
+
 class SoundInstance : public QObject {
     Q_OBJECT
 public:
-    explicit SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMDevice* outputDevice, float volume, QObject *parent);
+    explicit SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMDevice* outputDevice, float mVolume, float oVolume, QObject *parent);
     ~SoundInstance() override;
 
     void start();   // start loading + playback
     void stop();    // request stop
     QString getFileName();
-    void setVolume(float volume);
+    void setMonitorVolume(float volume);
+    void setOutputVolume(float volume);
 
 signals:
     void finished(SoundInstance *self); // clean up;
@@ -39,7 +42,7 @@ private:
     HRESULT initOutputAudioClient();
 
     void startPlaybackThread();
-    void writeAudioData(IAudioClient *audioClient, IAudioRenderClient *renderClient);
+    void writeAudioData(IAudioClient *audioClient, IAudioRenderClient *renderClient, const std::atomic<float>& volume);
 
     QString filePath;
     AudioLoader* loader = nullptr;
@@ -56,7 +59,8 @@ private:
     // bool streamingMode = false; // flag to switch between preload vs streaming
 
     std::atomic<bool> stopFlag;
-    std::atomic<float> _volume;
+    std::atomic<float> monitorVolume;
+    std::atomic<float> outputVolume;
 
     QThread* playbackThreadMonitor = nullptr;
     QThread* playbackThreadOutput = nullptr;
@@ -67,8 +71,6 @@ private:
     QAudioFormat _qFormat;
 
     UINT32 bytesPerFrame = 0;
-    WAVEFORMATEX *monitorAudioFmt = nullptr;
-    WAVEFORMATEX *outputAudioFmt = nullptr;
 };
 
 

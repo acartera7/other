@@ -6,11 +6,19 @@
 #include <QFileInfo>
 #include "SoundInstance.h"
 
-SoundInstance::SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMDevice* outputDevice, float volume, QObject *parent) :
+#include "WasapiManager.h"
+
+SoundInstance::SoundInstance(const QString& path,
+                             IMMDevice* monitorDevice,
+                             IMMDevice* outputDevice,
+                             float mVolume,
+                             float oVolume,
+                             QObject *parent) :
         QObject(parent),
         filePath(path),
         stopFlag(false),
-        _volume(volume){
+        monitorVolume(mVolume),
+        outputVolume(oVolume){
     // Initialize monitor audio client in shared mode
     HRESULT hr;
     if (monitorDevice) {
@@ -45,39 +53,28 @@ SoundInstance::SoundInstance(const QString& path, IMMDevice* monitorDevice, IMMD
         }
     }
 
-    //TODO two loaders?
-    bytesPerFrame = monitorAudioFmt->nBlockAlign;
+    WAVEFORMATEXTENSIBLE neutralFormat = WasapiManager::getMainFormat();
+    bytesPerFrame = neutralFormat.Format.nBlockAlign;
 
     QAudioFormat qFormat;
-    qFormat.setSampleRate(monitorAudioFmt->nSamplesPerSec);
-    qFormat.setChannelCount(monitorAudioFmt->nChannels);
+    qFormat.setSampleRate(neutralFormat.Format.nSamplesPerSec);
+    qFormat.setChannelCount(neutralFormat.Format.nChannels);
     qFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
-    //qFormat.setSampleFormat(QAudioFormat::Float);
-
-    if (monitorAudioFmt->wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
-        WAVEFORMATEXTENSIBLE* wfext = reinterpret_cast<WAVEFORMATEXTENSIBLE*>(monitorAudioFmt);
-        if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) {
-            qFormat.setSampleFormat(QAudioFormat::Float);
-        } else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) {
-            qFormat.setSampleFormat(QAudioFormat::Int16);
-        }
-    } else if (monitorAudioFmt->wFormatTag == WAVE_FORMAT_IEEE_FLOAT) {
-        qFormat.setSampleFormat(QAudioFormat::Float);
-    } else {
-        qFormat.setSampleFormat(QAudioFormat::Int16);
-    }
+    qFormat.setSampleFormat(QAudioFormat::Float);
 
     loader = new AudioLoader(this);
     loader->setDecoderFormat(qFormat);
     _qFormat = qFormat;
 
+
     connect(loader, &AudioLoader::pcmReady, this, &SoundInstance::onPcmReady);
 }
 SoundInstance::~SoundInstance() {
     stop();
-    monitorAudioClient->Release();
-    outputAudioClient->Release();
-    CoTaskMemFree(monitorAudioFmt);
+    if (monitorAudioClient)
+        monitorAudioClient->Release();
+    if (outputAudioClient)
+        outputAudioClient->Release();
 }
 
 void SoundInstance::start() {
@@ -107,8 +104,12 @@ QString SoundInstance::getFileName() {
     return filePath;
 }
 
-void SoundInstance::setVolume(float volume) {
-    _volume = volume;
+void SoundInstance::setMonitorVolume(float volume) {
+    monitorVolume = volume;
+}
+
+void SoundInstance::setOutputVolume(float volume) {
+    outputVolume = volume;
 }
 
 void SoundInstance::onPcmReady(const QByteArray& data) {
@@ -136,7 +137,7 @@ void SoundInstance::startPlaybackThread() {
                 QFileInfo f(filePath);
                 qDebug() << QString("Failed to start the monitorAudioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
             }
-            writeAudioData(monitorAudioClient,monitorRenderClient); // blocking loop
+            writeAudioData(monitorAudioClient,monitorRenderClient, monitorVolume); // blocking loop
             monitorAudioClient->Stop();
             monitorRenderClient->Release();
         });
@@ -157,7 +158,7 @@ void SoundInstance::startPlaybackThread() {
                 QFileInfo f(filePath);
                 qDebug() << QString("Failed to start the outputAudioClient for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
             }
-            writeAudioData(outputAudioClient,outputRenderClient); // blocking loop
+            writeAudioData(outputAudioClient,outputRenderClient, outputVolume); // blocking loop
             outputAudioClient->Stop();
             outputRenderClient->Release();
         });
@@ -169,7 +170,7 @@ void SoundInstance::startPlaybackThread() {
 }
 
 void SoundInstance::writeAudioData(IAudioClient *audioClient,
-                                   IAudioRenderClient *renderClient) {
+                                   IAudioRenderClient *renderClient, const std::atomic<float>& volume) {
 
     UINT32 bufferFrameCount = 0;
     audioClient->GetBufferSize(&bufferFrameCount);
@@ -198,7 +199,7 @@ void SoundInstance::writeAudioData(IAudioClient *audioClient,
         }
 
         //memcpy(pData, pcmData.data() + bytesConsumed, bytesToWrite);
-
+        float _volume = volume.load();
         // Copy + volume scale
         if (_qFormat.sampleFormat() == QAudioFormat::Float) {
             const float* src = reinterpret_cast<const float*>(pcmData.data() + bytesConsumed);
@@ -225,20 +226,14 @@ void SoundInstance::writeAudioData(IAudioClient *audioClient,
 }
 
 HRESULT SoundInstance::initMonitorAudioClient() {
-
-    HRESULT hr = monitorAudioClient->GetMixFormat(&monitorAudioFmt);
-    if (FAILED(hr) || !monitorAudioFmt) {
-        QFileInfo f(filePath);
-        qDebug() << QString("Failed to get mix format for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
-        return hr;
-    }
+    WAVEFORMATEXTENSIBLE neutralFormat = getMainFormat();
 
     REFERENCE_TIME bufferDuration = 100000;
-    hr = monitorAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                 0,
+    HRESULT hr = monitorAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
+                       AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY,
                                  bufferDuration,
                                  0,
-                                 monitorAudioFmt,
+                                 reinterpret_cast<WAVEFORMATEX*>(&neutralFormat),
                                  nullptr);
 
     if (FAILED(hr)) {
@@ -252,19 +247,14 @@ HRESULT SoundInstance::initMonitorAudioClient() {
 
 HRESULT SoundInstance::initOutputAudioClient() {
 
-    HRESULT hr = outputAudioClient->GetMixFormat(&outputAudioFmt);
-    if (FAILED(hr) || !outputAudioFmt) {
-        QFileInfo f(filePath);
-        qDebug() << QString("Failed to get mix format for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
-        return hr;
-    }
+    WAVEFORMATEXTENSIBLE neutralFormat = WasapiManager::getMainFormat();
 
     REFERENCE_TIME bufferDuration = 100000;
-    hr = outputAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                 0,
+    HRESULT hr = outputAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
+                       AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY,
                                  bufferDuration,
                                  0,
-                                 outputAudioFmt,
+                                 reinterpret_cast<WAVEFORMATEX*>(&neutralFormat),
                                  nullptr);
 
     if (FAILED(hr)) {
@@ -275,3 +265,5 @@ HRESULT SoundInstance::initOutputAudioClient() {
 
     return 0;
 }
+
+

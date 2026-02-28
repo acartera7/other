@@ -28,6 +28,8 @@ public:
     [[nodiscard]] IMMDeviceEnumerator* getEnumerator() const;
     [[nodiscard]] const std::vector<AudioDeviceInfo>& getDevices() const;
 
+    static WAVEFORMATEXTENSIBLE getMainFormat();
+
 private:
     WasapiManager() = default;  // Private constructor (singleton)
     ~WasapiManager();

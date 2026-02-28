@@ -11,7 +11,7 @@ AudioPlayer & AudioPlayer::getInstance() {
 
 AudioPlayer::AudioPlayer(QObject *parent) :
         QObject(parent),
-        _volume(1.0f){
+        _monitorVolume(1.0f){
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -29,7 +29,7 @@ void AudioPlayer::play(const QString& filePath) {
     if (!monitorDevice) qDebug() << "AudioPlayer: Warning, no monitor device is set";
     if (!outputDevice) qDebug() << "AudioPlayer: Warning, no output device is set";
 
-    auto* instance = new SoundInstance(filePath, monitorDevice, outputDevice, _volume, this);
+    auto* instance = new SoundInstance(filePath, monitorDevice, outputDevice, _monitorVolume, _outputVolume, this);
     connect(instance, &SoundInstance::finished, this, &AudioPlayer::onInstanceFinished);
 
     activeInstances.push_back(instance);
@@ -55,10 +55,17 @@ void AudioPlayer::onInstanceFinished(SoundInstance* instance) {
     instance->deleteLater();
 }
 
-void AudioPlayer::setVolume(float volume) {
-    _volume = volume;
+void AudioPlayer::setMonitorVolume(float volume) {
+    _monitorVolume = volume;
     for (auto* instance : activeInstances) {
-        instance->setVolume(volume);
+        instance->setMonitorVolume(volume);
+    }
+}
+
+void AudioPlayer::setOutputVolume(float volume) {
+    _outputVolume = volume;
+    for (auto* instance : activeInstances) {
+        instance->setOutputVolume(volume);
     }
 }
 

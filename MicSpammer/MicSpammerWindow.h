@@ -42,7 +42,7 @@ private:
     void onOpenFolder();
     void onPlay();
     void onStop();
-    void onVolumeChanged(int volume);
+    void onVolumeChanged(QString name, int volume);
     void onFileSelected(const QString &filePath);
 
     void onMicDeviceChanged(int index);
@@ -64,14 +64,14 @@ private:
     QPushButton *openFolderButton, *playButton, *stopButton;
     QWidget *spacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
-    QSlider *volumeSlider;
+    QSlider *monitorVolumeSlider, *sendVolumeSlider;
     QSplitter *mainContent_splitter;
 
     QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel;
 
     QComboBox* micComboBox,*monitorComboBox, *sendComboBox;
 
-    QFormLayout *toolbar_devicesFLayout;
+    QGridLayout *toolbar_devicesGridLayout;
 
     std::vector<AudioDeviceInfo> deviceList;
 };

@@ -4,6 +4,8 @@ We currently have : AudioLoader.cpp AudioPlayer.cpp MicSpammerWindow.cpp FileBro
 
 I added the feature to hear the audio file being played when the user browses through the file browser and double clicks a file. The file gets loaded on single click via Qt Multimedia decoder and then played on double click. A problem occurs however that it seems only a portion of the audio is loaded and then played, probably because the audio decoder buffers the audio and we need to loop it until the whole file is loaded. This also becomes a problem later when playing the audio as we need to tell the emerging thread to wait for the decoder to finish before playing, which also means we need to, if the file is big enough, create some sort of feedback to the user that the software is loading by putting a task bar or a loading symbol.
 
+ok... lets now step into MicCapture and get that up and working. This module should be unique in that once selected it should probably launch a thread that constantly reads mic input from the selected mic device and sends it to the selected output device. we won't need to deal with any sound instances and we won't be dealing with the monitoring. We need to deal with the case in which one of the two devices isn't selected, in this case however I dont think we can do anything until the user selects a viable input and output. we also need deal with the difference in formats again, I've went ahead and made makeNeutralFormat into a static function and put it in WasapiManager called WAVEFORMATEXTENSIBLE WasapiManager::getMainFormat()
+
 Here is AudioLoader:
 
 and here is AudioPlayer:

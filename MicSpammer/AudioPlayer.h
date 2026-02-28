@@ -40,7 +40,8 @@ public:
 
     void play(const QString &filePath);
     void stopAll();
-    void setVolume(float volume);
+    void setMonitorVolume(float volume);
+    void setOutputVolume(float volume);
 
     void setMonitorDevice(const std::wstring& id);
     void setOutputDevice(const std::wstring& id);
@@ -59,7 +60,8 @@ private:
     IMMDevice* outputDevice = nullptr;
 
     std::vector<SoundInstance*> activeInstances;      // keep track of threads playing sound
-    float _volume;
+    float _monitorVolume;
+    float _outputVolume;
 };
 
 

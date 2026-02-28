@@ -76,4 +76,19 @@ WasapiManager::~WasapiManager() {
     cleanup();
 }
 
+WAVEFORMATEXTENSIBLE WasapiManager::getMainFormat() {
+    WAVEFORMATEXTENSIBLE wfext = {};
+    wfext.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+    wfext.Format.nChannels = 2;
+    wfext.Format.nSamplesPerSec = 48000;
+    wfext.Format.wBitsPerSample = 32;
+    wfext.Format.nBlockAlign = wfext.Format.nChannels * (wfext.Format.wBitsPerSample / 8);
+    wfext.Format.nAvgBytesPerSec = wfext.Format.nSamplesPerSec * wfext.Format.nBlockAlign;
+    wfext.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+    wfext.Samples.wValidBitsPerSample = 32;
+    wfext.dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+    wfext.SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+    return wfext;
+}
+
 const std::vector<AudioDeviceInfo>& WasapiManager::getDevices() const { return deviceList; }
