@@ -12,103 +12,114 @@ MicCapture & MicCapture::getInstance() {
     return instance;
 }
 
-MicCapture::MicCapture(QObject *parent) : QObject(parent) {
+MicCapture::MicCapture(QObject *parent) : QObject(parent), captureFormat() {
 }
 
 MicCapture::~MicCapture() {
     stop();
-    if (captureRenderClient) captureRenderClient->Release();
+    if (inputCaptureClient) inputCaptureClient->Release();
     if (outputRenderClient) outputRenderClient->Release();
-    CoTaskMemFree(captureMixFormat);
-    CoTaskMemFree(outputMixFormat);
 
 }
 
-void MicCapture::setCaptureDevice(const std::wstring &id) {
-    releaseCaptureClient();
+void MicCapture::setInputDevice(QString id) {
+    releaseInputClient();
 
-    if (id.empty()) return;
+    if (id.isEmpty() || id == "None") return;
 
-    IMMDevice *device = nullptr;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &device);
+
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.toStdWString().c_str(), &inputDevice);
 
     if (FAILED(hr)) {
         qDebug() << "MicCaptureClient: Failed to set capture device.";
         return;
     }
-    initCaptureClient(device);
+    initInputClient();
+    if (outputRenderClient && inputAudioClient) {
+        start();
+    }
 }
 
-void MicCapture::setOutputDevice(const std::wstring &id) {
+void MicCapture::setOutputDevice(QString id) {
     releaseOutputClient();
 
-    if (id.empty()) return;
+    if (id.isEmpty() || id == "None") return;
 
-    IMMDevice *device = nullptr;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &device);
+
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.toStdWString().c_str(), &outputDevice);
     if (FAILED(hr)) {
         qDebug() << "MicCaptureClient: Failed to set output device.";
         return;
     }
-    initOutputClient(device);
+    initOutputClient();
+    // Auto-start, check if other device is available before
+    if (inputCaptureClient && inputAudioClient) {
+        start();
+    }
 }
 
-void MicCapture::releaseCaptureClient() {
-    if (captureRenderClient) { captureRenderClient->Release(); captureRenderClient = nullptr; }
-    if (captureAudioClient) { captureAudioClient->Release(); captureAudioClient = nullptr; }
-    if (captureDevice) { captureDevice->Release(); captureDevice = nullptr; }
-    CoTaskMemFree(captureMixFormat);
+void MicCapture::setVolume(float volume) {
+    outputVolume.store(volume);
+}
+
+void MicCapture::releaseInputClient() {
+    stop();
+    if (inputCaptureClient) { inputCaptureClient->Release(); inputCaptureClient = nullptr; }
+    if (inputAudioClient) { inputAudioClient->Release(); inputAudioClient = nullptr; }
+    if (inputDevice) { inputDevice->Release(); inputDevice = nullptr; }
 }
 
 void MicCapture::releaseOutputClient() {
+    stop();
     if (outputRenderClient) { outputRenderClient->Release(); outputRenderClient = nullptr; }
     if (outputAudioClient) { outputAudioClient->Release(); outputAudioClient = nullptr; }
     if (outputDevice) { outputDevice->Release(); outputDevice = nullptr; }
-    CoTaskMemFree(outputMixFormat);
 }
 
-void MicCapture::initCaptureClient(IMMDevice *device) {
+void MicCapture::initInputClient() {
+    if (!inputDevice) {
+        qDebug() << "MicCapture: cannot start, missing device";
+        return;
+    }
     // Initialize for output
-    HRESULT hr = device->Activate(__uuidof(IUnknown),
+    HRESULT hr = inputDevice->Activate(__uuidof(IAudioClient),
                                      CLSCTX_ALL,
                                      nullptr,
-                                     (void**)&captureAudioClient);
-    if (FAILED(hr) || !captureAudioClient) {
+                                     (void**)&inputAudioClient);
+    if (FAILED(hr) || !inputAudioClient) {
         qDebug() << "MicCaptureClient: Failed to activate captureAudioClient.";
         return;
     }
 
-    hr = captureAudioClient->GetMixFormat(&captureMixFormat);
-    if (FAILED(hr) || !captureMixFormat) {
-        qDebug() << "MicCaptureClient: Failed to get mix format in initCaptureClient.";
-        return;
-    }
-
     // Initialize for capture
+    inputAudioClient->GetMixFormat(&captureFormat);
     REFERENCE_TIME bufferDuration = 100000;
-    hr = captureAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                 AUDCLNT_STREAMFLAGS_LOOPBACK,
+    hr = inputAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
+                                 0,
                                  bufferDuration,
                                  0,
-                                 captureMixFormat,
+                                 captureFormat,
                                  nullptr);
     if (FAILED(hr)) {
         qDebug() << "MicCaptureClient: Failed to initialize captureAudioClient.";
-        CoTaskMemFree(captureMixFormat);
         return;
     }
 
-    hr = captureAudioClient->GetService(__uuidof(IAudioCaptureClient),
-                                 (void**)&captureRenderClient);
+    hr = inputAudioClient->GetService(__uuidof(IAudioCaptureClient),
+                                 (void**)&inputCaptureClient);
 
-    if (FAILED(hr) || !captureRenderClient) {
+    if (FAILED(hr) || !inputCaptureClient) {
         qDebug() << "MicCaptureClient: Failed to get captureRenderClient.";
     }
 
 }
 
-void MicCapture::initOutputClient(IMMDevice *device) {
-    HRESULT hr = device->Activate(__uuidof(IUnknown),
+void MicCapture::initOutputClient() {
+    if (!outputDevice) {
+        qDebug() << "MicCapture: cannot start, missing device";
+        return;
+    }
+    HRESULT hr = outputDevice->Activate(__uuidof(IAudioClient),
                                      CLSCTX_ALL,
                                      nullptr,
                                      (void**)&outputAudioClient);
@@ -116,28 +127,19 @@ void MicCapture::initOutputClient(IMMDevice *device) {
         qDebug() << "MicCaptureClient: Failed to activate outputAudioClient.";
         return;
     }
-
-
-    hr = outputAudioClient->GetMixFormat(&outputMixFormat);
-    if (FAILED(hr) || !outputMixFormat) {
-        qDebug() << "MicCaptureClient: Failed to get mix format in initOutputClient.";
-        return;
-    }
-
     REFERENCE_TIME bufferDuration = 100000;
     hr = outputAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                       0,
+                                       AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY,
                                        bufferDuration,
                                        0,
-                                       outputMixFormat,
+                                       captureFormat,
                                        nullptr);
     if (FAILED(hr)) {
         qDebug() << "MicCaptureClient: Failed to initialize outputAudioClient.";
-        CoTaskMemFree(outputMixFormat);
         return;
     }
 
-    hr = outputAudioClient->GetService(__uuidof(IAudioCaptureClient),
+    hr = outputAudioClient->GetService(__uuidof(IAudioRenderClient),
                                         (void**)&outputRenderClient);
     if (FAILED(hr) || !outputRenderClient) {
         qDebug() << "MicCaptureClient: Failed to get outputRenderClient.";
@@ -145,15 +147,18 @@ void MicCapture::initOutputClient(IMMDevice *device) {
 }
 
 void MicCapture::start() {
-    if (!outputRenderClient || !captureRenderClient) {
+    if (!inputAudioClient || !outputAudioClient) {
+        qDebug() << "MicCapture: cannot start, missing device";
         return;
     }
     stopFlag = false;
 
     captureThread = QThread::create([this]() {
-        captureAudioClient->Start();
+        inputAudioClient->Start();
+        outputAudioClient->Start();
         captureLoop();
-        captureAudioClient->Stop();
+        inputAudioClient->Stop();
+        outputAudioClient->Stop();
     });
 
     captureThread->start();
@@ -169,30 +174,77 @@ void MicCapture::stop() {
 }
 
 void MicCapture::captureLoop() {
+    //UINT32 blockAlign = captureFormat->nBlockAlign;
+
     while (!stopFlag) {
         UINT32 packetLength = 0;
-        HRESULT hr = captureRenderClient->GetNextPacketSize(&packetLength);
+        HRESULT hr = inputCaptureClient->GetNextPacketSize(&packetLength);
         if (FAILED(hr)) break;
 
-        while ( packetLength > 0 ) {
-            BYTE* pData;
-            UINT32 numFrames;
-            DWORD flags;
+        while (packetLength > 0) {
+            BYTE* inData = nullptr;
+            UINT32 numFrames = 0;
+            DWORD flags = 0;
 
-            hr = captureRenderClient->GetBuffer(&pData, &numFrames, &flags, nullptr, nullptr);
+            hr = inputCaptureClient->GetBuffer(&inData, &numFrames, &flags, nullptr, nullptr);
             if (FAILED(hr)) break;
 
-            size_t bytes = numFrames * captureMixFormat->nBlockAlign;
-            QByteArray pcm(reinterpret_cast<const char*>(pData), bytes);
+            BYTE* outData = nullptr;
+            hr = outputRenderClient->GetBuffer(numFrames, &outData);
+            if (FAILED(hr)) {
+                inputCaptureClient->ReleaseBuffer(numFrames);
+                qDebug() << "MicCaptureClient: Failed to get buffer.";
+                break;
+            }
 
-            emit micDataReady(pcm);
+            size_t bytes = numFrames * captureFormat->nBlockAlign;
+            float vol = outputVolume.load();
 
-            captureRenderClient->ReleaseBuffer(numFrames);
+            if (captureFormat->wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
+                WAVEFORMATEXTENSIBLE* ext = reinterpret_cast<WAVEFORMATEXTENSIBLE*>(captureFormat);
+                if (ext->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) {
+                    const float* src = reinterpret_cast<const float*>(inData);
+                    float* dst = reinterpret_cast<float*>(outData);
+                    size_t samples = bytes / sizeof(float);
+                    for (size_t i = 0; i < samples; ++i) dst[i] = src[i] * vol;
+                } else if (ext->SubFormat == KSDATAFORMAT_SUBTYPE_PCM &&
+                           ext->Format.wBitsPerSample == 16) {
+                    const int16_t* src = reinterpret_cast<const int16_t*>(inData);
+                    int16_t* dst = reinterpret_cast<int16_t*>(outData);
+                    size_t samples = bytes / sizeof(int16_t);
+                    for (size_t i = 0; i < samples; ++i) {
+                        int sample = static_cast<int>(src[i] * vol);
+                        dst[i] = std::clamp(sample, -32768, 32767);
+                    }
+                } else {
+                   memcpy(outData, inData, bytes); // fallback
+                }
+            } else if (captureFormat->wFormatTag == WAVE_FORMAT_IEEE_FLOAT) {
+                const float* src = reinterpret_cast<const float*>(inData);
+                float* dst = reinterpret_cast<float*>(outData);
+                size_t samples = bytes / sizeof(float);
+                for (size_t i = 0; i < samples; ++i) dst[i] = src[i] * vol;
+            } else if (captureFormat->wFormatTag == WAVE_FORMAT_PCM &&
+                       captureFormat->wBitsPerSample == 16) {
+                const int16_t* src = reinterpret_cast<const int16_t*>(inData);
+                int16_t* dst = reinterpret_cast<int16_t*>(outData);
+                size_t samples = bytes / sizeof(int16_t);
+                for (size_t i = 0; i < samples; ++i) {
+                    int sample = static_cast<int>(src[i] * vol);
+                    dst[i] = std::clamp(sample, -32768, 32767);
+                }
+           } else {
+               memcpy(outData, inData, bytes); // fallback
+           }
 
-            hr = captureRenderClient->GetNextPacketSize(&packetLength);
+
+            inputCaptureClient->ReleaseBuffer(numFrames);
+            outputRenderClient->ReleaseBuffer(numFrames, 0);
+
+            hr = inputCaptureClient->GetNextPacketSize(&packetLength);
             if (FAILED(hr)) break;
         }
 
-    QThread::msleep(1);
+        //QThread::msleep(1);
     }
 }

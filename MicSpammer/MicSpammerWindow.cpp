@@ -56,14 +56,18 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
         }
     }
 
+    micVolumeSlider = new QSlider(Qt::Horizontal, this);
     monitorVolumeSlider = new QSlider(Qt::Horizontal, this);
     sendVolumeSlider = new QSlider(Qt::Horizontal, this);
-    monitorVolumeSlider->setRange(0, 100);
-    monitorVolumeSlider->setFixedWidth(100);
-    monitorVolumeSlider->setObjectName("MonitorVS");
     sendVolumeSlider->setRange(0, 100);
     sendVolumeSlider->setFixedWidth(100);
     sendVolumeSlider->setObjectName("SendVS");
+    monitorVolumeSlider->setRange(0, 100);
+    monitorVolumeSlider->setFixedWidth(100);
+    monitorVolumeSlider->setObjectName("MonitorVS");
+    micVolumeSlider->setRange(0, 100);
+    micVolumeSlider->setFixedWidth(100);
+    micVolumeSlider->setObjectName("MicVS");
 
     toolbar_devicesGridLayout = new QGridLayout(this);
 
@@ -73,6 +77,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
 
     toolbar_devicesGridLayout->addWidget(micDeviceLabel, 0,0);
     toolbar_devicesGridLayout->addWidget(micComboBox, 0,1);
+    toolbar_devicesGridLayout->addWidget(micVolumeSlider, 0,2);
 
     toolbar_devicesGridLayout->addWidget(monitorDeviceLabel, 1,0);
     toolbar_devicesGridLayout->addWidget(monitorComboBox, 1,1);
@@ -134,13 +139,17 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(openFolderButton, &QPushButton::clicked, this, &MicSpammerWindow::onOpenFolder);
     connect(playButton, &QPushButton::clicked, this, &MicSpammerWindow::onPlay);
     connect(stopButton, &QPushButton::clicked, this, &MicSpammerWindow::onStop);
+    connect(micVolumeSlider, &QSlider::valueChanged, this,
+        [this](int volume) {
+            onVolumeChanged(micVolumeSlider->objectName(), volume);
+        });
     connect(monitorVolumeSlider, &QSlider::valueChanged, this,
         [this](int volume) {
-            MicSpammerWindow::onVolumeChanged(monitorVolumeSlider->objectName(), volume);
+            onVolumeChanged(monitorVolumeSlider->objectName(), volume);
         });
     connect(sendVolumeSlider, &QSlider::valueChanged, this,
         [this](int volume) {
-            MicSpammerWindow::onVolumeChanged(sendVolumeSlider->objectName(), volume);
+            onVolumeChanged(sendVolumeSlider->objectName(), volume);
         });
     // File actions
     connect(browser, &FileBrowserWidget::fileSelected, this, &MicSpammerWindow::onFileSelected);
@@ -163,6 +172,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
 
     monitorVolumeSlider->setValue(80);
     sendVolumeSlider->setValue(80);
+    micVolumeSlider->setValue(80);
+
 }
 
 void MicSpammerWindow::onOpenFolder() {
@@ -184,31 +195,25 @@ void MicSpammerWindow::onStop() {
 
 void MicSpammerWindow::onVolumeChanged(QString name, int volume) {
 
+    float gain = 0.0f;
     // Clamp to avoid log(0)
-    if (volume <= 0) {
-        if ( name == "MonitorVS") {
-            audioPlayer.setMonitorVolume(0.0f);
-        } else if (name == "SendVS") {
-            audioPlayer.setOutputVolume(0.0f);
-            //TODO add micCapture
-        }
-        return;
+    if (volume > 0) {
+        // Map 0–100 slider to -40 dB .. 0 dB range
+        float minDb = -40.0f;   // silence threshold
+        float maxDb = 0.0f;
+
+        float db = minDb + (volume / 100.0f) * (maxDb - minDb);
+
+        // Convert dB to linear gain
+        gain = powf(10.0f, db / 20.0f);
     }
-
-    // Map 0–100 slider to -40 dB .. 0 dB range
-    float minDb = -40.0f;   // silence threshold
-    float maxDb = 0.0f;
-
-    float db = minDb + (volume / 100.0f) * (maxDb - minDb);
-
-    // Convert dB to linear gain
-    float gain = powf(10.0f, db / 20.0f);
 
     if ( name == "MonitorVS") {
         audioPlayer.setMonitorVolume(gain);
     } else if (name == "SendVS") {
         audioPlayer.setOutputVolume(gain);
-        //TODO add micCapture
+    } else if (name == "MicVS") {
+        micCapture.setVolume(gain);
     }
 }
 
@@ -218,18 +223,18 @@ void MicSpammerWindow::onFileSelected(const QString &filePath) {
 
 void MicSpammerWindow::onMicDeviceChanged(int index) {
     QString id = micComboBox->itemData(index).toString();
-    micCapture.setCaptureDevice(id.toStdWString());
+    micCapture.setInputDevice(id);
 }
 
 void MicSpammerWindow::onMonitorDeviceChanged(int index) {
     QString id = monitorComboBox->itemData(index).toString();
-    audioPlayer.setMonitorDevice(id.toStdWString());
+    audioPlayer.setMonitorDevice(id);
 }
 
 void MicSpammerWindow::onSendDeviceChanged(int index) {
     QString id = sendComboBox->itemData(index).toString();
-    micCapture.setOutputDevice(id.toStdWString());
-    audioPlayer.setOutputDevice(id.toStdWString());
+    micCapture.setOutputDevice(id);
+    audioPlayer.setOutputDevice(id);
 }
 
 MicSpammerWindow::~MicSpammerWindow() = default;
@@ -255,12 +260,12 @@ void MicSpammerWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void MicSpammerWindow::focusInEvent(QFocusEvent *event) {
-    qDebug() << "MicSpammerWindow got focus";
-    QWidget::focusInEvent(event);
-}
-
-void MicSpammerWindow::focusOutEvent(QFocusEvent *event) {
-    qDebug() << "MicSpammerWindow lost focus";
-    QWidget::focusOutEvent(event);
-}
+//void MicSpammerWindow::focusInEvent(QFocusEvent *event) {
+//    qDebug() << "MicSpammerWindow got focus";
+//    QWidget::focusInEvent(event);
+//}
+//
+//void MicSpammerWindow::focusOutEvent(QFocusEvent *event) {
+//    qDebug() << "MicSpammerWindow lost focus";
+//    QWidget::focusOutEvent(event);
+//}

@@ -43,8 +43,8 @@ public:
     void setMonitorVolume(float volume);
     void setOutputVolume(float volume);
 
-    void setMonitorDevice(const std::wstring& id);
-    void setOutputDevice(const std::wstring& id);
+    void setMonitorDevice(QString id);
+    void setOutputDevice(QString id);
 
 private slots:
     void onInstanceFinished(SoundInstance* instance);

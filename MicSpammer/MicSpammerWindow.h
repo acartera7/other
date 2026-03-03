@@ -32,8 +32,8 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
-    void focusInEvent(QFocusEvent *event) override;
-    void focusOutEvent(QFocusEvent *event) override;
+    //void focusInEvent(QFocusEvent *event) override;
+    //void focusOutEvent(QFocusEvent *event) override;
 
 private:
     int _window_x, _window_y;
@@ -64,7 +64,7 @@ private:
     QPushButton *openFolderButton, *playButton, *stopButton;
     QWidget *spacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
-    QSlider *monitorVolumeSlider, *sendVolumeSlider;
+    QSlider *micVolumeSlider, *monitorVolumeSlider, *sendVolumeSlider;
     QSplitter *mainContent_splitter;
 
     QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel;

@@ -20,9 +20,9 @@ public:
     MicCapture(const MicCapture&) = delete;
     MicCapture& operator=(const MicCapture&) = delete;
 
-    void setCaptureDevice(const std::wstring &id);
-    void setOutputDevice(const std::wstring &id);
-
+    void setInputDevice(QString id);
+    void setOutputDevice(QString id);
+    void setVolume(float volume);
     void start();
     void stop();
 
@@ -34,16 +34,16 @@ private:
     ~MicCapture() override;
 
     void captureLoop();
-    void releaseCaptureClient();
+    void releaseInputClient();
     void releaseOutputClient();
-    void initCaptureClient(IMMDevice *device);
-    void initOutputClient(IMMDevice *device);
+    void initInputClient();
+    void initOutputClient();
 
-    IMMDevice* captureDevice = nullptr;
+    IMMDevice* inputDevice = nullptr;
     IMMDevice* outputDevice = nullptr;
 
-    IAudioClient* captureAudioClient = nullptr;
-    IAudioCaptureClient* captureRenderClient = nullptr;
+    IAudioClient* inputAudioClient = nullptr;
+    IAudioCaptureClient* inputCaptureClient = nullptr;
 
     IAudioClient* outputAudioClient = nullptr;
     IAudioRenderClient* outputRenderClient = nullptr;
@@ -52,8 +52,10 @@ private:
     std::atomic<bool> stopFlag{false};
 
     UINT32 bufferFrameCount = 0;
-    WAVEFORMATEX *captureMixFormat = nullptr;
-    WAVEFORMATEX *outputMixFormat = nullptr;
+    WAVEFORMATEX* captureFormat;
+
+    std::atomic<float> outputVolume;
+
 
 };
 

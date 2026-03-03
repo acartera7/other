@@ -9,9 +9,8 @@ AudioPlayer & AudioPlayer::getInstance() {
     return instance;
 }
 
-AudioPlayer::AudioPlayer(QObject *parent) :
-        QObject(parent),
-        _monitorVolume(1.0f){
+AudioPlayer::AudioPlayer(QObject *parent) : QObject(parent),
+        _monitorVolume(1.0f), _outputVolume(0) {
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -69,20 +68,19 @@ void AudioPlayer::setOutputVolume(float volume) {
     }
 }
 
-void AudioPlayer::setMonitorDevice(const std::wstring &id) {
+void AudioPlayer::setMonitorDevice(QString id) {
     releaseMonitorDevice();
-    if (id.empty()) return;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &monitorDevice);
+    if (id.isEmpty() || id == "None") return;
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.toStdWString().c_str(), &monitorDevice);
     if (FAILED(hr)) {
         qDebug() << "AudioPlayer: Failed to set Monitor device";
-        return;
     }
 }
 
-void AudioPlayer::setOutputDevice(const std::wstring &id) {
+void AudioPlayer::setOutputDevice(QString id) {
     releaseOutputDevice();
-    if (id.empty()) return;
-    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.c_str(), &outputDevice);
+    if (id.isEmpty() || id == "None") return;
+    HRESULT hr = WasapiManager::getInstance().getEnumerator()->GetDevice(id.toStdWString().c_str(), &outputDevice);
     if (FAILED(hr)) {
         qDebug() << "AudioPlayer: Failed to set Output device";
         return;

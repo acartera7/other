@@ -95,12 +95,12 @@ void FileBrowserWidget::setRootDirectory(const QString &path) {
     listView->setRootIndex(listIndex);
 }
 
-void FileBrowserWidget::focusInEvent(QFocusEvent *event) {
-    qDebug() << "FileBrowserWidget got focus";
-    QWidget::focusInEvent(event);
-}
-
-void FileBrowserWidget::focusOutEvent(QFocusEvent *event) {
-    qDebug() << "FileBrowserWidget lost focus";
-    QWidget::focusOutEvent(event);
-}
+//void FileBrowserWidget::focusInEvent(QFocusEvent *event) {
+//    qDebug() << "FileBrowserWidget got focus";
+//    QWidget::focusInEvent(event);
+//}
+//
+//void FileBrowserWidget::focusOutEvent(QFocusEvent *event) {
+//    qDebug() << "FileBrowserWidget lost focus";
+//    QWidget::focusOutEvent(event);
+//}

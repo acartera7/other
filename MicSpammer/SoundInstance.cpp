@@ -226,7 +226,7 @@ void SoundInstance::writeAudioData(IAudioClient *audioClient,
 }
 
 HRESULT SoundInstance::initMonitorAudioClient() {
-    WAVEFORMATEXTENSIBLE neutralFormat = getMainFormat();
+    WAVEFORMATEXTENSIBLE neutralFormat = WasapiManager::getMainFormat();
 
     REFERENCE_TIME bufferDuration = 100000;
     HRESULT hr = monitorAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,

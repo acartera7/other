@@ -1,3 +1,7 @@
+lets add the volume 
+we have to now wire this up so that when the device changes, MicCapture responds
+
+
 Lets continue on my project to make a MicSpammer using Qt and WASAPI. A software that will allow the user to browse their computer, load up audio from their computer and map them to the numpad, then at the press of one of the buttons on the numpad the audio will playback to the listener via a separate thread but also send the audio through a VB-Audio Cable so that it can be sent through to the mic and be heard by others in a game. Right now a lot of features are missing including proper selection of audio devices, playback and throughput into the mic and maybe eventual midi controls.
 
 We currently have : AudioLoader.cpp AudioPlayer.cpp MicSpammerWindow.cpp FileBrowserWidget.cpp WasapiManager.cpp NumpadWidget.cpp and of course main.cpp. 
