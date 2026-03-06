@@ -112,11 +112,20 @@ void MicCapture::initInputClient() {
         qDebug() << "MicCaptureClient: Failed to get captureRenderClient.";
     }
 
+    // reinitialize output in case it hasn't successfully been initialized due to format missing
+    if (outputDevice) {
+        initOutputClient();
+    }
+
 }
 
 void MicCapture::initOutputClient() {
     if (!outputDevice) {
-        qDebug() << "MicCapture: cannot start, missing device";
+        qDebug() << "MicCapture: cannot initialize, missing device";
+        return;
+    }
+    if (!captureFormat) {
+        qDebug() << "MicCapture: cannot initialize, no input device selected";
         return;
     }
     HRESULT hr = outputDevice->Activate(__uuidof(IAudioClient),
