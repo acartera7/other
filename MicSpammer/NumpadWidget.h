@@ -41,9 +41,9 @@ public:
     void triggerKey(int key);
     void animateButtonPress(int key);
 
-    signals:
-        void numpadTriggered(int numpadKey, const QString &filePath);
-        void pageChanged(int currentPage);
+signals:
+    void numpadTriggered(int numpadKey, const QString &filePath);
+    void pageChanged(int currentPage);
 
 private:
     int currentPage = 1;
@@ -57,12 +57,10 @@ private:
     QPushButton *nextPageButton;
 
     // Store mappings per page
-    QMap<int, QMap<int, NumpadItem>> pageMappings;
     // page -> (key -> item)
+    QMap<int, QMap<int, NumpadItem>> pageMappings;
 
     QMap<int, QPushButton*> buttons;
-    // TODO add session persistence
-    QMap<int, NumpadItem> items;
 
     void setupButtons();
     void updatePageIndicator() const;

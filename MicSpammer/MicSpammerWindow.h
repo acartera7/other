@@ -44,6 +44,9 @@ private:
     void onStop();
     void onVolumeChanged(QString name, int volume);
     void onFileSelected(const QString &filePath);
+    void onLoadProfile();
+    void onSaveProfile();
+    void onDeleteProfile();
 
     void onMicDeviceChanged(int index);
     void onMonitorDeviceChanged(int index);
@@ -60,14 +63,15 @@ private:
     FileBrowserWidget *browser;
     NumpadWidget *numpad;
     QToolBar *toolbar;
+    QToolBar *profile_toolbar;
 
-    QPushButton *openFolderButton, *playButton, *stopButton;
-    QWidget *spacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
+    QPushButton *openFolderButton, *playButton, *stopButton, *loadProfileButton, *saveProfileButton, *deleteProfileButton;
+    QWidget *toolbarSpacer, *profileSpacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *micVolumeSlider, *monitorVolumeSlider, *sendVolumeSlider;
     QSplitter *mainContent_splitter;
 
-    QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel;
+    QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel, *profileLabel;
 
     QComboBox* micComboBox,*monitorComboBox, *sendComboBox;
 

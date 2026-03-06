@@ -3,7 +3,19 @@
 //
 #include "MicSpammerWindow.h"
 
-
+struct Profile {
+    QString _name;
+    QString micDeviceID;
+    QString monitorDeviceID;
+    QString outputDeviceID;
+    int micVolume;
+    int monitorVolume;
+    int sendVolume;
+    QString rootFolder;
+    QString selectedFile;
+    QMap<int, QString> numpadMappings; // key → file path
+    QRect windowGeometry;
+};
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent),  _window_x(800),_window_y(500),
@@ -21,7 +33,27 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     setWindowTitle("MicSpammer");
     setGeometry(100,100, _window_x, _window_y);
 
-    // Toolbar & Button
+    // profile toolbar for loading profiles
+    profile_toolbar = new QToolBar(this);
+
+    profileLabel = new QLabel("Profile: None", this);
+    profileLabel->setFixedWidth(100);
+    loadProfileButton = new QPushButton("Load", this);
+    saveProfileButton = new QPushButton("Save", this);
+    deleteProfileButton = new QPushButton("Delete", this);
+
+    // Spacer Widget (Flexible Space)
+    profileSpacer = new QWidget(this);
+    profileSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    profile_toolbar->addWidget(profileLabel);
+    profile_toolbar->addWidget(profileSpacer);
+    profile_toolbar->addWidget(loadProfileButton);
+    profile_toolbar->addWidget(saveProfileButton);
+    profile_toolbar->addWidget(deleteProfileButton);
+
+    //addToolBar(Qt::TopToolBarArea, profile_toolbar);
+    // Main Toolbar & Button
     toolbar = new QToolBar(this);
     playButton = new QPushButton("Play", this);
     stopButton = new QPushButton("Stop", this);
@@ -29,8 +61,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
-    spacer = new QWidget(this);
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    toolbarSpacer = new QWidget(this);
+    toolbarSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Devices selection dropdown
     micComboBox = new QComboBox(this);
@@ -103,10 +135,11 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     // Add widgets to toolbar
     toolbar->addWidget(openFolderButton);
     toolbar->addWidget(toolbar_devicesContainer);
-    toolbar->addWidget(spacer);
+    toolbar->addWidget(toolbarSpacer);
     toolbar->addWidget(toolbar_rightContainer);
-    addToolBar(Qt::TopToolBarArea, toolbar);
+    //addToolBar(Qt::TopToolBarArea, toolbar);
     // add toolbar to the window
+    mainVLayout->addWidget(profile_toolbar);
     mainVLayout->addWidget(toolbar);
 
     //QDir(QDir::homePath()).filePath("Music")
@@ -136,6 +169,10 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     centralWidget()->setLayout(mainVLayout);
 
     // Toolbar buttons actions
+    connect(loadProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onLoadProfile);
+    connect(saveProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onSaveProfile);
+    connect(deleteProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onDeleteProfile);
+
     connect(openFolderButton, &QPushButton::clicked, this, &MicSpammerWindow::onOpenFolder);
     connect(playButton, &QPushButton::clicked, this, &MicSpammerWindow::onPlay);
     connect(stopButton, &QPushButton::clicked, this, &MicSpammerWindow::onStop);
@@ -170,10 +207,17 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(sendComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MicSpammerWindow::onSendDeviceChanged);
 
+
+    // TODO profiles
+
     monitorVolumeSlider->setValue(80);
     sendVolumeSlider->setValue(80);
     micVolumeSlider->setValue(80);
 
+}
+
+template<typename>
+constexpr auto MicSpammerWindow::qt_create_metaobjectdata() {
 }
 
 void MicSpammerWindow::onOpenFolder() {
@@ -219,6 +263,15 @@ void MicSpammerWindow::onVolumeChanged(QString name, int volume) {
 
 void MicSpammerWindow::onFileSelected(const QString &filePath) {
     selectedFilePath = filePath;
+}
+
+void MicSpammerWindow::onLoadProfile() {
+}
+
+void MicSpammerWindow::onSaveProfile() {
+}
+
+void MicSpammerWindow::onDeleteProfile() {
 }
 
 void MicSpammerWindow::onMicDeviceChanged(int index) {
