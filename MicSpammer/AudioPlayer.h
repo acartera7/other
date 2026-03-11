@@ -4,19 +4,22 @@
 #pragma once
 #include <QWidget>
 #include <QFile>
-
 #include <QDebug>
 #include <QThread>
+#include <QJsonObject>
 
 #include <vector>
 #include <cstring>
 
 #include "SoundInstance.h"
 #include "WasapiManager.h"
+
 #define NO_DSHOW_STRSAFE
 
 #include <Mmdeviceapi.h>
 #include <Audioclient.h>
+
+
 
 #undef TIMECODE_SAMPLE
 
@@ -45,6 +48,10 @@ public:
 
     void setMonitorDevice(QString id);
     void setOutputDevice(QString id);
+
+    // session persistence
+    QJsonObject saveState();
+    void loadState(QJsonObject);
 
 private slots:
     void onInstanceFinished(SoundInstance* instance);

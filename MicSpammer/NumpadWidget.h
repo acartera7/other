@@ -6,6 +6,7 @@
 #define MICSPAMMER_NUMPADWIDGET_H
 #pragma once
 #include "AudioPlayer.h"
+
 #include <QWidget>
 #include <QFileInfo>
 #include <QMimeData>
@@ -19,6 +20,8 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QIcon>
+#include <QJsonObject>
+
 
 struct NumpadItem {
     QString filePath;
@@ -40,6 +43,10 @@ public:
     [[nodiscard]] int currentPageNumber() const { return currentPage; }
     void triggerKey(int key);
     void animateButtonPress(int key);
+
+    // session persistence
+    QJsonObject saveState();
+    void loadState(QJsonObject);
 
 signals:
     void numpadTriggered(int numpadKey, const QString &filePath);

@@ -20,7 +20,8 @@ struct Profile {
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent),  _window_x(800),_window_y(500),
         audioPlayer(AudioPlayer::getInstance()),
-        micCapture(MicCapture::getInstance()) {
+        micCapture(MicCapture::getInstance()),
+        profileManager(ProfileManager::getInstance()) {
 
 
     setFocusPolicy(Qt::StrongFocus);
@@ -41,6 +42,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     loadProfileButton = new QPushButton("Load", this);
     saveProfileButton = new QPushButton("Save", this);
     deleteProfileButton = new QPushButton("Delete", this);
+    resetButton = new QPushButton("Reset", this);
 
     // Spacer Widget (Flexible Space)
     profileSpacer = new QWidget(this);
@@ -50,6 +52,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     profile_toolbar->addWidget(profileSpacer);
     profile_toolbar->addWidget(loadProfileButton);
     profile_toolbar->addWidget(saveProfileButton);
+    profile_toolbar->addWidget(resetButton);
     profile_toolbar->addWidget(deleteProfileButton);
 
     //addToolBar(Qt::TopToolBarArea, profile_toolbar);
@@ -172,6 +175,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     connect(loadProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onLoadProfile);
     connect(saveProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onSaveProfile);
     connect(deleteProfileButton, &QPushButton::clicked, this, &MicSpammerWindow::onDeleteProfile);
+    connect(resetButton, &QPushButton::clicked, this, &MicSpammerWindow::onReset);
 
     connect(openFolderButton, &QPushButton::clicked, this, &MicSpammerWindow::onOpenFolder);
     connect(playButton, &QPushButton::clicked, this, &MicSpammerWindow::onPlay);
@@ -266,12 +270,103 @@ void MicSpammerWindow::onFileSelected(const QString &filePath) {
 }
 
 void MicSpammerWindow::onLoadProfile() {
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        "Load Profile",
+        QDir("saves").absolutePath(),
+        "Profile Files (*.json)"
+    );
+
+    if (!fileName.isEmpty()) {
+        profileManager.loadProfile(fileName, micCapture, audioPlayer, *browser, *numpad, frameGeometry());
+        profileLabel->setText("Profile: " + QFileInfo(fileName).baseName());
+        currentProfilePath = fileName;
+    }
 }
 
 void MicSpammerWindow::onSaveProfile() {
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        "Save Profile",
+        QDir("saves").absolutePath(),
+        "Profile Files (*.json)"
+    );
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        if (file.exists()) {
+            QMessageBox::StandardButton reply = QMessageBox::question(
+                this,
+                "Overwrite Profile",
+                "The file already exists. Do you want to overwrite it?",
+                QMessageBox::Yes | QMessageBox::No
+            );
+
+            if (reply != QMessageBox::Yes) {
+                return; // user cancelled overwrite
+            }
+        }
+
+        profileManager.saveProfile(fileName, micCapture, audioPlayer, *browser, *numpad, frameGeometry());
+        profileLabel->setText("Profile: " + QFileInfo(fileName).baseName());
+        currentProfilePath = fileName;
+    }
 }
 
 void MicSpammerWindow::onDeleteProfile() {
+    if (currentProfilePath.isEmpty()) {
+        QMessageBox::information(this,"Delete Profile","No profile currently loaded");
+        return;
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Delete Profile",
+        "Are you sure you want to delete " + QFileInfo(currentProfilePath).fileName() + "?",
+        QMessageBox::Yes | QMessageBox::No
+    );
+
+    if (reply == QMessageBox::Yes) {
+        QFile::remove(currentProfilePath);
+        currentProfilePath.clear();
+        profileLabel->setText("Profile: None");
+
+        reply = QMessageBox::question(
+            this,
+            "Reset Settings",
+            "Would you like to reset current settings to default?",
+            QMessageBox::Yes | QMessageBox::No
+        );
+
+        if (reply == QMessageBox::Yes) {
+            resetProfileSettings();
+        }
+    }
+}
+
+void MicSpammerWindow::onReset() {
+    if (currentProfilePath.isEmpty()) {
+        QMessageBox::information(this,"Reset","No profile currently loaded");
+        return;
+    }
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Reset Profile",
+        "Resetting will clear all settings. Do you want to save the current profile first?",
+        QMessageBox::Yes | QMessageBox::Cancel
+    );
+
+    if (reply == QMessageBox::Cancel) return;
+
+    if (reply == QMessageBox::Yes) {
+        onSaveProfile();
+    }
+
+    resetProfileSettings();
+    currentProfilePath.clear();
+    profileLabel->setText("Profile: None");
+}
+
+void MicSpammerWindow::resetProfileSettings() {
 }
 
 void MicSpammerWindow::onMicDeviceChanged(int index) {

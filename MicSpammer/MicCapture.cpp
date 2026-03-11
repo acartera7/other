@@ -182,6 +182,14 @@ void MicCapture::stop() {
     }
 }
 
+QJsonObject MicCapture::saveState() {
+    QJsonObject result;
+    return result;
+}
+
+void MicCapture::loadState(QJsonObject) {
+}
+
 void MicCapture::captureLoop() {
     //UINT32 blockAlign = captureFormat->nBlockAlign;
 

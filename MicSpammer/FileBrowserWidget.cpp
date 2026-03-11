@@ -95,6 +95,14 @@ void FileBrowserWidget::setRootDirectory(const QString &path) {
     listView->setRootIndex(listIndex);
 }
 
+QJsonObject FileBrowserWidget::saveState() {
+    QJsonObject result;
+    return result;
+}
+
+void FileBrowserWidget::loadState(QJsonObject) {
+}
+
 //void FileBrowserWidget::focusInEvent(QFocusEvent *event) {
 //    qDebug() << "FileBrowserWidget got focus";
 //    QWidget::focusInEvent(event);

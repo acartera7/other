@@ -13,6 +13,7 @@
 #include <QSplitter>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <QJsonObject>
 
 
 class FileBrowserWidget : public QWidget {
@@ -21,9 +22,14 @@ public:
     explicit FileBrowserWidget(QWidget *parent = nullptr);
     void setRootDirectory(const QString &path);
 
-    signals:
-        void fileSelected(const QString &filePath);
-        void playSound();
+    // session persistence
+    QJsonObject saveState();
+    void loadState(QJsonObject);
+
+signals:
+    void fileSelected(const QString &filePath);
+    void playSound();
+
 protected:
     //void focusInEvent(QFocusEvent *event) override;
     //void focusOutEvent(QFocusEvent *event) override;

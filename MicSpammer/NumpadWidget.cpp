@@ -242,3 +242,11 @@ void NumpadWidget::animateButtonPress(int key) {
         });
     }
 }
+
+QJsonObject NumpadWidget::saveState() {
+    QJsonObject result;
+    return result;
+}
+
+void NumpadWidget::loadState(QJsonObject) {
+}

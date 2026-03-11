@@ -7,6 +7,7 @@
 #define MICSPAMMER_MICCAPTURE_H
 #include <QObject>
 #include <QThread>
+#include <QJsonObject>
 
 #include <atomic>
 #include <audioclient.h>
@@ -25,6 +26,10 @@ public:
     void setVolume(float volume);
     void start();
     void stop();
+
+    // session persistence
+    QJsonObject saveState();
+    void loadState(QJsonObject);
 
 signals:
     void micDataReady(const QByteArray &pcm);
@@ -55,7 +60,6 @@ private:
     WAVEFORMATEX* captureFormat;
 
     std::atomic<float> outputVolume;
-
 
 };
 

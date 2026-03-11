@@ -2,6 +2,7 @@
 // Created by Victus on 3/6/2026.
 //
 #pragma once
+#include <QJsonObject>
 #include "MicCapture.h"
 #include "AudioPlayer.h"
 #include "FileBrowserWidget.h"
@@ -29,7 +30,7 @@ public:
                      NumpadWidget& numpad,
                      const QRect& windowGeometry);
 
-    QStringList listProfiles();
+    QStringList listProfiles(); // list files in ./saves/
 
 private:
     ProfileManager() = default;

@@ -12,12 +12,14 @@
 #include <QFileSystemModel>
 #include <QSplitter>
 #include <QComboBox>
-#include <QFormLayout>
+#include <QJsonObject>
+#include <QMessageBox>
 
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
 #include "MicCapture.h"
+#include "ProfileManager.h"
 #include "WasapiManager.h"
 
 
@@ -37,8 +39,9 @@ protected:
 
 private:
     int _window_x, _window_y;
+    QString currentProfilePath;
 
-    // Handler Functions
+// Handler Functions
     void onOpenFolder();
     void onPlay();
     void onStop();
@@ -47,6 +50,8 @@ private:
     void onLoadProfile();
     void onSaveProfile();
     void onDeleteProfile();
+    void onReset();
+    void resetProfileSettings();
 
     void onMicDeviceChanged(int index);
     void onMonitorDeviceChanged(int index);
@@ -55,17 +60,18 @@ private:
     QString selectedFilePath;
     AudioPlayer& audioPlayer;
     MicCapture& micCapture;
+    ProfileManager& profileManager;
+    FileBrowserWidget *browser;
+    NumpadWidget *numpad;
 
     // GUI Elements
     QWidget     *mainWidget;
     QVBoxLayout *mainVLayout;
 
-    FileBrowserWidget *browser;
-    NumpadWidget *numpad;
     QToolBar *toolbar;
     QToolBar *profile_toolbar;
 
-    QPushButton *openFolderButton, *playButton, *stopButton, *loadProfileButton, *saveProfileButton, *deleteProfileButton;
+    QPushButton *openFolderButton, *playButton, *stopButton, *loadProfileButton, *saveProfileButton, *deleteProfileButton, *resetButton;
     QWidget *toolbarSpacer, *profileSpacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *micVolumeSlider, *monitorVolumeSlider, *sendVolumeSlider;

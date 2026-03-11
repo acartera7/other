@@ -15,6 +15,23 @@ void ProfileManager::saveProfile(const QString& name,
                                  FileBrowserWidget& browser,
                                  NumpadWidget& numpad,
                                  const QRect& windowGeometry) {
+    //QJsonObject root;
+    //root["mic"] = mic.saveState();
+    //root["player"] = player.saveState();
+    //root["browser"] = browser.saveState();
+    //root["numpad"] = numpad.saveState();
+    //root["window"] = QJsonObject {
+    //    {"x", windowGeometry.x()},
+    //    {"y", windowGeometry.y()},
+    //    {"w", windowGeometry.width()},
+    //    {"h", windowGeometry.height()}
+    //};
+
+    //QDir().mkpath("saves");
+    //QFile file("saves/" + name + ".json");
+    //if (file.open(QIODevice::WriteOnly)) {
+    //    file.write(QJsonDocument(root).toJson());
+    //}
 
 }
 
