@@ -1,10 +1,11 @@
 
 #include "MicSpammerWindow.h"
 
-MicSpammerWindow::MicSpammerWindow(QWidget *parent)
-    : QMainWindow(parent),  _window_x(800),_window_y(500),
+MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
+        QMainWindow(parent),  _window_x(800),_window_y(500),
         audioPlayer(AudioPlayer::getInstance()),
-        micCapture(MicCapture::getInstance()) {
+        micCapture(MicCapture::getInstance()),
+        deviceList(WasapiManager::getInstance().getDevices()) {
 
 
     setFocusPolicy(Qt::StrongFocus);
@@ -62,7 +63,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     sendComboBox->addItem("--None--", QVariant("None"));
     sendComboBox->setCurrentIndex(0);
 
-    deviceList = WasapiManager::getInstance().getDevices();
     for (size_t i = 0; i < deviceList.size(); i++) {
         const auto& info = deviceList.at(i);
         QString name = QString::fromStdWString(info.name);
@@ -285,24 +285,37 @@ void MicSpammerWindow::onLoadProfile() {
         // load states for the devices and volumes
         QJsonObject devicesObj = root["devices"].toObject();
 
-        auto audioDevices = WasapiManager::getInstance().getDevices();
-
         // mic device
         QString micDeviceName = devicesObj["mic-device"].toString();
-        micCapture.setInputDevice(micDeviceName);
-        micComboBox->setCurrentIndex(micComboBox->findData(micDeviceName));
+        if (isDeviceValid(micDeviceName)) {
+            micCapture.setInputDevice(micDeviceName);
+            micComboBox->setCurrentIndex(micComboBox->findData(micDeviceName));
+        } else {
+            QString deviceText = devicesObj["mic-device-text"].toString();
+            QMessageBox::information(this,"Error","Error: failed to load Microphone Device \"" + deviceText +"\". Device not found or is disabled.");
+        }
 
         //monitor device
         QString monitorDeviceName = devicesObj["monitoring-device"].toString();
-        if ()
-        audioPlayer.setMonitorDevice(monitorDeviceName);
-        monitorComboBox->setCurrentIndex(monitorComboBox->findData(monitorDeviceName));
+        if (isDeviceValid(monitorDeviceName)) {
+            audioPlayer.setMonitorDevice(monitorDeviceName);
+            monitorComboBox->setCurrentIndex(monitorComboBox->findData(monitorDeviceName));
+        } else {
+            QString deviceText = devicesObj["mic-device-text"].toString();
+            QMessageBox::information(this,"Error","Error: failed to load Monitoring Device \"" + deviceText +"\". Device not found or is disabled.");
+        }
+
 
         //output device
         QString outputDeviceName = devicesObj["output-device"].toString();
-        micCapture.setOutputDevice(devicesObj["output-device"].toString());
-        audioPlayer.setOutputDevice(devicesObj["output-device"].toString());
-        sendComboBox->setCurrentIndex(sendComboBox->findData(outputDeviceName));
+        if (isDeviceValid(outputDeviceName)) {
+            micCapture.setOutputDevice(devicesObj["output-device"].toString());
+            audioPlayer.setOutputDevice(devicesObj["output-device"].toString());
+            sendComboBox->setCurrentIndex(sendComboBox->findData(outputDeviceName));
+        } else {
+            QString deviceText = devicesObj["mic-device-text"].toString();
+            QMessageBox::information(this,"Error","Error: failed to load Output Device \"" + deviceText +"\". Device not found or is disabled.");
+        }
 
         QJsonObject volumeObj = root["volume"].toObject();
         micVolumeSlider->setValue(volumeObj["mic-volume"].toInt());
@@ -350,8 +363,11 @@ void MicSpammerWindow::onSaveProfile() {
         // save states for the devices and volumes
         root["devices"] = QJsonObject {
             {"mic-device", micComboBox->itemData(micComboBox->currentIndex()).toString()},
+            {"mic-device-text", micComboBox->itemText(micComboBox->currentIndex())},
             {"monitoring-device", monitorComboBox->itemData(monitorComboBox->currentIndex()).toString()},
+            {"monitoring-device-text", monitorComboBox->itemText(micComboBox->currentIndex())},
             {"output-device", sendComboBox->itemData(sendComboBox->currentIndex()).toString()},
+            {"output-device-text", sendComboBox->itemText(micComboBox->currentIndex())},
         };
         root["volume"] = QJsonObject {
             {"mic-volume", micVolumeSlider->value()},
@@ -468,6 +484,22 @@ void MicSpammerWindow::onSendDeviceChanged(int index) {
     micCapture.setOutputDevice(id);
     audioPlayer.setOutputDevice(id);
 }
+
+bool MicSpammerWindow::isDeviceValid(QString deviceName) {
+    if (deviceName.isEmpty())
+        return false;
+    std::vector<AudioDeviceInfo>::const_iterator it = std::find_if(deviceList.begin(), deviceList.end(),
+            [=](const AudioDeviceInfo& device) {
+                std::wstring wname = deviceName.toStdWString();
+                if (device.id == wname)
+                    return true;
+                return false;
+            });
+    if (it != deviceList.end())
+        return true;
+    return false;
+}
+
 
 MicSpammerWindow::~MicSpammerWindow() = default;
 

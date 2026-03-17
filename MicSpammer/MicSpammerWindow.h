@@ -54,6 +54,8 @@ private:
     void onMonitorDeviceChanged(int index);
     void onSendDeviceChanged(int index);
 
+    bool isDeviceValid(QString deviceName);
+
     QString selectedFilePath;
     AudioPlayer& audioPlayer;
     MicCapture& micCapture;
@@ -79,7 +81,7 @@ private:
 
     QGridLayout *toolbar_devicesGridLayout;
 
-    std::vector<AudioDeviceInfo> deviceList;
+    const std::vector<AudioDeviceInfo>& deviceList;
 };
 
 
