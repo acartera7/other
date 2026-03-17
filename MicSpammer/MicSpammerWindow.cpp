@@ -197,7 +197,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     connect(sendComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MicSpammerWindow::onSendDeviceChanged);
 
-
     // TODO check for last profile
 
     monitorVolumeSlider->setValue(80);
@@ -301,7 +300,7 @@ void MicSpammerWindow::onLoadProfile() {
             audioPlayer.setMonitorDevice(monitorDeviceName);
             monitorComboBox->setCurrentIndex(monitorComboBox->findData(monitorDeviceName));
         } else {
-            QString deviceText = devicesObj["mic-device-text"].toString();
+            QString deviceText = devicesObj["monitoring-device-text"].toString();
             QMessageBox::information(this,"Error","Error: failed to load Monitoring Device \"" + deviceText +"\". Device not found or is disabled.");
         }
 
@@ -313,7 +312,7 @@ void MicSpammerWindow::onLoadProfile() {
             audioPlayer.setOutputDevice(devicesObj["output-device"].toString());
             sendComboBox->setCurrentIndex(sendComboBox->findData(outputDeviceName));
         } else {
-            QString deviceText = devicesObj["mic-device-text"].toString();
+            QString deviceText = devicesObj["output-device-text"].toString();
             QMessageBox::information(this,"Error","Error: failed to load Output Device \"" + deviceText +"\". Device not found or is disabled.");
         }
 
@@ -365,9 +364,9 @@ void MicSpammerWindow::onSaveProfile() {
             {"mic-device", micComboBox->itemData(micComboBox->currentIndex()).toString()},
             {"mic-device-text", micComboBox->itemText(micComboBox->currentIndex())},
             {"monitoring-device", monitorComboBox->itemData(monitorComboBox->currentIndex()).toString()},
-            {"monitoring-device-text", monitorComboBox->itemText(micComboBox->currentIndex())},
+            {"monitoring-device-text", monitorComboBox->itemText(monitorComboBox->currentIndex())},
             {"output-device", sendComboBox->itemData(sendComboBox->currentIndex()).toString()},
-            {"output-device-text", sendComboBox->itemText(micComboBox->currentIndex())},
+            {"output-device-text", sendComboBox->itemText(sendComboBox->currentIndex())},
         };
         root["volume"] = QJsonObject {
             {"mic-volume", micVolumeSlider->value()},

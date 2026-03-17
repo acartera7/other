@@ -64,7 +64,7 @@ SoundInstance::SoundInstance(const QString& path,
     loader->setDecoderFormat(qFormat);
     _qFormat = qFormat;
 
-
+    //TODO fix bug where device is disconnected
     connect(loader, &AudioLoader::pcmReady, this, &SoundInstance::onPcmReady);
 }
 SoundInstance::~SoundInstance() {
