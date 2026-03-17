@@ -1,6 +1,4 @@
-//
-// Created by Andrew on 11/15/2025.
-//
+
 
 #ifndef MICSPAMMER_NUMPADWIDGET_H
 #define MICSPAMMER_NUMPADWIDGET_H
@@ -21,11 +19,23 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QJsonObject>
+#include <QJsonArray>
 
 
 struct NumpadItem {
     QString filePath;
     QString customLabel;
+    QJsonObject toJson() const {
+        QJsonObject obj;
+        obj["filePath"] = filePath;
+        obj["customLabel"] = customLabel;
+        return obj;
+    }
+
+    void fromJson(const QJsonObject& obj) {
+        filePath = obj["filePath"].toString();
+        customLabel = obj["customLabel"].toString();
+    }
 };
 
 class NumpadWidget : public QWidget {
@@ -43,6 +53,7 @@ public:
     [[nodiscard]] int currentPageNumber() const { return currentPage; }
     void triggerKey(int key);
     void animateButtonPress(int key);
+    void resetMappings();
 
     // session persistence
     QJsonObject saveState();
@@ -66,7 +77,6 @@ private:
     // Store mappings per page
     // page -> (key -> item)
     QMap<int, QMap<int, NumpadItem>> pageMappings;
-
     QMap<int, QPushButton*> buttons;
 
     void setupButtons();

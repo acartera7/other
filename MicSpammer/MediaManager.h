@@ -1,6 +1,4 @@
-//
-// Created by Andrei on 5/5/2025.
-//
+
 #pragma once
 
 #include <QString>

@@ -1,6 +1,4 @@
-//
-// Created by Victus on 12/8/2025.
-//
+
 
 #ifndef MICSPAMMER_AUDIOLOADER_H
 #define MICSPAMMER_AUDIOLOADER_H

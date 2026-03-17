@@ -1,9 +1,9 @@
-make checks for input and output device for mix format. do even need to? we dont use it for the capture loop
+make a checkbox for previewing files to be played thorugh output or not
 
-Ok We made good progress, mic works and so does monitoring and output of the sounds.
-Lets get to work with persistence, a way to save profiles, and maybe make it so that when launching it prompts you to load the last saved profile
+add alt+press to return to default value
 
 Lets fix keyboard focus
+
 
 
 Lets continue on my project to make a MicSpammer using Qt and WASAPI. A software that will allow the user to browse their computer, load up audio from their computer and map them to the numpad, then at the press of one of the buttons on the numpad the audio will playback to the listener via a separate thread but also send the audio through a VB-Audio Cable so that it can be sent through to the mic and be heard by others in a game. Right now a lot of features are missing including proper selection of audio devices, playback and throughput into the mic and maybe eventual midi controls.

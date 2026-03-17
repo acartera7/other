@@ -1,6 +1,4 @@
-//
-// Created by Victus on 2/17/2026.
-//
+
 
 #include "MicCapture.h"
 #include <QDebug>
@@ -180,14 +178,6 @@ void MicCapture::stop() {
         captureThread->wait();
         captureThread = nullptr;
     }
-}
-
-QJsonObject MicCapture::saveState() {
-    QJsonObject result;
-    return result;
-}
-
-void MicCapture::loadState(QJsonObject) {
 }
 
 void MicCapture::captureLoop() {

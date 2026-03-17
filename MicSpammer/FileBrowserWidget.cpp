@@ -1,6 +1,4 @@
-//
-// Created by Andrei on 5/4/2025.
-//
+
 
 #include "FileBrowserWidget.h"
 
@@ -14,7 +12,6 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     treeModel = new QFileSystemModel(this);
     treeModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
     treeModel->setRootPath(QDir::rootPath());
-
     // --- Tree View (Left)
     treeView = new QTreeView(this);
     treeView->setModel(treeModel);
@@ -56,15 +53,7 @@ FileBrowserWidget::FileBrowserWidget(QWidget *parent)
     setFocusProxy(listView);
 
     // Change listView
-    connect(treeView, &QTreeView::clicked, this, [this](const QModelIndex &index){
-        if (listView->isHidden()) {
-            listView->show();  // Hide list view
-            listView->setEnabled(true);  // Disable list view
-        }
-        QString path = treeModel->fileInfo(index).absoluteFilePath();
-        listView->setRootIndex(dirModel->setRootPath(path));
-        qDebug() << "Folder selected:" << path;
-    });
+    connect(treeView, &QTreeView::clicked, this, &FileBrowserWidget::listFolder);
 
     // File Selected
     connect(listView, &QListView::clicked, this, [this](const QModelIndex &index){
@@ -95,12 +84,45 @@ void FileBrowserWidget::setRootDirectory(const QString &path) {
     listView->setRootIndex(listIndex);
 }
 
-QJsonObject FileBrowserWidget::saveState() {
-    QJsonObject result;
-    return result;
+void FileBrowserWidget::listFolder(const QModelIndex &index) {
+    if (listView->isHidden()) {
+        listView->show();
+        listView->setEnabled(true);
+    }
+    QString path = treeModel->fileInfo(index).absoluteFilePath();
+    listView->setRootIndex(dirModel->setRootPath(path));
+    //qDebug() << "Folder selected:" << path;
 }
 
-void FileBrowserWidget::loadState(QJsonObject) {
+QJsonObject FileBrowserWidget::saveState() {
+    QJsonObject state;
+    state["curr-path"] = treeModel->fileInfo(treeView->currentIndex()).absoluteFilePath();
+    // TODO if (!listView->isHidden())
+    state["root-path"] = treeModel->fileInfo(treeView->rootIndex()).absoluteFilePath();
+    return state;
+}
+
+void FileBrowserWidget::loadState(QJsonObject state) {
+
+    if ( state.contains("root-path") ) {
+        QString rootPath = state["root-path"].toString();
+        if (!rootPath.isEmpty()) {
+            setRootDirectory(rootPath);
+        }
+    } else {
+
+    }
+    if ( state.contains("curr-path") ) {
+        QString currPath = state["curr-path"].toString();
+        if (!currPath.isEmpty()) {
+            if (listView->isHidden()) {
+                listView->show();
+                listView->setEnabled(true);
+            }
+            listView->setRootIndex(dirModel->setRootPath(currPath));
+        }
+    }
+
 }
 
 //void FileBrowserWidget::focusInEvent(QFocusEvent *event) {

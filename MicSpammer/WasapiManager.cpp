@@ -1,6 +1,3 @@
-//
-// Created by Andrei on 5/4/2025.
-//
 
 #include "WasapiManager.h"
 #include <setupapi.h>

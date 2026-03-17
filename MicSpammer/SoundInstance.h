@@ -1,6 +1,4 @@
-//
-// Created by Victus on 2/8/2026.
-//
+
 
 #ifndef MICSPAMMER_SOUNDINSTANCE_H
 #define MICSPAMMER_SOUNDINSTANCE_H

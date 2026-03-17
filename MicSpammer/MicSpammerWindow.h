@@ -1,6 +1,4 @@
-//
-// Created by Andrei on 4/29/2025.
-//
+
 #pragma once
 #include <QMainWindow>
 #include <QWidget>
@@ -19,7 +17,6 @@
 #include "NumpadWidget.h"
 #include "AudioPlayer.h"
 #include "MicCapture.h"
-#include "ProfileManager.h"
 #include "WasapiManager.h"
 
 
@@ -60,7 +57,6 @@ private:
     QString selectedFilePath;
     AudioPlayer& audioPlayer;
     MicCapture& micCapture;
-    ProfileManager& profileManager;
     FileBrowserWidget *browser;
     NumpadWidget *numpad;
 

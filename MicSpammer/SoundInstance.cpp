@@ -1,6 +1,4 @@
-//
-// Created by Victus on 2/8/2026.
-//
+
 
 #include <QDebug>
 #include <QFileInfo>

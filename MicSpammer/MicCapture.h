@@ -1,6 +1,4 @@
-//
-// Created by Victus on 2/17/2026.
-//
+
 #pragma once
 
 #ifndef MICSPAMMER_MICCAPTURE_H
@@ -28,8 +26,8 @@ public:
     void stop();
 
     // session persistence
-    QJsonObject saveState();
-    void loadState(QJsonObject);
+    //QJsonObject saveState();
+    //void loadState(QJsonObject);
 
 signals:
     void micDataReady(const QByteArray &pcm);

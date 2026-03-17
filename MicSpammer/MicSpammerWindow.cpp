@@ -1,27 +1,10 @@
-//
-// Created by Andrei on 4/29/2025.
-//
-#include "MicSpammerWindow.h"
 
-struct Profile {
-    QString _name;
-    QString micDeviceID;
-    QString monitorDeviceID;
-    QString outputDeviceID;
-    int micVolume;
-    int monitorVolume;
-    int sendVolume;
-    QString rootFolder;
-    QString selectedFile;
-    QMap<int, QString> numpadMappings; // key → file path
-    QRect windowGeometry;
-};
+#include "MicSpammerWindow.h"
 
 MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     : QMainWindow(parent),  _window_x(800),_window_y(500),
         audioPlayer(AudioPlayer::getInstance()),
-        micCapture(MicCapture::getInstance()),
-        profileManager(ProfileManager::getInstance()) {
+        micCapture(MicCapture::getInstance()) {
 
 
     setFocusPolicy(Qt::StrongFocus);
@@ -73,11 +56,11 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     sendComboBox = new QComboBox(this);
 
     micComboBox->addItem("--None--", QVariant("None"));
-    micComboBox->setCurrentIndex(-1);
+    micComboBox->setCurrentIndex(0);
     monitorComboBox->addItem("--None--", QVariant("None"));
-    monitorComboBox->setCurrentIndex(-1);
+    monitorComboBox->setCurrentIndex(0);
     sendComboBox->addItem("--None--", QVariant("None"));
-    sendComboBox->setCurrentIndex(-1);
+    sendComboBox->setCurrentIndex(0);
 
     deviceList = WasapiManager::getInstance().getDevices();
     for (size_t i = 0; i < deviceList.size(); i++) {
@@ -152,6 +135,9 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
     mainContent_HLayout  = new QHBoxLayout(this);
     //create left hand browser
     browser = new FileBrowserWidget(this);
+
+    browser->setRootDirectory(QDir::homePath());
+
     // create right hand numpad
     numpad = new NumpadWidget(this);
 
@@ -212,7 +198,7 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent)
             this, &MicSpammerWindow::onSendDeviceChanged);
 
 
-    // TODO profiles
+    // TODO check for last profile
 
     monitorVolumeSlider->setValue(80);
     sendVolumeSlider->setValue(80);
@@ -278,9 +264,54 @@ void MicSpammerWindow::onLoadProfile() {
     );
 
     if (!fileName.isEmpty()) {
-        profileManager.loadProfile(fileName, micCapture, audioPlayer, *browser, *numpad, frameGeometry());
+
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) return;
+
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+        if (doc.isNull()) return;
+
+        // load states for browser and numpad widgets
+        QJsonObject root = doc.object();
+        browser->loadState(root["browser"].toObject());
+        numpad->loadState(root["numpad"].toObject());
+
+        // load state for the window size
+        QJsonObject winObj = root["window"].toObject();
+        QSize winSize(winObj["w"].toInt(),
+                   winObj["h"].toInt());
+        resize(winSize.width(), winSize.height());
+
+        // load states for the devices and volumes
+        QJsonObject devicesObj = root["devices"].toObject();
+
+        auto audioDevices = WasapiManager::getInstance().getDevices();
+
+        // mic device
+        QString micDeviceName = devicesObj["mic-device"].toString();
+        micCapture.setInputDevice(micDeviceName);
+        micComboBox->setCurrentIndex(micComboBox->findData(micDeviceName));
+
+        //monitor device
+        QString monitorDeviceName = devicesObj["monitoring-device"].toString();
+        if ()
+        audioPlayer.setMonitorDevice(monitorDeviceName);
+        monitorComboBox->setCurrentIndex(monitorComboBox->findData(monitorDeviceName));
+
+        //output device
+        QString outputDeviceName = devicesObj["output-device"].toString();
+        micCapture.setOutputDevice(devicesObj["output-device"].toString());
+        audioPlayer.setOutputDevice(devicesObj["output-device"].toString());
+        sendComboBox->setCurrentIndex(sendComboBox->findData(outputDeviceName));
+
+        QJsonObject volumeObj = root["volume"].toObject();
+        micVolumeSlider->setValue(volumeObj["mic-volume"].toInt());
+        monitorVolumeSlider->setValue(volumeObj["monitor-volume"].toInt());
+        sendVolumeSlider->setValue(volumeObj["output-volume"].toInt());
+
         profileLabel->setText("Profile: " + QFileInfo(fileName).baseName());
         currentProfilePath = fileName;
+
     }
 }
 
@@ -301,12 +332,40 @@ void MicSpammerWindow::onSaveProfile() {
                 QMessageBox::Yes | QMessageBox::No
             );
 
-            if (reply != QMessageBox::Yes) {
+            if (reply == QMessageBox::No) {
                 return; // user cancelled overwrite
             }
         }
 
-        profileManager.saveProfile(fileName, micCapture, audioPlayer, *browser, *numpad, frameGeometry());
+        // save states for browser and numpad widgets
+        QJsonObject root;
+        root["browser"] = browser->saveState();
+        root["numpad"] = numpad->saveState();
+
+        // save state for the window size
+        root["window"] = QJsonObject {
+            {"w", window()->size().width()},
+            {"h", window()->size().height()}
+        };
+        // save states for the devices and volumes
+        root["devices"] = QJsonObject {
+            {"mic-device", micComboBox->itemData(micComboBox->currentIndex()).toString()},
+            {"monitoring-device", monitorComboBox->itemData(monitorComboBox->currentIndex()).toString()},
+            {"output-device", sendComboBox->itemData(sendComboBox->currentIndex()).toString()},
+        };
+        root["volume"] = QJsonObject {
+            {"mic-volume", micVolumeSlider->value()},
+            {"monitor-volume", monitorVolumeSlider->value()},
+            {"output-volume", sendVolumeSlider->value()}
+        };
+
+        if (QDir().mkpath("saves")) {
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(QJsonDocument(root).toJson());
+            }
+        } else {
+            qDebug() << "Error Save Profile: failed to make /saves folder" ;
+        }
         profileLabel->setText("Profile: " + QFileInfo(fileName).baseName());
         currentProfilePath = fileName;
     }
@@ -344,15 +403,12 @@ void MicSpammerWindow::onDeleteProfile() {
 }
 
 void MicSpammerWindow::onReset() {
-    if (currentProfilePath.isEmpty()) {
-        QMessageBox::information(this,"Reset","No profile currently loaded");
-        return;
-    }
+
     QMessageBox::StandardButton reply = QMessageBox::question(
         this,
         "Reset Profile",
         "Resetting will clear all settings. Do you want to save the current profile first?",
-        QMessageBox::Yes | QMessageBox::Cancel
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel
     );
 
     if (reply == QMessageBox::Cancel) return;
@@ -367,6 +423,34 @@ void MicSpammerWindow::onReset() {
 }
 
 void MicSpammerWindow::resetProfileSettings() {
+
+    // Reset devices
+    micComboBox->setCurrentIndex(0);
+    monitorComboBox->setCurrentIndex(0);
+    sendComboBox->setCurrentIndex(0);
+
+    micCapture.setInputDevice("None");
+    micCapture.setOutputDevice("None");
+    audioPlayer.setMonitorDevice("None");
+    audioPlayer.setOutputDevice("None");
+
+    // Reset volume sliders
+    micVolumeSlider->setValue(80);
+    monitorVolumeSlider->setValue(80);
+    sendVolumeSlider->setValue(80);
+
+    // Reset file browser
+    browser->setRootDirectory(QDir::homePath());
+    selectedFilePath.clear();
+
+    // Reset numpad mappings and page
+    numpad->resetMappings();
+    setGeometry(100, 100, _window_x, _window_y);
+
+    // Clear profile label
+    profileLabel->setText("Profile: None");
+
+    qDebug() << "Profile settings reset to defaults.";
 }
 
 void MicSpammerWindow::onMicDeviceChanged(int index) {

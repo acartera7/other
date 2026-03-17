@@ -1,6 +1,4 @@
-//
-// Created by Andrei on 5/4/2025.
-//
+
 #pragma once
 #include <QWidget>
 #include <QFile>
@@ -50,8 +48,8 @@ public:
     void setOutputDevice(QString id);
 
     // session persistence
-    QJsonObject saveState();
-    void loadState(QJsonObject);
+    //QJsonObject saveState();
+    //void loadState(QJsonObject);
 
 private slots:
     void onInstanceFinished(SoundInstance* instance);

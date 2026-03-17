@@ -1,6 +1,4 @@
-//
-// Created by Andrei on 5/4/2025.
-//
+
 #pragma once
 #ifndef FILEBROWSERWIDGET_H
 #define FILEBROWSERWIDGET_H
@@ -35,6 +33,8 @@ protected:
     //void focusOutEvent(QFocusEvent *event) override;
 
 private:
+    void listFolder(const QModelIndex &index);
+
     QFileSystemModel *treeModel, *dirModel;
     QTreeView *treeView;
     QListView *listView;

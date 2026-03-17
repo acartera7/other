@@ -1,15 +1,15 @@
-//
-// Created by Victus on 11/15/2025.
-//
+
 
 #include "NumpadWidget.h"
+
+#include <map>
 
 NumpadWidget::NumpadWidget(QWidget *parent) : QWidget(parent) {
 
     mainLayout = new QVBoxLayout(this);
 
     // Page indicator bar
-    indicatorLayout = new QHBoxLayout();
+    indicatorLayout = new QHBoxLayout(this);
     prevPageButton = new QPushButton(this);
     nextPageButton = new QPushButton(this);
     QPixmap leftArrow(":/icons/assets/long_arrow_left_icon.png");
@@ -111,6 +111,8 @@ void NumpadWidget::setMapping(int numpadKey, const QString &filePath) {
         buttons[numpadKey]->setText(QString::number(numpadKey) + "\n" + item.customLabel);
     }
 }
+
+
 
 QString NumpadWidget::getMapping(int numpadKey) const {
     if (pageMappings[currentPage].contains(numpadKey)) {
@@ -243,10 +245,70 @@ void NumpadWidget::animateButtonPress(int key) {
     }
 }
 
-QJsonObject NumpadWidget::saveState() {
-    QJsonObject result;
-    return result;
+void NumpadWidget::resetMappings() {
+
+    AudioPlayer::getInstance().stopAll();
+
+    for (auto &map : pageMappings) {
+        map.clear();
+    }
+
+    for (int i = 1; i <= buttons.size(); ++i) {
+        if (buttons[i]) {
+            buttons[i]->setText(QString::number(i + 1));
+        }
+    }
+
+    currentPage = 1;
+    loadPage(currentPage);
+    emit pageChanged(currentPage);
+
 }
 
-void NumpadWidget::loadState(QJsonObject) {
+QJsonObject NumpadWidget::saveState() {
+    QJsonObject state;
+    state["currentPage"] = currentPage;
+
+    QJsonArray pagesArray;
+    for (const auto &pageMap : pageMappings) {
+        QJsonObject pageObj;
+        for (auto it = pageMap.constBegin(); it != pageMap.constEnd(); ++it) {
+            pageObj[QString::number(it.key())] = it.value().toJson();
+        }
+        pagesArray.append(pageObj);
+    }
+    state["pages"] = pagesArray;
+
+    return state;
+}
+
+void NumpadWidget::loadState(QJsonObject state) {
+    if (state.contains("currentPage")) {
+        currentPage = state["currentPage"].toInt();
+    }
+
+    if (state.contains("pages")) {
+        QJsonArray pagesArray = state["pages"].toArray();
+        pageMappings.clear();
+
+        for (int i = 0; i < pagesArray.size(); ++i) {
+            QJsonObject pageObj = pagesArray[i].toObject();
+            QMap<int, NumpadItem> btnMap;
+
+            for (auto it = pageObj.begin(); it != pageObj.end(); ++it) {
+                NumpadItem item;
+                int btnKey = it.key().toInt();
+                item.fromJson(it.value().toObject());
+                btnMap[btnKey] = item;
+                if (buttons.contains(btnKey)) {
+                    buttons[btnKey]->setText(QString::number(btnKey) + "\n" + item.customLabel);
+                }
+
+            }
+            pageMappings[i+1] = btnMap;
+
+        }
+    }
+
+    loadPage(currentPage);
 }
