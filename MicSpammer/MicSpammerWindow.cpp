@@ -21,8 +21,10 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     // profile toolbar for loading profiles
     profile_toolbar = new QToolBar(this);
 
+    openFolderButton = new QPushButton("Open Folder", this);
     profileLabel = new QLabel("Profile: None", this);
-    profileLabel->setFixedWidth(100);
+    profileLabel->setFixedWidth(150);
+    profileLabel->setMargin(15);
     loadProfileButton = new QPushButton("Load", this);
     saveProfileButton = new QPushButton("Save", this);
     deleteProfileButton = new QPushButton("Delete", this);
@@ -32,8 +34,9 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     profileSpacer = new QWidget(this);
     profileSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    profile_toolbar->addWidget(profileLabel);
+    profile_toolbar->addWidget(openFolderButton);
     profile_toolbar->addWidget(profileSpacer);
+    profile_toolbar->addWidget(profileLabel);
     profile_toolbar->addWidget(loadProfileButton);
     profile_toolbar->addWidget(saveProfileButton);
     profile_toolbar->addWidget(resetButton);
@@ -45,7 +48,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     playButton = new QPushButton("Play", this);
     stopButton = new QPushButton("Stop", this);
 
-    openFolderButton = new QPushButton("Open Folder", this);
 
     // Spacer Widget (Flexible Space)
     toolbarSpacer = new QWidget(this);
@@ -119,7 +121,6 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     toolbar_rightContainer->setLayout(toolbar_rightHLayout);
 
     // Add widgets to toolbar
-    toolbar->addWidget(openFolderButton);
     toolbar->addWidget(toolbar_devicesContainer);
     toolbar->addWidget(toolbarSpacer);
     toolbar->addWidget(toolbar_rightContainer);

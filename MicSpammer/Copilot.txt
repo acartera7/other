@@ -1,3 +1,5 @@
+mute checkboxes
+
 make a checkbox for previewing files to be played thorugh output or not
 
 add alt+press to return to default value
