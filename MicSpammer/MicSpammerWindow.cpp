@@ -23,8 +23,8 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
 
     openFolderButton = new QPushButton("Open Folder", this);
     profileLabel = new QLabel("Profile: None", this);
-    profileLabel->setFixedWidth(150);
     profileLabel->setMargin(15);
+    profileLabel->setAlignment(Qt::AlignRight);
     loadProfileButton = new QPushButton("Load", this);
     saveProfileButton = new QPushButton("Save", this);
     deleteProfileButton = new QPushButton("Delete", this);
