@@ -19,7 +19,10 @@ SoundInstance::SoundInstance(const QString& path,
         outputVolume(oVolume){
     // Initialize monitor audio client in shared mode
     HRESULT hr;
-    if (monitorDevice) {
+    DWORD mon, out;
+    monitorDevice->GetState(&mon);
+    outputDevice->GetState(&out);
+    if (mon != DEVICE_STATE_ACTIVE) {
 
         hr = monitorDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&monitorAudioClient);
         if (FAILED(hr) || !monitorAudioClient) {
@@ -35,7 +38,7 @@ SoundInstance::SoundInstance(const QString& path,
         }
     }
 
-    if (outputDevice) {
+    if (out != DEVICE_STATE_ACTIVE) {
         // Initialize output audio client in shared mode
         hr = outputDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&outputAudioClient);
         if (FAILED(hr) || !outputAudioClient) {

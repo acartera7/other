@@ -18,13 +18,16 @@ AudioPlayer::~AudioPlayer() {
 void AudioPlayer::play(const QString& filePath) {
 
     //qDebug() << "AudioPlayer: Play file:" << filePath;
-    if (!monitorDevice && !outputDevice)  {
-        qDebug() << "AudioPlayer: Cannot play file, no monitor device or output device is set";
+    DWORD mon, out;
+    monitorDevice->GetState(&mon);
+    outputDevice->GetState(&out);
+    if (mon != DEVICE_STATE_ACTIVE && out != DEVICE_STATE_ACTIVE)  {
+        qDebug() << "AudioPlayer: Cannot play file, no monitor device or output device is valid";
         return;
     }
 
-    if (!monitorDevice) qDebug() << "AudioPlayer: Warning, no monitor device is set";
-    if (!outputDevice) qDebug() << "AudioPlayer: Warning, no output device is set";
+    if (mon != DEVICE_STATE_ACTIVE) qDebug() << "AudioPlayer: Warning, no monitor device is valid";
+    if (out != DEVICE_STATE_ACTIVE) qDebug() << "AudioPlayer: Warning, no output device is vaild";
 
     auto* instance = new SoundInstance(filePath, monitorDevice, outputDevice, _monitorVolume, _outputVolume, this);
     connect(instance, &SoundInstance::finished, this, &AudioPlayer::onInstanceFinished);
