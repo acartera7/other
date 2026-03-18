@@ -20,37 +20,41 @@ SoundInstance::SoundInstance(const QString& path,
     // Initialize monitor audio client in shared mode
     HRESULT hr;
     DWORD mon, out;
-    monitorDevice->GetState(&mon);
-    outputDevice->GetState(&out);
-    if (mon != DEVICE_STATE_ACTIVE) {
+    if ( monitorDevice) {
+        monitorDevice->GetState(&mon);
+        if (mon != DEVICE_STATE_ACTIVE) {
 
-        hr = monitorDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&monitorAudioClient);
-        if (FAILED(hr) || !monitorAudioClient) {
-            QFileInfo f(filePath);
-            qDebug() << QString("Failed to activate audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
-            return;
-        }
+            hr = monitorDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&monitorAudioClient);
+            if (FAILED(hr) || !monitorAudioClient) {
+                QFileInfo f(filePath);
+                qDebug() << QString("Failed to activate audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+                return;
+            }
 
-        hr = initMonitorAudioClient();
-        if (FAILED(hr)) {
-            QFileInfo f(filePath);
-            qDebug() << QString("Failed to initialize monitor audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+            hr = initMonitorAudioClient();
+            if (FAILED(hr)) {
+                QFileInfo f(filePath);
+                qDebug() << QString("Failed to initialize monitor audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+            }
         }
     }
+    if (outputDevice) {
+        outputDevice->GetState(&out);
+        if (out != DEVICE_STATE_ACTIVE) {
 
-    if (out != DEVICE_STATE_ACTIVE) {
-        // Initialize output audio client in shared mode
-        hr = outputDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&outputAudioClient);
-        if (FAILED(hr) || !outputAudioClient) {
-            QFileInfo f(filePath);
-            qDebug() << QString("Failed to activate audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
-            return;
-        }
+            // Initialize output audio client in shared mode
+            hr = outputDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr,(void**)&outputAudioClient);
+            if (FAILED(hr) || !outputAudioClient) {
+                QFileInfo f(filePath);
+                qDebug() << QString("Failed to activate audio client for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+                return;
+            }
 
-        hr = initOutputAudioClient();
-        if (FAILED(hr)) {
-            QFileInfo f(filePath);
-            qDebug() << QString("Failed to initialize output audio client: for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+            hr = initOutputAudioClient();
+            if (FAILED(hr)) {
+                QFileInfo f(filePath);
+                qDebug() << QString("Failed to initialize output audio client: for sound instance: %1").arg(f.completeBaseName()+"."+f.suffix());
+            }
         }
     }
 

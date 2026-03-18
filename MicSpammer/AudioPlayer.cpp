@@ -17,19 +17,39 @@ AudioPlayer::~AudioPlayer() {
 
 void AudioPlayer::play(const QString& filePath) {
 
+    DWORD monState = 0;
+    DWORD outState = 0;
+
+    const bool hasMonitor = (monitorDevice != nullptr);
+    const bool hasOutput  = (outputDevice  != nullptr);
+
+    const bool monitorActive = hasMonitor &&
+        SUCCEEDED(monitorDevice->GetState(&monState)) &&
+        (monState == DEVICE_STATE_ACTIVE);
+
+    const bool outputActive = hasOutput &&
+        SUCCEEDED(outputDevice->GetState(&outState)) &&
+        (outState == DEVICE_STATE_ACTIVE);
+
     //qDebug() << "AudioPlayer: Play file:" << filePath;
-    DWORD mon, out;
-    monitorDevice->GetState(&mon);
-    outputDevice->GetState(&out);
-    if (mon != DEVICE_STATE_ACTIVE && out != DEVICE_STATE_ACTIVE)  {
+    if (!monitorActive && !outputActive) {
         qDebug() << "AudioPlayer: Cannot play file, no monitor device or output device is valid";
         return;
     }
+    if (!monitorActive)
+        qDebug() << "AudioPlayer: Warning, monitor device is not active";
 
-    if (mon != DEVICE_STATE_ACTIVE) qDebug() << "AudioPlayer: Warning, no monitor device is valid";
-    if (out != DEVICE_STATE_ACTIVE) qDebug() << "AudioPlayer: Warning, no output device is vaild";
+    if (!outputActive)
+        qDebug() << "AudioPlayer: Warning, output device is not active";
 
-    auto* instance = new SoundInstance(filePath, monitorDevice, outputDevice, _monitorVolume, _outputVolume, this);
+    auto* instance = new SoundInstance(
+        filePath,
+        monitorDevice,
+        outputDevice,
+        _monitorVolume,
+        _outputVolume,
+        this
+    );
     connect(instance, &SoundInstance::finished, this, &AudioPlayer::onInstanceFinished);
 
     activeInstances.push_back(instance);
