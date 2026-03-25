@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include <QJsonObject>
 #include <QMessageBox>
+#include <QCheckBox>
 
 #include "FileBrowserWidget.h"
 #include "NumpadWidget.h"
@@ -73,6 +74,7 @@ private:
     QWidget *toolbarSpacer, *profileSpacer, *toolbar_rightContainer, *toolbar_devicesContainer, *mainContent_container;
     QHBoxLayout *toolbar_rightHLayout, *mainContent_HLayout;
     QSlider *micVolumeSlider, *monitorVolumeSlider, *sendVolumeSlider;
+    QCheckBox *micMuteCheckBox, *monitorMuteCheckBox, *sendMuteCheckBox;
     QSplitter *mainContent_splitter;
 
     QLabel* micDeviceLabel, *monitorDeviceLabel, *sendDeviceLabel, *profileLabel;

@@ -76,18 +76,66 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
         }
     }
 
-    micVolumeSlider = new QSlider(Qt::Horizontal, this);
-    monitorVolumeSlider = new QSlider(Qt::Horizontal, this);
     sendVolumeSlider = new QSlider(Qt::Horizontal, this);
     sendVolumeSlider->setRange(0, 100);
     sendVolumeSlider->setFixedWidth(100);
     sendVolumeSlider->setObjectName("SendVS");
+    monitorVolumeSlider = new QSlider(Qt::Horizontal, this);
     monitorVolumeSlider->setRange(0, 100);
     monitorVolumeSlider->setFixedWidth(100);
     monitorVolumeSlider->setObjectName("MonitorVS");
+    micVolumeSlider = new QSlider(Qt::Horizontal, this);
     micVolumeSlider->setRange(0, 100);
     micVolumeSlider->setFixedWidth(100);
     micVolumeSlider->setObjectName("MicVS");
+
+    micMuteCheckBox = new QCheckBox(this);
+    micMuteCheckBox->setCursor(Qt::PointingHandCursor);
+    micMuteCheckBox->setText("");
+    micMuteCheckBox->setStyleSheet(R"(
+        QCheckBox::indicator {
+            width: 16px;
+            height: 16px;
+        }
+        QCheckBox::indicator:unchecked {
+            image: url(:/icons/assets/microphone.png);
+        }
+        QCheckBox::indicator:checked {
+            image: url(:/icons/assets/microphone-mute.png);
+        }
+    )");
+
+    monitorMuteCheckBox = new QCheckBox(this);
+    monitorMuteCheckBox->setCursor(Qt::PointingHandCursor);
+    monitorMuteCheckBox->setText("");
+    monitorMuteCheckBox->setStyleSheet(R"(
+        QCheckBox::indicator {
+            width: 16px;
+            height: 16px;
+        }
+        QCheckBox::indicator:unchecked {
+            image: url(:/icons/assets/unmute.png);
+        }
+        QCheckBox::indicator:checked {
+            image: url(:/icons/assets/mute.png);
+        }
+    )");
+
+    sendMuteCheckBox = new QCheckBox(this);
+    sendMuteCheckBox->setCursor(Qt::PointingHandCursor);
+    sendMuteCheckBox->setText("");
+    sendMuteCheckBox->setStyleSheet(R"(
+        QCheckBox::indicator {
+            width: 16px;
+            height: 16px;
+        }
+        QCheckBox::indicator:unchecked {
+            image: url(:/icons/assets/unmute.png);
+        }
+        QCheckBox::indicator:checked {
+            image: url(:/icons/assets/mute.png);
+        }
+    )");
 
     toolbar_devicesGridLayout = new QGridLayout(this);
 
@@ -98,14 +146,18 @@ MicSpammerWindow::MicSpammerWindow(QWidget *parent) :
     toolbar_devicesGridLayout->addWidget(micDeviceLabel, 0,0);
     toolbar_devicesGridLayout->addWidget(micComboBox, 0,1);
     toolbar_devicesGridLayout->addWidget(micVolumeSlider, 0,2);
+    toolbar_devicesGridLayout->addWidget(micMuteCheckBox, 0, 3);
 
     toolbar_devicesGridLayout->addWidget(monitorDeviceLabel, 1,0);
     toolbar_devicesGridLayout->addWidget(monitorComboBox, 1,1);
     toolbar_devicesGridLayout->addWidget(monitorVolumeSlider, 1,2);
+    toolbar_devicesGridLayout->addWidget(monitorMuteCheckBox, 1, 3);
 
     toolbar_devicesGridLayout->addWidget(sendDeviceLabel, 2,0);
     toolbar_devicesGridLayout->addWidget(sendComboBox, 2,1);
     toolbar_devicesGridLayout->addWidget(sendVolumeSlider, 2,2);
+    toolbar_devicesGridLayout->addWidget(sendMuteCheckBox, 2, 3);
+
 
     //devices left part devices drop down container
     toolbar_devicesContainer = new QWidget(this);

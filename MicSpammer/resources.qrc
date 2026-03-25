@@ -2,5 +2,9 @@
     <qresource prefix="/icons">
         <file>assets/long_arrow_left_icon.png</file>
         <file>assets/long_arrow_right_icon.png</file>
+        <file>assets/microphone.png</file>
+        <file>assets/microphone-mute.png</file>
+        <file>assets/mute.png</file>
+        <file>assets/unmute.png</file>
     </qresource>
 </RCC>
