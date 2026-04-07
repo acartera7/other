@@ -20,3 +20,5 @@
 #CMake Builds
 */cmake-build-debug/*
 */.idea/*
+
+.vs
