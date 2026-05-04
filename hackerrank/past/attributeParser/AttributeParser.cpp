@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <string>
 #include <limits>
 #include <unordered_map>
 
@@ -58,8 +58,8 @@ void answerQueries(vector<Node*>& v) {
 
     auto v_it = find_if(v.begin(),v.end(),[outer](Node* x){return outer == x->name;});
     if(v_it == v.end()) {
-      cerr << "Not found!" << endl;
-      continue;; 
+      cout << "Not Found!" << endl;
+      continue;
     }  
       
     curr_node = *v_it;
@@ -80,6 +80,11 @@ void answerQueries(vector<Node*>& v) {
         if ((*child_it)->name == next) {  
           curr_node = *child_it;
         }
+      } else {
+        // attempting to access a non existant object
+        cout << "Not Found!" << endl;
+        curr_node = nullptr;
+        break;
       }
               
     } 
@@ -145,28 +150,34 @@ vector<Node*> readHRML() {
           prev->children.push_back(curr_node);
         }
 
-        //get name of tag
-        curr_node->name = line.substr(1,line.find(" ")-1); 
-        line = line.erase(0,line.find(" ")+1);
-        
-        //remove spaces
-        line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
-        //remove last ">"
-        line.erase(line.size()-1);
-        
-        string key, value;
-        while (line.find('=') != string::npos){
-          //find where next equals is
-          key = line.substr(0, line.find('='));
-          line.erase(0, line.find('=')+1);
-
-          //get whatever is in the " "
-          string temp = line.substr(0, line.find('\"',1)); // find second closing quote 
-          value = temp.erase(0,1);
-          curr_node->attributes.insert({key,value});
-          line.erase(0,line.find('\"',1)+1);
+        if(line.find(" ") != string::npos) { // if there are attributes
+          
+          //get name of tag
+          curr_node->name = line.substr(1,line.find(" ")-1); 
+          line = line.erase(0,line.find(" ")+1);
+          
+          //remove spaces
+          line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
+          //remove last ">"
+          line.erase(line.size()-1);
+          
+          string key, value;
+          while (line.find('=') != string::npos){
+            //find where next equals is
+            key = line.substr(0, line.find('='));
+            line.erase(0, line.find('=')+1);
+            
+            //get whatever is in the " "
+            string temp = line.substr(0, line.find('\"',1)); // find second closing quote 
+            value = temp.erase(0,1);
+            curr_node->attributes.insert({key,value});
+            line.erase(0,line.find('\"',1)+1);
+          }
+          
+        } else {
+          //remove last ">"
+          curr_node->name = line.substr(1,line.find(">")-1); 
         }
-
       } 
     }
     return result;

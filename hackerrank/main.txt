@@ -1,0 +1,23 @@
+int main(void) {
+  string line;
+  stringstream ss;
+  //cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  getline(cin,line);
+  while(getline(cin, line)) {
+  }
+    ss.clear();
+
+  return 0;
+}
+
+
+static inline std::string &ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
+    return s;
+}
+
+static inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {return !std::isspace(c);}).base(), s.end());
+    return s;
+}
+

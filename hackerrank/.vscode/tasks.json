@@ -6,10 +6,11 @@
             "type": "shell",
             "command": "g++",
             "args": [
+                "-Wall",
                 "-g",
-                "AttributeParser.cpp",
                 "-o",
-                "attrib.exe"
+                "missing.exe",
+                "missingPositiveInt.cpp",
             ],
             "group": {
                 "kind": "build",
