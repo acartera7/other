@@ -9,8 +9,8 @@
                 "-Wall",
                 "-g",
                 "-o",
-                "missing.exe",
-                "missingPositiveInt.cpp",
+                "selection.exe",
+                "selectionSort.cpp",
             ],
             "group": {
                 "kind": "build",

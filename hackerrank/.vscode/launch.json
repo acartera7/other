@@ -8,7 +8,7 @@
       "name": "Launch",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/missing.exe",
+      "program": "${workspaceFolder}/selection.exe",
       "args": ["<", "input.txt"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
