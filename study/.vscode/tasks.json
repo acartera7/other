@@ -9,8 +9,8 @@
                 "-Wall",
                 "-g",
                 "-o",
-                "selection.exe",
-                "selectionSort.cpp",
+                "wtf.exe",
+                "wtf.cpp",
             ],
             "group": {
                 "kind": "build",
