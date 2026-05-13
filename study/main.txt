@@ -10,6 +10,10 @@ int main(void) {
   return 0;
 }
 
+template<typename T>
+int signum(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 static inline std::string &ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
@@ -19,5 +23,11 @@ static inline std::string &ltrim(std::string &s) {
 static inline std::string &rtrim(std::string &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {return !std::isspace(c);}).base(), s.end());
     return s;
+}
+
+template<typename... Args>
+void ts_print(Args&&... args) {
+    std::lock_guard<std::mutex> lock(t_print_mtx);
+    (std::cout << ... << args) << std::endl;
 }
 
