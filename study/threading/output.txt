@@ -1,0 +1,113 @@
+
+C:\Users\Victus\Documents\GitHub\other\study\threading>thread.exe
+Philosopher: 0 thinks for 340
+Philosopher: 2 thinks for 377
+Philosopher: 3 thinks for 375
+Philosopher: 1 thinks for 387
+Philosopher: 4 thinks for 301
+Philosopher: 4 picks up right fork: 4
+Philosopher: 4 picks up left fork: 0
+Philosopher: 4 eats for 223 - 4 bites left
+Philosopher: 3 picks up right fork: 3
+Philosopher: 3 puts down right fork: 3
+Philosopher: 3 waits on left fork: 4
+Philosopher: 2 picks up right fork: 2
+Philosopher: 1 picks up right fork: 1
+Philosopher: 2 picks up left fork: 3
+Philosopher: 1 puts down right fork: 1
+Philosopher: 2 eats for 225 - 4 bites left
+Philosopher: 1 waits on left fork: 2
+Philosopher: 3 thinks for 391
+Philosopher: 1 thinks for 362
+Philosopher: 4 puts down left fork: 0
+Philosopher: 4 puts down right fork: 4
+Philosopher: 4 thinks for 365
+Philosopher: 0 picks up right fork: 0
+Philosopher: 0 picks up left fork: 1
+Philosopher: 0 eats for 225 - 4 bites left
+Philosopher: 2 puts down left fork: 3
+Philosopher: 2 puts down right fork: 2
+Philosopher: 2 thinks for 346
+Philosopher: 0 puts down left fork: 1
+Philosopher: 0 puts down right fork: 0
+Philosopher: 0 thinks for 304
+Philosopher: 1 picks up right fork: 1
+Philosopher: 1 picks up left fork: 2
+Philosopher: 1 eats for 276 - 4 bites left
+Philosopher: 3 picks up right fork: 3
+Philosopher: 3 picks up left fork: 4
+Philosopher: 3 eats for 227 - 4 bites left
+Philosopher: 0 picks up right fork: 0
+Philosopher: 0 puts down right fork: 0
+Philosopher: 0 waits on left fork: 1
+Philosopher: 3 puts down left fork: 4
+Philosopher: 3 puts down right fork: 3
+Philosopher: 4 picks up right fork: 4
+Philosopher: 3 thinks for 316
+Philosopher: 4 picks up left fork: 0
+Philosopher: 4 eats for 213 - 2 bites left
+Philosopher: 1 puts down left fork: 2
+Philosopher: 1 puts down right fork: 1
+Philosopher: 2 picks up right fork: 2
+Philosopher: 2 picks up left fork: 3
+Philosopher: 2 eats for 230 - 2 bites left
+Philosopher: 1 thinks for 349
+Philosopher: 0 thinks for 321
+Philosopher: 4 puts down left fork: 0
+Philosopher: 4 puts down right fork: 4
+Philosopher: 4 thinks for 356
+Philosopher: 2 puts down left fork: 3
+Philosopher: 2 puts down right fork: 2
+Philosopher: 2 thinks for 347
+Philosopher: 3 picks up right fork: 3
+Philosopher: 3 picks up left fork: 4
+Philosopher: 3 eats for 280 - 2 bites left
+Philosopher: 1 picks up right fork: 1
+Philosopher: 1 picks up left fork: 2
+Philosopher: 1 eats for 265 - 2 bites left
+Philosopher: 0 picks up right fork: 0
+Philosopher: 0 puts down right fork: 0
+Philosopher: 0 waits on left fork: 1
+Philosopher: 0 thinks for 399
+Philosopher: 3 puts down left fork: 4
+Philosopher: 3 puts down right fork: 3
+Philosopher: 4 picks up right fork: 4
+Philosopher: 4 picks up left fork: 0
+Philosopher: 3 thinks for 379
+Philosopher: 4 eats for 225 - 0 bites left
+Philosopher: 1 puts down left fork: 2
+Philosopher: 1 puts down right fork: 1
+Philosopher: 2 picks up right fork: 2
+Philosopher: 1 thinks for 353
+Philosopher: 2 picks up left fork: 3
+Philosopher: 2 eats for 244 - 0 bites left
+Philosopher: 4 puts down left fork: 0
+Philosopher: 4 puts down right fork: 4
+Philosopher: 4 is satisified with the meal, proceeds to praise Aphrodite...
+Philosopher: 2 puts down left fork: 3
+Philosopher: 2 puts down right fork: 2
+Philosopher: 2 is satisified with the meal, proceeds to praise Aphrodite...
+Philosopher: 0 picks up right fork: 0
+Philosopher: 0 picks up left fork: 1
+Philosopher: 0 eats for 270 - 2 bites left
+Philosopher: 3 picks up right fork: 3
+Philosopher: 3 picks up left fork: 4
+Philosopher: 3 eats for 273 - 0 bites left
+Philosopher: 0 puts down left fork: 1
+Philosopher: 0 puts down right fork: 0
+Philosopher: 1 picks up right fork: 1
+Philosopher: 1 picks up left fork: 2
+Philosopher: 0 thinks for 332
+Philosopher: 1 eats for 214 - 0 bites left
+Philosopher: 3 puts down left fork: 4
+Philosopher: 3 puts down right fork: 3
+Philosopher: 3 is satisified with the meal, proceeds to praise Aphrodite...
+Philosopher: 1 puts down left fork: 2
+Philosopher: 1 puts down right fork: 1
+Philosopher: 1 is satisified with the meal, proceeds to praise Aphrodite...
+Philosopher: 0 picks up right fork: 0
+Philosopher: 0 picks up left fork: 1
+Philosopher: 0 eats for 275 - 0 bites left
+Philosopher: 0 puts down left fork: 1
+Philosopher: 0 puts down right fork: 0
+Philosopher: 0 is satisified with the meal, proceeds to praise Aphrodite...
