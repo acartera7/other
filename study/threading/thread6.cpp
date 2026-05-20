@@ -5,6 +5,10 @@
 #include <vector>
 #include <chrono>
 
+/*
+Exercise 6 — Launch Threads to Compute Factorials
+*/
+
 void print_vector(const std::vector<uint64_t>& v) {
   for(const auto& e : v) {
     std::cout << e << " ";

@@ -6,6 +6,9 @@
 #include <vector>
 #include <chrono>
 
+/*
+Exercise 7 — Synchronize Access to a Shared Variable Using std::mutex
+*/
 
 void t_func(long& num, std::mutex& mtx) {
   for(unsigned i=0; i<100000; ++i){

@@ -4,6 +4,10 @@
 #include <syncstream>
 #include <vector>
 
+/*
+Exercise 2 — Multiple Threads Printing Their IDs
+Goal: Understand how threads run independently and how to retrieve their IDs.
+*/
 
 void t_printInfo(std::string payload) {
   

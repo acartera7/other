@@ -6,6 +6,9 @@
 #include <vector>
 #include <chrono>
 
+/*
+Exercise 8 — Demonstrate a Race Condition (No Mutex)
+*/
 
 void t_func(long& num) {
   for(unsigned i=0; i<100000; ++i){

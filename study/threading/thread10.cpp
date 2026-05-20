@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 
+/*
+Exercise 10 — Using std::unique_lock and std::mutex
+*/
 
 void t_func(long& num1, long& num2, std::mutex& mtx) {
   std::unique_lock<std::mutex> ulock(mtx);

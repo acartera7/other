@@ -7,6 +7,10 @@
 #include <chrono>
 #include <numeric>
 
+/*
+Exercise 13 — Compare Single‑Threaded vs Multithreaded Sum Performance
+*/
+
 struct alignas(64) Padded {
   uint64_t value = 0;
 };

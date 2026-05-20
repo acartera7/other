@@ -5,6 +5,10 @@
 #include <iostream>
 #include <vector>
 
+/*
+Exercise 12 — Print Even and Odd Numbers Using Two Threads
+*/
+
 void print_vector(const std::vector<unsigned>& v) {
   for(unsigned i : v) {
     std::cout << i << " ";

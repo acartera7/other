@@ -7,6 +7,18 @@
 #include <chrono>
 #include <syncstream>
 
+/*
+=== Exercise 17 — Dining Philosophers ===
+Write a program that simulates 5 philosophers 
+sitting around a table, each alternating between:
+- thinking
+- picking up two forks
+- eating
+- putting down forks
+
+Each fork is a shared resource represented by a mutex.
+*/
+
 using ms = std::chrono::milliseconds;
 
 const size_t NUM_PHILOSOPHERS = 5;

@@ -5,6 +5,9 @@
 #include <vector>
 #include <chrono>
 
+/*
+Exercise 4 — Join and Detach Threads
+*/
 
 void t_printInfo(std::string id, std::string str) {  
   

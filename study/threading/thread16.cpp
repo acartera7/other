@@ -9,6 +9,10 @@
 #include <syncstream>
 #include <algorithm>
 
+/*
+Exercise 16 - Run multiple asynchronous tasks and wait for results.
+*/
+
 using ms = std::chrono::milliseconds;
 
 std::random_device rd; 

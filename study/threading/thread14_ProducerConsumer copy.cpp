@@ -10,6 +10,11 @@
 #include <atomic>
 #include <syncstream>
 
+/*
+=== Producer–Consumer ===
+Copilot generated solution
+*/
+
 std::mutex t_print_mtx;
 
 template<typename... Args>

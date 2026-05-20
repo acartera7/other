@@ -5,6 +5,9 @@
 #include <vector>
 #include <chrono>
 
+/*
+Exercise 5 — Thread That Computes the Sum of an Array
+*/
 
 void t_sum(size_t n,int* arr, int& sum) {  
   for(size_t i=0; i<n; ++i) {

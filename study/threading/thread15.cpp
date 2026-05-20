@@ -8,6 +8,10 @@
 #include <chrono>
 #include <syncstream>
 
+/*
+Exercise 15 - Use std::async and std::future to get result from a thread.
+*/
+
 using ms = std::chrono::milliseconds;
 
 std::random_device rd; 

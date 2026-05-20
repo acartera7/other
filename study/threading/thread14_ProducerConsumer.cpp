@@ -10,6 +10,20 @@
 #include <atomic>
 #include <syncstream>
 
+/*
+=== Producer–Consumer ===
+This problem is about two threads coordinating over a shared queue:
+- Producer: generates items and pushes them into a queue
+- Consumer: removes items and processes them
+
+The challenge is that:
+- The producer must wait if the queue is full
+- The consumer must wait if the queue is empty
+- Both must avoid data races
+- Both must avoid busy-waiting
+- Both must avoid deadlocks
+*/
+
 std::mutex t_print_mtx;
 
 template<typename... Args>

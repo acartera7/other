@@ -4,6 +4,9 @@
 #include <syncstream>
 #include <vector>
 
+/*
+Exercise 3 — Passing Parameters to a Thread
+*/
 
 void t_printInfo(std::string str, int num) {
   std::osyncstream out(std::cout);

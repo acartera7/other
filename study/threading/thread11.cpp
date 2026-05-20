@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 
+/*
+Exercise 11 — Create a Thread‑Safe Counter Using std::mutex
+*/
+
 class Counter
 {
 private:
