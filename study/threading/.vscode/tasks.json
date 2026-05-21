@@ -11,7 +11,7 @@
                 "-std=c++20",
                 "-o",
                 "thread.exe",
-                "thread17-DiningPhilosophers.cpp",
+                "thread18_ReadersWriters.cpp",
             ],
             "group": {
                 "kind": "build",
