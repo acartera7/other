@@ -1,7 +1,0 @@
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\bin\Debug\GameLeaderboard.exe.config
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\bin\Debug\GameLeaderboard.exe
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\bin\Debug\GameLeaderboard.pdb
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\obj\Debug\GameLeaderboard.csproj.AssemblyReference.cache
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\obj\Debug\GameLeaderboard.csproj.CoreCompileInputs.cache
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\obj\Debug\GameLeaderboard.exe
-C:\Users\Victus\Documents\GitHub\other\GameLeaderboard\GameLeaderboard\obj\Debug\GameLeaderboard.pdb
