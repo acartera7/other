@@ -1,113 +1,208 @@
+Writer (2) waits. Current phase: READ | Writers left: 0
+Reader (4) acquiring read. Active readers: 1 (Max: 3) Readers left: 4
+Reader (4) starts to read
+Reader (1) acquiring read. Active readers: 2 (Max: 3) Readers left: 3
+Reader (1) starts to read
+Writer (0) waits. Current phase: READ | Writers left: 0
+Writer (1) waits. Current phase: READ | Writers left: 0
+Reader (2) acquiring read. Active readers: 3 (Max: 3) Readers left: 2
+Reader (2) starts to read
+Reader (3) waits. Current phase: READ | Active readers: 3 (Max: 3) | Readers left: 2
+Reader (0) waits. Current phase: READ | Active readers: 3 (Max: 3) | Readers left: 2
+Reader (2) reads: Lorem (1/8)
+Reader (4) reads: Lorem (1/8)
+Reader (1) reads: Lorem (1/8)
+Reader (1) reads: ipsum (2/8)
+Reader (2) reads: ipsum (2/8)
+Reader (4) reads: ipsum (2/8)
+Reader (1) reads: dolor (3/8)
+Reader (2) reads: dolor (3/8)
+Reader (4) reads: dolor (3/8)
+Reader (4) reads: sit (4/8)
+Reader (1) reads: sit (4/8)
+Reader (2) reads: sit (4/8)
+Reader (2) reads: amet (5/8)
+Reader (4) reads: amet (5/8)
+Reader (1) reads: amet (5/8)
+Reader (4) reads: consectetur (6/8)
+Reader (2) reads: consectetur (6/8)
+Reader (1) reads: consectetur (6/8)
+Reader (1) reads: adipiscing (7/8)
+Reader (2) reads: adipiscing (7/8)
+Reader (4) reads: adipiscing (7/8)
+Reader (4) reads: elit (8/8)
+Reader (2) reads: elit (8/8)
+Reader (1) reads: elit (8/8)
+Reader (3) acquiring read. Active readers: 1 (Max: 3) Readers left: 1
+Reader (3) starts to read
+Reader (0) acquiring read. Active readers: 2 (Max: 3) Readers left: 0
+Reader (0) starts to read
+Reader (3) reads: Lorem (1/8)
+Reader (0) reads: Lorem (1/8)
+Reader (2) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (4) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (1) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (0) reads: ipsum (2/8)
+Reader (3) reads: ipsum (2/8)
+Reader (3) reads: dolor (3/8)
+Reader (0) reads: dolor (3/8)
+Reader (3) reads: sit (4/8)
+Reader (0) reads: sit (4/8)
+Reader (0) reads: amet (5/8)
+Reader (3) reads: amet (5/8)
+Reader (3) reads: consectetur (6/8)
+Reader (0) reads: consectetur (6/8)
+Reader (0) reads: adipiscing (7/8)
+Reader (3) reads: adipiscing (7/8)
+Reader (3) reads: elit (8/8)
+Reader (0) reads: elit (8/8)
 
-C:\Users\Victus\Documents\GitHub\other\study\threading>thread.exe
-Philosopher: 0 thinks for 340
-Philosopher: 2 thinks for 377
-Philosopher: 3 thinks for 375
-Philosopher: 1 thinks for 387
-Philosopher: 4 thinks for 301
-Philosopher: 4 picks up right fork: 4
-Philosopher: 4 picks up left fork: 0
-Philosopher: 4 eats for 223 - 4 bites left
-Philosopher: 3 picks up right fork: 3
-Philosopher: 3 puts down right fork: 3
-Philosopher: 3 waits on left fork: 4
-Philosopher: 2 picks up right fork: 2
-Philosopher: 1 picks up right fork: 1
-Philosopher: 2 picks up left fork: 3
-Philosopher: 1 puts down right fork: 1
-Philosopher: 2 eats for 225 - 4 bites left
-Philosopher: 1 waits on left fork: 2
-Philosopher: 3 thinks for 391
-Philosopher: 1 thinks for 362
-Philosopher: 4 puts down left fork: 0
-Philosopher: 4 puts down right fork: 4
-Philosopher: 4 thinks for 365
-Philosopher: 0 picks up right fork: 0
-Philosopher: 0 picks up left fork: 1
-Philosopher: 0 eats for 225 - 4 bites left
-Philosopher: 2 puts down left fork: 3
-Philosopher: 2 puts down right fork: 2
-Philosopher: 2 thinks for 346
-Philosopher: 0 puts down left fork: 1
-Philosopher: 0 puts down right fork: 0
-Philosopher: 0 thinks for 304
-Philosopher: 1 picks up right fork: 1
-Philosopher: 1 picks up left fork: 2
-Philosopher: 1 eats for 276 - 4 bites left
-Philosopher: 3 picks up right fork: 3
-Philosopher: 3 picks up left fork: 4
-Philosopher: 3 eats for 227 - 4 bites left
-Philosopher: 0 picks up right fork: 0
-Philosopher: 0 puts down right fork: 0
-Philosopher: 0 waits on left fork: 1
-Philosopher: 3 puts down left fork: 4
-Philosopher: 3 puts down right fork: 3
-Philosopher: 4 picks up right fork: 4
-Philosopher: 3 thinks for 316
-Philosopher: 4 picks up left fork: 0
-Philosopher: 4 eats for 213 - 2 bites left
-Philosopher: 1 puts down left fork: 2
-Philosopher: 1 puts down right fork: 1
-Philosopher: 2 picks up right fork: 2
-Philosopher: 2 picks up left fork: 3
-Philosopher: 2 eats for 230 - 2 bites left
-Philosopher: 1 thinks for 349
-Philosopher: 0 thinks for 321
-Philosopher: 4 puts down left fork: 0
-Philosopher: 4 puts down right fork: 4
-Philosopher: 4 thinks for 356
-Philosopher: 2 puts down left fork: 3
-Philosopher: 2 puts down right fork: 2
-Philosopher: 2 thinks for 347
-Philosopher: 3 picks up right fork: 3
-Philosopher: 3 picks up left fork: 4
-Philosopher: 3 eats for 280 - 2 bites left
-Philosopher: 1 picks up right fork: 1
-Philosopher: 1 picks up left fork: 2
-Philosopher: 1 eats for 265 - 2 bites left
-Philosopher: 0 picks up right fork: 0
-Philosopher: 0 puts down right fork: 0
-Philosopher: 0 waits on left fork: 1
-Philosopher: 0 thinks for 399
-Philosopher: 3 puts down left fork: 4
-Philosopher: 3 puts down right fork: 3
-Philosopher: 4 picks up right fork: 4
-Philosopher: 4 picks up left fork: 0
-Philosopher: 3 thinks for 379
-Philosopher: 4 eats for 225 - 0 bites left
-Philosopher: 1 puts down left fork: 2
-Philosopher: 1 puts down right fork: 1
-Philosopher: 2 picks up right fork: 2
-Philosopher: 1 thinks for 353
-Philosopher: 2 picks up left fork: 3
-Philosopher: 2 eats for 244 - 0 bites left
-Philosopher: 4 puts down left fork: 0
-Philosopher: 4 puts down right fork: 4
-Philosopher: 4 is satisified with the meal, proceeds to praise Aphrodite...
-Philosopher: 2 puts down left fork: 3
-Philosopher: 2 puts down right fork: 2
-Philosopher: 2 is satisified with the meal, proceeds to praise Aphrodite...
-Philosopher: 0 picks up right fork: 0
-Philosopher: 0 picks up left fork: 1
-Philosopher: 0 eats for 270 - 2 bites left
-Philosopher: 3 picks up right fork: 3
-Philosopher: 3 picks up left fork: 4
-Philosopher: 3 eats for 273 - 0 bites left
-Philosopher: 0 puts down left fork: 1
-Philosopher: 0 puts down right fork: 0
-Philosopher: 1 picks up right fork: 1
-Philosopher: 1 picks up left fork: 2
-Philosopher: 0 thinks for 332
-Philosopher: 1 eats for 214 - 0 bites left
-Philosopher: 3 puts down left fork: 4
-Philosopher: 3 puts down right fork: 3
-Philosopher: 3 is satisified with the meal, proceeds to praise Aphrodite...
-Philosopher: 1 puts down left fork: 2
-Philosopher: 1 puts down right fork: 1
-Philosopher: 1 is satisified with the meal, proceeds to praise Aphrodite...
-Philosopher: 0 picks up right fork: 0
-Philosopher: 0 picks up left fork: 1
-Philosopher: 0 eats for 275 - 0 bites left
-Philosopher: 0 puts down left fork: 1
-Philosopher: 0 puts down right fork: 0
-Philosopher: 0 is satisified with the meal, proceeds to praise Aphrodite...
+>>>>>>>>>> Readers turnstile exhausted. Switching to Writers... <<<<<<<<<<
+
+Writer (1) acquiring write. Active writers: 1 Writers left: 9
+Writer (1) starts to write
+Writer (1) replaced "Lorem" with "Lobem" (1/3)
+Reader (2) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Writer (1) replaced "consectetur" with "copsectetur" (2/3)
+Writer (1) replaced "amet" with "aget" (3/3)
+Writer (2) acquiring write. Active writers: 1 Writers left: 8
+Writer (2) starts to write
+Writer (2) replaced "adipiscing" with "adiptscing" (1/3)
+Writer (2) replaced "copsectetur" with "copsecvetur" (2/3)
+Writer (2) replaced "Lobem" with "Lfbem" (3/3)
+Writer (0) acquiring write. Active writers: 1 Writers left: 7
+Writer (0) starts to write
+Writer (0) replaced "ipsum" with "ipssm" (1/3)
+Writer (0) replaced "sit" with "cit" (2/3)
+Writer (0) replaced "cit" with "cis" (3/3)
+Writer (0) acquiring write. Active writers: 1 Writers left: 6
+Writer (0) starts to write
+Writer (0) replaced "copsecvetur" with "copkecvetur" (1/3)
+Writer (0) replaced "elit" with "eliu" (2/3)
+Writer (0) replaced "ipssm" with "iyssm" (3/3)
+Reader (0) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Reader (3) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Writer (1) acquiring write. Active writers: 1 Writers left: 5
+Writer (1) starts to write
+Writer (1) replaced "aget" with "eget" (1/3)
+Writer (1) replaced "dolor" with "dozor" (2/3)
+Writer (1) replaced "adiptscing" with "adiqtscing" (3/3)
+Writer (2) acquiring write. Active writers: 1 Writers left: 4
+Writer (2) starts to write
+Writer (2) replaced "iyssm" with "iyssm" (1/3)
+Writer (2) replaced "cis" with "civ" (2/3)
+Writer (2) replaced "civ" with "cnv" (3/3)
+Writer (0) acquiring write. Active writers: 1 Writers left: 3
+Writer (0) starts to write
+Writer (0) replaced "eget" with "eaet" (1/3)
+Writer (0) replaced "copkecvetur" with "copkedvetur" (2/3)
+Writer (0) replaced "adiqtscing" with "adiqtsying" (3/3)
+Writer (1) acquiring write. Active writers: 1 Writers left: 2
+Writer (1) starts to write
+Writer (1) replaced "Lfbem" with "Lfsem" (1/3)
+Writer (1) replaced "copkedvetur" with "bopkedvetur" (2/3)
+Writer (1) replaced "eaet" with "eeet" (3/3)
+Writer (2) acquiring write. Active writers: 1 Writers left: 1
+Writer (2) starts to write
+Writer (2) replaced "iyssm" with "iysjm" (1/3)
+Writer (2) replaced "dozor" with "dozir" (2/3)
+Writer (2) replaced "eeet" with "ehet" (3/3)
+Writer (0) acquiring write. Active writers: 1 Writers left: 0
+Writer (0) starts to write
+Writer (0) replaced "adiqtsying" with "adiqtsyiqg" (1/3)
+Writer (0) replaced "Lfsem" with "Lfseg" (2/3)
+Writer (0) replaced "adiqtsyiqg" with "cdiqtsyiqg" (3/3)
+
+>>>>>>>>>> Writers turnstile exhausted. Switching to Readers... <<<<<<<<<<
+
+Reader (3) acquiring read. Active readers: 1 (Max: 3) Readers left: 4
+Reader (3) starts to read
+Reader (1) acquiring read. Active readers: 2 (Max: 3) Readers left: 3
+Reader (1) starts to read
+Reader (2) acquiring read. Active readers: 3 (Max: 3) Readers left: 2
+Reader (2) starts to read
+Reader (4) waits. Current phase: READ | Active readers: 3 (Max: 3) | Readers left: 2
+Reader (0) waits. Current phase: READ | Active readers: 3 (Max: 3) | Readers left: 2
+Writer (1) waits. Current phase: READ | Writers left: 0
+Reader (3) reads: Lfseg (1/8)
+Reader (1) reads: Lfseg (1/8)
+Reader (2) reads: Lfseg (1/8)
+Writer (2) waits. Current phase: READ | Writers left: 0
+Writer (0) waits. Current phase: READ | Writers left: 0
+Reader (3) reads: iysjm (2/8)
+Reader (1) reads: iysjm (2/8)
+Reader (2) reads: iysjm (2/8)
+Reader (1) reads: dozir (3/8)
+Reader (2) reads: dozir (3/8)
+Reader (3) reads: dozir (3/8)
+Reader (1) reads: cnv (4/8)
+Reader (3) reads: cnv (4/8)
+Reader (2) reads: cnv (4/8)
+Reader (2) reads: ehet (5/8)
+Reader (3) reads: ehet (5/8)
+Reader (1) reads: ehet (5/8)
+Reader (3) reads: bopkedvetur (6/8)
+Reader (1) reads: bopkedvetur (6/8)
+Reader (2) reads: bopkedvetur (6/8)
+Reader (2) reads: cdiqtsyiqg (7/8)
+Reader (1) reads: cdiqtsyiqg (7/8)
+Reader (3) reads: cdiqtsyiqg (7/8)
+Reader (2) reads: eliu (8/8)
+Reader (3) reads: eliu (8/8)
+Reader (0) acquiring read. Active readers: 2 (Max: 3) Readers left: 1
+Reader (1) reads: eliu (8/8)
+Reader (0) starts to read
+Reader (4) acquiring read. Active readers: 3 (Max: 3) Readers left: 0
+Reader (4) starts to read
+Reader (4) reads: Lfseg (1/8)
+Reader (0) reads: Lfseg (1/8)
+Reader (1) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (3) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (2) waits. Current phase: READ | Active readers: 2 (Max: 3) | Readers left: 0
+Reader (4) reads: iysjm (2/8)
+Reader (0) reads: iysjm (2/8)
+Reader (4) reads: dozir (3/8)
+Reader (0) reads: dozir (3/8)
+Reader (0) reads: cnv (4/8)
+Reader (4) reads: cnv (4/8)
+Reader (0) reads: ehet (5/8)
+Reader (4) reads: ehet (5/8)
+Reader (0) reads: bopkedvetur (6/8)
+Reader (4) reads: bopkedvetur (6/8)
+Reader (4) reads: cdiqtsyiqg (7/8)
+Reader (0) reads: cdiqtsyiqg (7/8)
+Reader (0) reads: eliu (8/8)
+Reader (4) reads: eliu (8/8)
+
+>>>>>>>>>> Readers turnstile exhausted. Switching to Writers... <<<<<<<<<<
+
+Reader (1) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Writer (2) acquiring write. Active writers: 1 Writers left: 9
+Writer (2) starts to write
+Writer (2) replaced "ehet" with "whet" (1/3)
+Writer (2) replaced "Lfseg" with "sfseg" (2/3)
+Writer (2) replaced "iysjm" with "iyscm" (3/3)
+Writer (1) waits. Current phase: WRITE | Writers left: 9
+Writer (0) waits. Current phase: WRITE | Writers left: 9
+Writer (1) acquiring write. Active writers: 1 Writers left: 8
+Writer (1) starts to write
+Writer (1) replaced "cdiqtsyiqg" with "cdiqtsmiqg" (1/3)
+Writer (1) replaced "bopkedvetur" with "bopeedvetur" (2/3)
+Writer (1) replaced "cdiqtsmiqg" with "ctiqtsmiqg" (3/3)
+Writer (0) acquiring write. Active writers: 1 Writers left: 7
+Writer (0) starts to write
+Writer (0) replaced "iyscm" with "iyrcm" (1/3)
+Writer (0) replaced "dozir" with "lozir" (2/3)
+Writer (0) replaced "eliu" with "elbu" (3/3)
+Reader (0) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Writer (1) acquiring write. Active writers: 1 Writers left: 6
+Writer (1) starts to write
+Writer (1) replaced "lozir" with "lczir" (1/3)
+Writer (1) replaced "lczir" with "lcfir" (2/3)
+Writer (1) replaced "iyrcm" with "iyqcm" (3/3)
+Reader (4) waits. Current phase: WRITE | Active readers: 0 (Max: 3) | Readers left: 0
+Writer (2) acquiring write. Active writers: 1 Writers left: 5
+Writer (2) starts to write
+Writer (2) replaced "whet" with "ahet" (1/3)
+Writer (2) replaced "cnv" with "csv" (2/3)
+Writer (2) replaced "bopeedvetur" with "bopvedvetur" (3/3)

@@ -5,10 +5,10 @@
 #include <shared_mutex>
 #include <condition_variable>
 #include <vector>
-#include <queue>
 #include <random>
 #include <chrono>
 #include <syncstream>
+#include <processthreadsapi.h>
 
 /*
 === Exercise 18 - Readers/Writers Problem ===
@@ -67,48 +67,142 @@ struct PhaseRWScheduler {
     
     // initialize for readers to start first
     readers_left = readers_batchsize;
-    writers_left = readers_batchsize;
+    writers_left = 0;
   }
 
-  void startRead() {
+  void startRead(int id) {
     std::unique_lock<std::mutex> ulock(scheduler_mtx);
 
     reader_cv.wait(ulock, [&](){
-      return curr_phase == PHASE::READ_PHASE
-             && active_readers <= max_readers
+      bool result = curr_phase == PHASE::READ_PHASE
+             && active_readers < max_readers
              && readers_left > 0;
+      if(!result)
+        ts_print("Reader ",id," (", GetCurrentThreadId(),") waits. ", 
+          "Current phase: ", curr_phase==PHASE::READ_PHASE ? "READ | " : "WRITE | ",
+          "Active readers: ", active_readers, " (Max: ", max_readers, ") | ",
+          "Readers left: ", readers_left);
+      return result;
     });
-
+    
     active_readers++;
     readers_left--;
+    ts_print("Reader ",id," (", GetCurrentThreadId(),") acquiring read. Active readers: ", active_readers, " (Max: ", max_readers, ") ", "Readers left: ", readers_left);
 
-    if(readers_left == 0) {
-      curr_phase == PHASE::WRITE_PHASE;
-      readers_left = readers_batchsize;
-    }
   }
 
   void endRead() {
+    bool lastreader = false;
+    {
+      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
+      active_readers--;
+      //last reader, start writers
+      if(active_readers == 0 && readers_left == 0) {
+        writers_left = writers_batchsize;
+        lastreader = true;
+      }
+    }
+    if(lastreader) {
+      ts_print("\n>>>>>>>>>> Readers turnstile exhausted. Switching to Writers... <<<<<<<<<<\n");
+      curr_phase = PHASE::WRITE_PHASE;
+      writer_cv.notify_all();
+      return;
+    }
+    if(curr_phase == PHASE::READ_PHASE)
+      reader_cv.notify_one();
+  }
+
+  void startWrite(int id) {
     std::unique_lock<std::mutex> ulock(scheduler_mtx);
 
-    active_readers--;
+    writer_cv.wait(ulock, [&](){
+      bool result = curr_phase == PHASE::WRITE_PHASE
+            && active_writers == 0
+            && writers_left > 0;
+      if(!result)
+        ts_print("Writer ",id," (", GetCurrentThreadId(),") waits. ", 
+          "Current phase: ", curr_phase==PHASE::READ_PHASE ? "READ | " : "WRITE | ",
+          "Writers left: ", writers_left);
+      return result;
+    });
+
+    active_writers++;
+    writers_left--;
+    ts_print("Writer ",id," (", GetCurrentThreadId(),") acquiring write. Active writers: ", active_writers, " Writers left: ", writers_left);
 
   }
 
-  void acquireWrite(){
-
+  void endWrite() {
+    bool lastwriter = false;
+    {
+      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
+      active_writers--;
+      //last writer, start readers
+      if(active_writers == 0 && writers_left == 0) {
+        ts_print("\n>>>>>>>>>> Writers turnstile exhausted. Switching to Readers... <<<<<<<<<<\n");
+        curr_phase = PHASE::READ_PHASE;
+        readers_left = readers_batchsize;
+        lastwriter = true;
+      }
+    }
+    if(lastwriter) {
+      reader_cv.notify_all();
+      return;
+    }
+    if(curr_phase==PHASE::WRITE_PHASE) {
+      writer_cv.notify_one();
+    }
   }
-
 };
 
-void tf_read(std::string (&data)[], PhaseRWScheduler& scheduler) {
-  scheduler.startRead();
+void tf_read(int id, std::vector<std::string>& data, PhaseRWScheduler& scheduler) {
+  for (size_t i=0; i<5; ++i) {
 
+    scheduler.startRead(id);
+    
+    ts_print("Reader ",id," (", GetCurrentThreadId(),") starts to read");
+    for(size_t j=0; j<data.size(); ++j) {
+      std::this_thread::sleep_for(ms(50));
+      ts_print("Reader ",id," (", GetCurrentThreadId(),") reads: ", data[j], " (",j+1,"/",data.size() ,")");
+    }
+    scheduler.endRead();
 
+    std::uniform_int_distribution distrib(100,200);
+    std::this_thread::sleep_for(ms(distrib(gen)));
+  
+  }
+  
 }
 
-void tf_write() {
+void tf_write(int id, std::vector<std::string>& data, PhaseRWScheduler& scheduler) {
+  for(int i=0; i<5; ++i) {
+    
+    scheduler.startWrite(id);
 
+    ts_print("Writer ",id," (", GetCurrentThreadId(),") starts to write");
+
+    //random word, at a random place gets a random letter...
+    for(int j=1; j<=3; ++j) {
+
+      std::uniform_int_distribution word_dist(0,int(data.size()-1)); 
+      std::string& rnd_word = data[word_dist(gen)];
+      std::string org_word = rnd_word;
+
+      std::uniform_int_distribution pos_dist(0, int(rnd_word.size()-1));
+      size_t rnd_pos = pos_dist(gen);
+      
+      std::uniform_int_distribution letter_dist('a', 'z');
+      rnd_word[rnd_pos] = letter_dist(gen);
+
+      ts_print("Writer ",id," (", GetCurrentThreadId(),") replaced \"",org_word,"\" with \"",rnd_word,"\" (",j,"/",3,")");
+      std::this_thread::sleep_for(ms(50));
+    }
+    scheduler.endWrite();
+
+    std::uniform_int_distribution distrib(100,200);
+    std::this_thread::sleep_for(ms(distrib(gen)));
+
+  }
 }
 
 int main(void) {
@@ -138,20 +232,19 @@ int main(void) {
   const size_t READERS_BATCHSIZE = 5, WRITERS_BATCHSIZE = 10;
   const size_t MAX_CONCURRENT_READERS = 3;
   
-  std::shared_mutex rw_mutex;
-
   PhaseRWScheduler rw_scheduler(TOTAL_READERS,TOTAL_WRITERS, READERS_BATCHSIZE,
     WRITERS_BATCHSIZE, MAX_CONCURRENT_READERS);
 
   std::vector<std::thread> reader_threads;
   std::vector<std::thread> writer_threads;
 
-  std::string data[] = {"Lorem", "ipsum", "dolor", "sit", "amet", 
-                        "consectetur", "adipiscing", "elit"};
+  std::vector<std::string> data = {"Lorem", "ipsum", "dolor", "sit", "amet", 
+                                    "consectetur", "adipiscing", "elit"};
 
   for(unsigned i=0; i<TOTAL_READERS; ++i)   {
     reader_threads.emplace_back(
       tf_read,
+      i,
       std::ref(data),
       std::ref(rw_scheduler)
     );
@@ -160,14 +253,14 @@ int main(void) {
   for(unsigned i=0; i<TOTAL_WRITERS; ++i) {
     writer_threads.emplace_back(
       tf_write,
+      i,
       std::ref(data),
-      std::ref(rw_mutex), 
       std::ref(rw_scheduler)
     );
   }
 
   for(auto& t : writer_threads) {
-    t.join();
+   t.join();
   }
 
   for(auto& t : reader_threads) {
