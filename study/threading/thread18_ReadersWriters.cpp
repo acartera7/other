@@ -25,17 +25,13 @@ void ts_print(Args&&... args) {
     (out << ... << args) << '\n';
 }
 
-// std::uniform_int_distribution distrib(300,400);
-// int rnd = distrib(gen);
-// std::this_thread::sleep_for(ms(rnd));
-
 struct PhaseRWScheduler {
 
   std::mutex scheduler_mtx;
   std::condition_variable reader_cv;
   std::condition_variable writer_cv;
 
-  const size_t total_readers, total_writers; 
+  size_t total_readers, total_writers; 
   const size_t readers_batchsize, writers_batchsize; // turnstile, how many total read/writers allowed to pass before switch
   const size_t max_readers;   // maximum amount of concurrent readers
 
@@ -91,27 +87,6 @@ struct PhaseRWScheduler {
 
   }
 
-  void endRead() {
-    bool lastreader = false;
-    {
-      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
-      active_readers--;
-      //last reader, start writers
-      if(active_readers == 0 && readers_left == 0) {
-        writers_left = writers_batchsize;
-        lastreader = true;
-      }
-    }
-    if(lastreader) {
-      ts_print("\n>>>>>>>>>> Readers turnstile exhausted. Switching to Writers... <<<<<<<<<<\n");
-      curr_phase = PHASE::WRITE_PHASE;
-      writer_cv.notify_all();
-      return;
-    }
-    if(curr_phase == PHASE::READ_PHASE)
-      reader_cv.notify_one();
-  }
-
   void startWrite(int id) {
     std::unique_lock<std::mutex> ulock(scheduler_mtx);
 
@@ -132,6 +107,31 @@ struct PhaseRWScheduler {
 
   }
 
+  void endRead() {
+    bool lastreader = false;
+    {
+      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
+      active_readers--;
+      //last reader, start writers
+      if(active_readers == 0 && readers_left == 0) {
+        if(total_writers) {
+          ts_print("\n>>>>>>>>>> Readers turnstile exhausted. Switching to Writers... <<<<<<<<<<\n");
+          curr_phase = PHASE::WRITE_PHASE;
+          writers_left = writers_batchsize;
+          lastreader = true;
+        } else {
+          readers_left = readers_batchsize;
+        }
+      }
+    }
+    if(lastreader) {
+      writer_cv.notify_all();
+      return;
+    }
+    if(curr_phase == PHASE::READ_PHASE)
+      reader_cv.notify_one();
+  }
+
   void endWrite() {
     bool lastwriter = false;
     {
@@ -139,13 +139,17 @@ struct PhaseRWScheduler {
       active_writers--;
       //last writer, start readers
       if(active_writers == 0 && writers_left == 0) {
-        ts_print("\n>>>>>>>>>> Writers turnstile exhausted. Switching to Readers... <<<<<<<<<<\n");
-        curr_phase = PHASE::READ_PHASE;
-        readers_left = readers_batchsize;
-        lastwriter = true;
+        if(total_readers) {
+          ts_print("\n>>>>>>>>>> Writers turnstile exhausted. Switching to Readers... <<<<<<<<<<\n");
+          curr_phase = PHASE::READ_PHASE;
+          readers_left = readers_batchsize;
+          lastwriter = true;
+        } else {
+          writers_left = writers_batchsize;
+        }
       }
     }
-    if(lastwriter) {
+    if(lastwriter) {  
       reader_cv.notify_all();
       return;
     }
@@ -153,29 +157,77 @@ struct PhaseRWScheduler {
       writer_cv.notify_one();
     }
   }
+
+  void exitRead() {
+    bool lastreader = false;
+    {
+      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
+      total_readers--;
+      
+      if(total_readers==0) {
+        if(total_writers==0) {
+          ts_print("\n>>>>>>>>>> All readers and writers exited. <<<<<<<<<<\n");
+          return;
+        }
+        ts_print("\n>>>>>>>>>> All readers exited. Switching to Readers... <<<<<<<<<<\n");
+        curr_phase = PHASE::WRITE_PHASE;
+        writers_left = writers_batchsize;
+        lastreader=true;
+      }
+    }
+    if(lastreader) {  
+      writer_cv.notify_all();
+    }
+  }
+  
+  void exitWrite() {
+    bool lastwriter = false;
+    {
+      std::unique_lock<std::mutex> ulock(scheduler_mtx); 
+      total_writers--;
+      
+      if(total_writers==0) {
+        if(total_readers==0) {
+          ts_print("\n>>>>>>>>>> All readers and writers exited. <<<<<<<<<<\n");
+          return;
+        }
+        ts_print("\n>>>>>>>>>> All writers exited. Switching to Readers... <<<<<<<<<<\n");
+        curr_phase = PHASE::READ_PHASE;
+        readers_left = readers_batchsize;
+        lastwriter = true;
+      }
+    }
+    if(lastwriter) {  
+      reader_cv.notify_all();
+    }
+  }
 };
+
 
 void tf_read(int id, std::vector<std::string>& data, PhaseRWScheduler& scheduler) {
   for (size_t i=0; i<5; ++i) {
 
     scheduler.startRead(id);
+
     
     ts_print("Reader ",id," (", GetCurrentThreadId(),") starts to read");
     for(size_t j=0; j<data.size(); ++j) {
-      std::this_thread::sleep_for(ms(50));
+      //std::this_thread::sleep_for(ms(50));
       ts_print("Reader ",id," (", GetCurrentThreadId(),") reads: ", data[j], " (",j+1,"/",data.size() ,")");
     }
     scheduler.endRead();
 
-    std::uniform_int_distribution distrib(100,200);
-    std::this_thread::sleep_for(ms(distrib(gen)));
+    //std::uniform_int_distribution distrib(100,200);
+    //std::this_thread::sleep_for(ms(distrib(gen)));
   
   }
+  ts_print("\n>>>>>>>>>> Reader ",id," (", GetCurrentThreadId(),") finished. Exiting... <<<<<<<<<<\n");
+  scheduler.exitRead();
   
 }
 
 void tf_write(int id, std::vector<std::string>& data, PhaseRWScheduler& scheduler) {
-  for(int i=0; i<5; ++i) {
+  for(int i=0; i<15; ++i) {
     
     scheduler.startWrite(id);
 
@@ -195,38 +247,19 @@ void tf_write(int id, std::vector<std::string>& data, PhaseRWScheduler& schedule
       rnd_word[rnd_pos] = letter_dist(gen);
 
       ts_print("Writer ",id," (", GetCurrentThreadId(),") replaced \"",org_word,"\" with \"",rnd_word,"\" (",j,"/",3,")");
-      std::this_thread::sleep_for(ms(50));
+      //std::this_thread::sleep_for(ms(50));
     }
     scheduler.endWrite();
 
-    std::uniform_int_distribution distrib(100,200);
-    std::this_thread::sleep_for(ms(distrib(gen)));
+    //std::uniform_int_distribution distrib(100,200);
+    //std::this_thread::sleep_for(ms(distrib(gen)));
 
   }
+  ts_print("\n>>>>>>>>>> Writer ",id," (", GetCurrentThreadId(),") finished. Exiting... <<<<<<<<<<\n");
+  scheduler.exitWrite();
 }
 
 int main(void) {
-
-  // overview:
-  // READER PHASE
-  // ------------
-  // allow readers in
-  // queue writers
-  // count readers
-
-  // when max count occurs:
-  //     stop accepting readers
-  //     wait for active readers to finish
-
-  // WRITER PHASE
-  // ------------
-  // allow writers in one at a time
-  // count writers
-  // queue readers
-
-  // when  occurs:
-  //     stop accepting writers
-  //     wait for current writer to finish
 
   const size_t TOTAL_READERS = 5, TOTAL_WRITERS = 3;
   const size_t READERS_BATCHSIZE = 5, WRITERS_BATCHSIZE = 10;

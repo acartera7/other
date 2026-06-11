@@ -8,10 +8,9 @@
             "args": [
                 //"-Wall",
                 "-g",
-                "-std=c++20",
                 "-o",
-                "thread.exe",
-                "thread20.cpp",
+                "link.exe",
+                "link.cpp",
             ],
             "group": {
                 "kind": "build",

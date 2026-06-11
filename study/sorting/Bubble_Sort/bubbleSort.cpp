@@ -16,12 +16,6 @@ static inline std::string &rtrim(std::string &s) {
 }
 vector<string> split(const string &);
 
-/*
- * Complete the 'countSwaps' function below.
- *
- * The function accepts INTEGER_ARRAY a as parameter.
- */
-
 void countSwaps(vector<int> a) {
   unsigned numSwaps = 0;
   for(unsigned i=0; i<a.size(); ++i) {
@@ -31,7 +25,10 @@ void countSwaps(vector<int> a) {
         ++numSwaps;
       }
     }
+    if(numSwaps==0) // no sorting occured in first pass, array is already sorted
+      break;
   }
+
   cout << "Array is sorted in " << numSwaps << " swaps." << endl;
   cout << "First Element: " << a[0] << endl;
   cout << "Last Element: " << a[a.size()-1] << endl;
