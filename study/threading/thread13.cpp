@@ -38,10 +38,10 @@ int main(int argc, char* argv[]) {
   
   
   /////////  ONE THREAD COMPUTATION ////////////////////////////////////////////
-  auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::steady_clock::now();
   std::thread single_thread(tf_sum, 0,N, std::ref(v), std::ref(output1));
   single_thread.join();
-  auto end = std::chrono::high_resolution_clock::now();
+  auto end = std::chrono::steady_clock::now();
   auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   ///////  END ONE THREAD COMPUTATION //////////////////////////////////////////
 
@@ -52,13 +52,13 @@ int main(int argc, char* argv[]) {
   std::cout << std::endl;
 
   ////////  MULTI THREAD COMPUTATION ///////////////////////////////////////////
-  start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::steady_clock::now();
   for(size_t i=0; i<T; ++i) {
     multi_threads.emplace_back(tf_sum, i*range,(i+1)*range, std::ref(v), std::ref(partial_sums[i].value));
   }
   for(auto& t : multi_threads) 
     t.join();
-  end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::steady_clock::now();
   ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   //////  END MULTI THREAD COMPUTATION /////////////////////////////////////////
 

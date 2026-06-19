@@ -70,7 +70,7 @@ int main(void) {
   std::atomic<int> counter;
 
   /* ===== Atmoic Counter ===== */
-  auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::steady_clock::now();
 
   for(size_t i=0; i<N; ++i) {
     threads.emplace_back(
@@ -83,7 +83,7 @@ int main(void) {
   for(auto& t : threads) {
     t.join();
   }
-  auto end = std::chrono::high_resolution_clock::now();
+  auto end = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<ms>(end-start).count();
 
   
@@ -99,7 +99,7 @@ int main(void) {
   std::mutex mtx;
   int integral_counter = 0;
 
-  start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::steady_clock::now();
 
   for(size_t i=0; i<N; ++i) {
     threads.emplace_back(
@@ -114,7 +114,7 @@ int main(void) {
     t.join();
   }
 
-  end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::steady_clock::now();
   duration = std::chrono::duration_cast<ms>(end-start).count();
   
   ts_print("Mutex Counter:");
@@ -130,7 +130,7 @@ int main(void) {
     c.store(0, std::memory_order_relaxed);
   }
 
-  start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::steady_clock::now();
 
   for(size_t i=0; i<N; ++i) {
     threads.emplace_back(
@@ -144,7 +144,7 @@ int main(void) {
     t.join();
   }
 
-  end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::steady_clock::now();
   duration = std::chrono::duration_cast<ms>(end-start).count();
   
   int result = std::accumulate(counters.begin(),counters.end(),0);
@@ -163,7 +163,7 @@ int main(void) {
     c.value.store(0, std::memory_order_relaxed);
   }
 
-  start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::steady_clock::now();
 
   for(size_t i=0; i<N; ++i) {
     threads.emplace_back(
@@ -177,7 +177,7 @@ int main(void) {
     t.join();
   }
 
-  end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::steady_clock::now();
   duration = std::chrono::duration_cast<ms>(end-start).count();
   
   for(PaddedInt& x : padded_counters){

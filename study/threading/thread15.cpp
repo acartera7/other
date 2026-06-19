@@ -83,13 +83,13 @@ int main(void) {
 
   ts_print("Starting Single Computation...");
   
-  auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::steady_clock::now();
   
   //fut.wait_for(std::chrono::milliseconds(500));
   
   ts_print("Result: ",fut.get());
   
-  auto end = std::chrono::high_resolution_clock::now();
+  auto end = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<ms>(end - start);
   
   ts_print("Computation Time: ",duration.count()," ms");

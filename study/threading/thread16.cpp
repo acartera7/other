@@ -27,7 +27,7 @@ void ts_print(Args&&... args) {
 std::pair<int,long long> bogo_compute(int beg = 0, int end = std::numeric_limits<int>::max()){
   if(beg < 0) return {};
   
-  auto start_time = std::chrono::high_resolution_clock::now();
+  auto start_time = std::chrono::steady_clock::now();
 
   std::uniform_int_distribution<> distrib(0, std::numeric_limits<int>::max());
   
@@ -37,7 +37,7 @@ std::pair<int,long long> bogo_compute(int beg = 0, int end = std::numeric_limits
     //std::cout << "trying: " << r << std::endl;
   } while(!(beg < r && r < end));
 
-  auto end_time = std::chrono::high_resolution_clock::now();
+  auto end_time = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<ms>(end_time - start_time);
   
   //ts_print("Computation Time: ",duration.count()," ms");
@@ -49,7 +49,7 @@ std::pair<int,long long> bogo_compute(int beg = 0, int end = std::numeric_limits
 int main(void) {
 
   ts_print("Launching Asyncs...");
-  auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::steady_clock::now();
   
   std::vector<std::future<std::pair<int,long long>>> futures;
 
@@ -73,7 +73,7 @@ int main(void) {
   }
   //ts_print("Result: ",);
   
-  auto end = std::chrono::high_resolution_clock::now();
+  auto end = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<ms>(end - start);
   
   ts_print("Total computation Time: ",duration.count()," ms");
