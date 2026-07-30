@@ -1,0 +1,15 @@
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\bin\Debug\net10.0\Project1.exe
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\bin\Debug\net10.0\Project1.deps.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\bin\Debug\net10.0\Project1.runtimeconfig.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\bin\Debug\net10.0\Project1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\bin\Debug\net10.0\Project1.pdb
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.AssemblyInfoInputs.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.AssemblyInfo.cs
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.csproj.CoreCompileInputs.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.sourcelink.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\refint\Project1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.pdb
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\Project1.genruntimeconfig.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Project1\obj\Debug\net10.0\ref\Project1.dll
