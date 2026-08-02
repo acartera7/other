@@ -7,7 +7,7 @@ namespace Project1;
 
 class Program {
     public static void Main(string[] args) {
-        // Exercise 1:
+        // ========== Exercise 1 ==============================
         /* 
         Player p1 = new Player("p1",10, 100);
         Player p2 = new Player("p2", 5, null);
@@ -26,7 +26,7 @@ class Program {
         }
         */
         
-        // Exercise 2:
+        // ========== Exercise 2 ==============================
         /*
         IWeapon sword = new Sword();
         IWeapon staff = new Staff();
@@ -43,6 +43,25 @@ class Program {
         }
         */
         
-        // Exercise 3
+        // ========== Exercise 3 ==============================
+        /*
+        Inventory<Item> inv = new Inventory<Item>();
+        
+        inv.Add(new Item("Potion", 10));
+        inv.Add(new Item("Sword", 100));
+        inv.Add(new Item("Shield", 75));
+
+        //inv.PrintAll();
+
+        var item = inv.FindByName("Sword");
+        if (item is not null)
+        {
+            Console.WriteLine(item.Name);
+        }
+        */
+        
+        // ========== Exercise 4 ==============================
+        
+        
     }
 }

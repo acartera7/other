@@ -1,6 +1,11 @@
 namespace Project1;
 
-public class Item {
+public interface IHasName
+{
+    string Name { get; }
+}
+
+public class Item : IHasName {
     public string Name { get; }
     public int Value { get; }
 
@@ -12,4 +17,5 @@ public class Item {
     public override string ToString() {
         return $"{Name} (Value: {Value})";
     }
+
 }

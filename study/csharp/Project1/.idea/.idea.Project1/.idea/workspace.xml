@@ -14,8 +14,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89ca20fb-839f-459a-ac16-9030cfd073b9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Player.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Weapon.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project1/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inventory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Inventory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Item.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Item.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net10.0/Project1.dll" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net10.0/Project1.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net10.0/Project1.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net10.0/Project1.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/Project1.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/ref/Project1.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/ref/Project1.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net10.0/refint/Project1.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net10.0/refint/Project1.dll" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +41,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Inventory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Item.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Player.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -105,7 +118,7 @@
       <workItem from="1784563077391" duration="5289000" />
       <workItem from="1784798749468" duration="180000" />
       <workItem from="1784908319550" duration="4498000" />
-      <workItem from="1785248287858" duration="8533000" />
+      <workItem from="1785248287858" duration="20526000" />
     </task>
     <servers />
   </component>
@@ -114,6 +127,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
