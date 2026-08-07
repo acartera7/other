@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+
 
 namespace Practical1;
 
@@ -56,7 +59,29 @@ public class Library {
    
    // === LINQ ===
    public IEnumerable<Book> GetBooksByAuthor(string author) {
-      return _booklist.FindAll(b => b.Author == author);
+      return _booklist.Where(b => b.Author == author);
    }
+
+   public IEnumerable<Book> GetBorrowedBooks() {
+      return _booklist.Where(b => b.IsBorrowed);
+   }
+   
+   public IEnumerable<Book> GetAvailableBooks() {
+      return _booklist.Where(b => !b.IsBorrowed);
+   }
+
+   public IEnumerable<Book> SearchByTitle(string substring) {
+      return _booklist.Where(
+            b => b.Title.Contains(substring, StringComparison.OrdinalIgnoreCase));
+   }
+
+   public IEnumerable<Book> GetBooksSortedByYear(bool descending = false) {
+      return descending ? _booklist.OrderByDescending(b => b.Year) : _booklist.OrderBy(b => b.Year);
+   }
+
+   public IEnumerable<IGrouping<string, Book>> GetBooksGroupedByAuthor() {
+      return _booklist.GroupBy(b => b.Author);
+   }
+   
 }
 

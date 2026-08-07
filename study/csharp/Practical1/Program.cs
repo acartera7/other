@@ -31,7 +31,58 @@ class Program {
             lib.AddBook(book);
          }
       }
-      
 
+      lib.BorrowBook("Inferno");
+      lib.BorrowBook("The War of the Worlds");
+      lib.BorrowBook("The Call of Cthulhu");
+      lib.BorrowBook("Frankenstein");
+      
+      Console.WriteLine("===== GetBooksByAuthor (Dan Brown) =====");
+      var query = lib.GetBooksByAuthor("Dan Brown");
+      foreach (var b in query) {
+         Console.WriteLine(b.ToString());
+      }
+      Console.WriteLine("");
+      
+      query = lib.GetBorrowedBooks();
+      Console.WriteLine("===== GetBorrowedBooks =====");
+      foreach (var b in query) {
+         Console.WriteLine(b.ToString());
+      }
+      Console.WriteLine("");
+
+      query = lib.GetAvailableBooks();
+      Console.WriteLine("===== GetAvailableBooks =====");
+      foreach (var b in query) {
+         Console.WriteLine(b.ToString());
+      }
+      Console.WriteLine("");
+
+      Console.WriteLine("===== SearchByTitle (The ) =====");
+      query = lib.SearchByTitle("The ");
+      foreach (var b in query) {
+         Console.WriteLine(b.ToString());
+      }
+      Console.WriteLine("");
+      
+      Console.WriteLine("===== GetBooksSortedByYear (descending) =====");
+      query = lib.GetBooksSortedByYear(true);
+      foreach (var b in query) {
+         Console.WriteLine(b.ToString());
+      }
+      Console.WriteLine("");
+      
+      Console.WriteLine("===== GetBooksGroupedByAuthor =====");
+      var result = lib.GetBooksGroupedByAuthor();
+      foreach (var group in result) {
+         Console.WriteLine($"{group.Key}: ");
+         
+         foreach (var b in group) {
+         
+            Console.WriteLine($"{b.Title}, {b.Year}");
+         }
+         Console.WriteLine("");
+         
+      }
    }
 }
