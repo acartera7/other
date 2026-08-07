@@ -1,0 +1,15 @@
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\bin\Debug\net10.0\Practical1.exe
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\bin\Debug\net10.0\Practical1.deps.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\bin\Debug\net10.0\Practical1.runtimeconfig.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\bin\Debug\net10.0\Practical1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\bin\Debug\net10.0\Practical1.pdb
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.AssemblyInfoInputs.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.AssemblyInfo.cs
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.csproj.CoreCompileInputs.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.sourcelink.json
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\refint\Practical1.dll
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.pdb
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\Practical1.genruntimeconfig.cache
+C:\Users\Victus\Documents\GitHub\other\study\csharp\Practical1\obj\Debug\net10.0\ref\Practical1.dll
