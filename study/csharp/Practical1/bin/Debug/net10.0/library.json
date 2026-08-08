@@ -214,5 +214,35 @@
     "Author": "H. G. Wells",
     "Year": 1897,
     "IsBorrowed": false
+  },
+  {
+    "Title": "Dune",
+    "Author": "Frank Herbert",
+    "Year": 1965, 
+    "IsBorrowed": false
+  },
+  {
+    "Title": "Neuromancer",
+    "Author": "William Gibson", 
+    "Year": 1984,
+    "IsBorrowed": false
+  },
+  {
+    "Title": "Snow Crash",
+    "Author": "Neal Stephenson",
+    "Year": 1992,
+    "IsBorrowed": false
+  },
+  {
+    "Title": "Hyperion",
+    "Author": "Dan Simmons",
+    "Year": 1989,
+    "IsBorrowed": false
+  },
+  {
+    "Title": "Foundation",
+    "Author": "Isaac Asimov",
+    "Year": 1951,
+    "IsBorrowed": false
   }
 ]

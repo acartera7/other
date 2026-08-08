@@ -2,11 +2,34 @@
 using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-      
 namespace Practical1;
-
 class Program {
+   public static async Task<List<Book>> FetchBooksFromApiAsync(string url) {
+      using var client = new HttpClient();
+
+      var response = await client.GetAsync(url);
+      response.EnsureSuccessStatusCode();
+
+      var json = await response.Content.ReadAsStringAsync();
+      List<Book>? books = JsonSerializer.Deserialize<List<Book>>(json);
+      
+      return books ?? new List<Book>();
+   }
+
+   public static async Task LoadLibraryFromApiAsync(Library lib, string url) {
+      var apiBooks = await FetchBooksFromApiAsync(url);
+
+      foreach (var book in apiBooks)
+      {
+         lib.AddBook(book);
+      }
+
+   }
+
    public static void Main(string[] args) {
       Library lib = new Library();
       
@@ -20,17 +43,13 @@ class Program {
       //string jsonString = JsonSerializer.Serialize(lib.List(), options);
       //File.WriteAllText(filePath, jsonString);
 
-      string filePath = "../../../library.json";
-      string json = File.ReadAllText(filePath);
-      List<Book>? books = JsonSerializer.Deserialize<List<Book>>(json);
+      //string filePath = "../../../library.json";
+      //string json = File.ReadAllText(filePath);
+      //List<Book>? books = JsonSerializer.Deserialize<List<Book>>(json);
       
-      if (books != null)
-      {
-         foreach (Book book in books)
-         {
-            lib.AddBook(book);
-         }
-      }
+      string apiUrl = "https://dummyjson.com/c/4bcf-8c49-423f-8d54";
+
+      LoadLibraryFromApiAsync(lib, apiUrl).Wait();
 
       lib.BorrowBook("Inferno");
       lib.BorrowBook("The War of the Worlds");
