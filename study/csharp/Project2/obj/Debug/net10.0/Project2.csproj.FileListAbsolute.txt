@@ -3,3 +3,13 @@ C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\
 C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.AssemblyInfo.cs
 C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.csproj.CoreCompileInputs.cache
 C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.sourcelink.json
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\bin\Debug\net10.0\Project2.exe
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\bin\Debug\net10.0\Project2.deps.json
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\bin\Debug\net10.0\Project2.runtimeconfig.json
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\bin\Debug\net10.0\Project2.dll
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\bin\Debug\net10.0\Project2.pdb
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.dll
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\refint\Project2.dll
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.pdb
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.genruntimeconfig.cache
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\ref\Project2.dll
