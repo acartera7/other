@@ -1,9 +1,13 @@
-Well that was nice, i learned new concepts like MVC, DataAnnocations Service classes
+Well that was nice, i learned new concepts like MVC, DataAnnocations, Service classes, etc...
 
-Give me another task to complete, 
+Give me another task to complete
+For context here's I'm trying to catch up to get ready for an online training program:
+
 I went in way over my head expecting this to be a C# training class but it is more of an in-depth class for .NET programming and it is expected that C# is known, as well as a little CSS, HTML and Javascript.
 
-for reference here's the application to the program:
+You know I am more of a C++ guy, 
+
+for reference here's the description to the program:
 If you are already familiar with the basics of .NET programming and interested in expanding your proficiency, then this program, led by industry experts, is exactly what you need to advance your skills.
 
 
@@ -41,4 +45,4 @@ Do you know someone interested in starting a career in IT? Share our EPAM Campus
 
 EPAM is a leading global provider of digital platform engineering and development services. We are committed to having a positive impact on our customers, our employees, and our communities. We embrace a dynamic and inclusive culture. Here you will collaborate with multi-national teams, contribute to a myriad of innovative projects that deliver the most creative and cutting-edge solutions, and have an opportunity to continuously learn and grow. No matter where you are located, you will join a dedicated, creative, and diverse community that will help you discover your fullest potential.
 
- 
+The deadline for the last task for admittance is coming up, I need to quickly learn what is needed for that .NET fundamentals class specifically in the realm where CSS, HTML, and Javascript is concerned.

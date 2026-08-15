@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 using System.Linq;
 
 namespace Project1;
 
 class Product {
     public int ID { get; }
-    public string Name { get; }
+    public string Name { get; } 
     public decimal Price { get; }
 
     Product(int id, string name, decimal price) {
@@ -23,39 +24,32 @@ class OrderItem {
     public OrderItem(Product product, int quantity) {
         Product = product;
         Quantity = quantity;
-    } 
-    
+    }
 }
 
 class Order {
-     public int ID { get; }
-     public List<OrderItem> Items { get; } = new();
+    public int ID { get; }
+    private List<OrderItem> _items { get; } = new();
 
-     public Order(int id) {
-         ID = id;
-     }
+    public IReadOnlyList<OrderItem> Items() => _items;
 
-     decimal GetTotal() {
-        decimal total = 0.0m;
+    public Order(int id) {
+        ID = id;
+    }
+
+    decimal GetTotal() {
         if (Items.Count != 0) {
-            foreach (var order in Items) {
-                total += order.Quantity * order.Product.Price;
-            }
+            return Items.Sum(item => item.Quantity * item.Product.Price);
         }
-        
-        return total;
-     }
+
+        return 0.0m;
+    }
 }
 
 class OrderService {
-    List<>
+    private List<Order> Orders { get; set; }
 }
 
 class Program {
-    
-    public static void Main(string[] args) {
-                
-    }
-    
+    public static void Main(string[] args) { }
 }
-

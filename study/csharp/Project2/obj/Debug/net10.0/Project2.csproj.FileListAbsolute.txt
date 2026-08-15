@@ -1,0 +1,5 @@
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.AssemblyInfoInputs.cache
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.AssemblyInfo.cs
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.csproj.CoreCompileInputs.cache
+C:\Users\Generic\Documents\GitHub\other\study\csharp\Project2\obj\Debug\net10.0\Project2.sourcelink.json
