@@ -1,0 +1,44 @@
+Well that was nice, i learned new concepts like MVC, DataAnnocations Service classes
+
+Give me another task to complete, 
+I went in way over my head expecting this to be a C# training class but it is more of an in-depth class for .NET programming and it is expected that C# is known, as well as a little CSS, HTML and Javascript.
+
+for reference here's the application to the program:
+If you are already familiar with the basics of .NET programming and interested in expanding your proficiency, then this program, led by industry experts, is exactly what you need to advance your skills.
+
+
+
+By participating, you will have the opportunity to:
+
+Learn how to create programs in C# using a structured approach
+Understand simple algorithms for searching and sorting data
+Find out how to develop and debug .NET solutions
+Acquire the skills to create ASP.NET Web API programs
+Discover how to build n-layer .NET applications
+
+
+Requirements
+
+English level from B1 (Intermediate) and higher
+Deep understanding of algorithms, data structures, OOP, SQL, and database fundamentals
+Good grasp of C#, HTML, CSS, JavaScript
+Development experience in any programming language
+Analytical thinking and ability to solve non-standard tasks
+
+
+We offer
+
+Top-notch materials: our curriculum is designed by .NET and C# experts from all over the world to make it perfect for beginners
+Diverse content: this course consists of text and video resources, quizzes and practical tasks with immediate automated feedback
+Industry-based education: the program consists of up-to-date, high-quality materials that reflect the current state of the IT industry. It will help you study and understand one of the most widely used and effective programming languages
+Beginner-friendly approach: built-in instructions and accessible delivery will help you easily navigate and pass the program
+Interactive events: you will have the opportunity to visit online workshops with IT experts from the global company
+ 
+
+Do you know someone interested in starting a career in IT? Share our EPAM Campus programs with them, where they can enhance their knowledge in various fields online, free of charge.
+
+ 
+
+EPAM is a leading global provider of digital platform engineering and development services. We are committed to having a positive impact on our customers, our employees, and our communities. We embrace a dynamic and inclusive culture. Here you will collaborate with multi-national teams, contribute to a myriad of innovative projects that deliver the most creative and cutting-edge solutions, and have an opportunity to continuously learn and grow. No matter where you are located, you will join a dedicated, creative, and diverse community that will help you discover your fullest potential.
+
+ 
