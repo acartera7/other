@@ -22,3 +22,6 @@
 */.idea/*
 
 .vs
+
+# Jetbrains files
+**/.idea

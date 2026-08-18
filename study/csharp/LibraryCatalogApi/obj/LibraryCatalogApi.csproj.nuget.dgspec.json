@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Generic\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj": {}
+    "C:\\Users\\Diverse\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Generic\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj": {
+    "C:\\Users\\Diverse\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Generic\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj",
+        "projectUniqueName": "C:\\Users\\Diverse\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj",
         "projectName": "LibraryCatalogApi",
-        "projectPath": "C:\\Users\\Generic\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj",
-        "packagesPath": "C:\\Users\\Generic\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Generic\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\obj\\",
+        "projectPath": "C:\\Users\\Diverse\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\LibraryCatalogApi.csproj",
+        "packagesPath": "C:\\Users\\Diverse\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Diverse\\Documents\\GitHub\\other\\study\\csharp\\LibraryCatalogApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Generic\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Diverse\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -70,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\Diverse\\.dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
