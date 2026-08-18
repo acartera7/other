@@ -3,7 +3,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
-builder.Services.AddSingleton<...>();
+builder.Services.AddSingleton<IBookRepository, BookRepository>();
+builder.Services.AddSingleton<IBookService, BookService>();
 
 //builder.Services.AddCors(options => {
 //    options.AddPolicy("AllowAll", policy => {
@@ -22,3 +23,4 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+

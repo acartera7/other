@@ -1,0 +1,254 @@
+[
+  {
+    "Id": 1,
+    "Title": 1984,
+    "Author": "George Orwell",
+    "Year": 1949,
+    "Genre": "Dystopian"
+  },
+  {
+    "Id": 2,
+    "Title": "To Kill a Mockingbird",
+    "Author": "Harper Lee",
+    "Year": 1960,
+    "Genre": "Classic Fiction"
+  },
+  {
+    "Id": 3,
+    "Title": "The Da Vinci Code",
+    "Author": "Dan Brown",
+    "Year": 2003,
+    "Genre": "Mystery Thriller"
+  },
+  {
+    "Id": 4,
+    "Title": "The Great Gatsby",
+    "Author": "F. Scott Fitzgerald",
+    "Year": 1925,
+    "Genre": "Classic Fiction"
+  },
+  {
+    "Id": 5,
+    "Title": "Lord of the Flies",
+    "Author": "William Golding",
+    "Year": 1954,
+    "Genre": "Allegorical Fiction"
+  },
+  {
+    "Id": 6,
+    "Title": "Animal Farm",
+    "Author": "George Orwell",
+    "Year": 1945,
+    "Genre": "Political Satire"
+  },
+  {
+    "Id": 7,
+    "Title": "Homage to Catalonia",
+    "Author": "George Orwell",
+    "Year": 1938,
+    "Genre": "Memoir / History"
+  },
+  {
+    "Id": 8,
+    "Title": "Go Set a Watchman",
+    "Author": "Harper Lee",
+    "Year": 2015,
+    "Genre": "Classic Fiction"
+  },
+  {
+    "Id": 9,
+    "Title": "Angels & Demons",
+    "Author": "Dan Brown",
+    "Year": 2000,
+    "Genre": "Mystery Thriller"
+  },
+  {
+    "Id": 10,
+    "Title": "Inferno",
+    "Author": "Dan Brown",
+    "Year": 2013,
+    "Genre": "Mystery Thriller"
+  },
+  {
+    "Id": 11,
+    "Title": "The Lost Symbol",
+    "Author": "Dan Brown",
+    "Year": 2009,
+    "Genre": "Mystery Thriller"
+  },
+  {
+    "Id": 12,
+    "Title": "Digital Fortress",
+    "Author": "Dan Brown",
+    "Year": 1998,
+    "Genre": "Techno-thriller"
+  },
+  {
+    "Id": 13,
+    "Title": "This Side of Paradise",
+    "Author": "F. Scott Fitzgerald",
+    "Year": 1920,
+    "Genre": "Classic Fiction"
+  },
+  {
+    "Id": 14,
+    "Title": "Tender Is the Night",
+    "Author": "F. Scott Fitzgerald",
+    "Year": 1934,
+    "Genre": "Classic Fiction"
+  },
+  {
+    "Id": 15,
+    "Title": "The Inheritors",
+    "Author": "William Golding",
+    "Year": 1955,
+    "Genre": "Historical Fiction"
+  },
+  {
+    "Id": 16,
+    "Title": "The War of the Worlds",
+    "Author": "H. G. Wells",
+    "Year": 1898,
+    "Genre": "Science Fiction"
+  },
+  {
+    "Id": 17,
+    "Title": "The Hobbit",
+    "Author": "J. R. R. Tolkien",
+    "Year": 1937,
+    "Genre": "Fantasy"
+  },
+  {
+    "Id": 18,
+    "Title": "The Fellowship of the Ring",
+    "Author": "J. R. R. Tolkien",
+    "Year": 1954,
+    "Genre": "Fantasy"
+  },
+  {
+    "Id": 19,
+    "Title": "The Two Towers",
+    "Author": "J. R. R. Tolkien",
+    "Year": 1954,
+    "Genre": "Fantasy"
+  },
+  {
+    "Id": 20,
+    "Title": "The Return of the King",
+    "Author": "J. R. R. Tolkien",
+    "Year": 1955,
+    "Genre": "Fantasy"
+  },
+  {
+    "Id": 21,
+    "Title": "The Silmarillion",
+    "Author": "J. R. R. Tolkien",
+    "Year": 1977,
+    "Genre": "Fantasy"
+  },
+  {
+    "Id": 22,
+    "Title": "The Call of Cthulhu",
+    "Author": "H. P. Lovecraft",
+    "Year": 1928,
+    "Genre": "Horror"
+  },
+  {
+    "Id": 23,
+    "Title": "At the Mountains of Madness",
+    "Author": "H. P. Lovecraft",
+    "Year": 1936,
+    "Genre": "Horror"
+  },
+  {
+    "Id": 24,
+    "Title": "The Shadow over Innsmouth",
+    "Author": "H. P. Lovecraft",
+    "Year": 1936,
+    "Genre": "Horror"
+  },
+  {
+    "Id": 25,
+    "Title": "The Dunwich Horror",
+    "Author": "H. P. Lovecraft",
+    "Year": 1929,
+    "Genre": "Horror"
+  },
+  {
+    "Id": 26,
+    "Title": "The Colour Out of Space",
+    "Author": "H. P. Lovecraft",
+    "Year": 1927,
+    "Genre": "Horror"
+  },
+  {
+    "Id": 27,
+    "Title": "Dracula",
+    "Author": "Bram Stoker",
+    "Year": 1897,
+    "Genre": "Gothic Horror"
+  },
+  {
+    "Id": 28,
+    "Title": "Frankenstein",
+    "Author": "Mary Shelley",
+    "Year": 1818,
+    "Genre": "Gothic Horror / Sci-Fi"
+  },
+  {
+    "Id": 29,
+    "Title": "The Picture of Dorian Gray",
+    "Author": "Oscar Wilde",
+    "Year": 1890,
+    "Genre": "Philosophical Fiction"
+  },
+  {
+    "Id": 30,
+    "Title": "The Count of Monte Cristo",
+    "Author": "Alexandre Dumas",
+    "Year": 1844,
+    "Genre": "Adventure / Historical"
+  },
+  {
+    "Id": 31,
+    "Title": "Treasure Island",
+    "Author": "Robert Louis Stevenson",
+    "Year": 1883,
+    "Genre": "Adventure"
+  },
+  {
+    "Id": 32,
+    "Title": "Moby-Dick",
+    "Author": "Herman Melville",
+    "Year": 1851,
+    "Genre": "Classic Fiction / Adventure"
+  },
+  {
+    "Id": 33,
+    "Title": "Pride and Prejudice",
+    "Author": "Jane Austen",
+    "Year": 1813,
+    "Genre": "Classic Romance"
+  },
+  {
+    "Id": 34,
+    "Title": "Jane Eyre",
+    "Author": "Charlotte Brontë",
+    "Year": 1847,
+    "Genre": "Gothic Romance"
+  },
+  {
+    "Id": 35,
+    "Title": "The Time Machine",
+    "Author": "H. G. Wells",
+    "Year": 1895,
+    "Genre": "Science Fiction"
+  },
+  {
+    "Id": 36,
+    "Title": "The Invisible Man",
+    "Author": "H. G. Wells",
+    "Year": 1897,
+    "Genre": "Science Fiction"
+  }
+]
