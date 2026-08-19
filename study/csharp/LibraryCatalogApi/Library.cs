@@ -116,3 +116,75 @@ public class BookService : IBookService {
         }
     }
 }
+
+[ApiController]
+[Route("api/[controller]")]
+public class BooksController : ControllerBase {
+    private readonly IBookService _service;
+
+    public BooksController(IBookService service) {
+        _service = service;
+    }
+
+    [HttpGet()]
+    public IActionResult GetAll() => Ok(_service.GetAll());
+
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id) {
+        try {
+            return Ok(_service.GetById(id));
+        }
+        catch (BookNotFoundException ex) {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("search")]
+    public IActionResult Search(
+        [FromQuery] string? title, 
+        [FromQuery] string? author,
+        [FromQuery] string? genre) => 
+            Ok(_service.Search(title, author, genre));
+    
+    [HttpGet("sorted")]
+    public IActionResult GetSortedByYear([FromQuery] bool descending) => 
+        Ok(_service.GetSortedByYear(descending));
+
+    [HttpPost]
+    public IActionResult Add([FromBody] Book? book) {
+        // Validate proper book
+        if (book == null ||
+            string.IsNullOrWhiteSpace(book.Title) ||
+            string.IsNullOrWhiteSpace(book.Author)) {
+            return BadRequest("Title and Author are required.");
+        }
+        _service.Add(book);
+        return Ok(book);
+    }
+    
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] Book? book) {
+        // Validate proper book
+        if (book == null || id != book.Id) {
+            return BadRequest("Id in URL must match Id in body.");
+        }
+
+        try {
+          _service.Update(book);
+          return Ok(book);
+        } catch (BookNotFoundException ex) {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id) {
+        try {
+            _service.Delete(id);
+            return Ok();
+        }
+        catch (BookNotFoundException ex) {
+            return NotFound(ex.Message);
+        }
+    }
+}
