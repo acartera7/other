@@ -7,29 +7,22 @@
 <body>
 
 <script src="books.js"></script>
-
+<script>
+    sortBooks("true");
+    loadBooks();
+    searchBooks("author=orwell");
+</script>
 <h1> Library Catalog </h1>
 
-<h3> Display all books :</h3>
-<div id="books">
-    <script>
-        loadBooks();
-    </script>
-</div>
+<h2> Display all books :</h2>
+<table id="books"></table>
 
-<h3> Search for books by George Orwell </h3>
-<div id="searches">
-    <script>
-        searchBooks("author=orwell");
-    </script>
-</div>
+<h2> Search for books by George Orwell: </h2>
+<table id="searches"></table>
 
-<h3> Sorted Books <b>Descending</b> </h3>
-<div id="sorted">
-    <script>
-        searchBooks("author=orwell");
-    </script>
-</div>
+<h2> Sorted Books Descending </h2>
+<table id="sorted"></table>
+
 
 </body>
 </html>

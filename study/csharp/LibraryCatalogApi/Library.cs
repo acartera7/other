@@ -78,9 +78,9 @@ public class BookRepository : IBookRepository {
     }
 
     public void Update(Book book) {
-        Book? result = _booklist.Find(b => b.Id == book.Id);
-        if (result != null) {
-            result = book;
+        var index = _booklist.FindIndex(b => b.Id == book.Id);
+        if (index != -1) {
+            _booklist[index] = book;
         }
     }
 

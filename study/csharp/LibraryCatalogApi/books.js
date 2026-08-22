@@ -16,12 +16,12 @@ async function loadBooks() {
             <td>${b.genre}</td>
         `;
 
-        document.getElementById("books").appendChild(row);
+        container.appendChild(row);
     });
 }
 
 async function searchBooks(query) {
-    const response = await fetch(`http://localhost:5124/api/Books/search?${query}`)
+    const response = await fetch(`http://localhost:5124/api/books/search?${query}`)
     const books = await response.json();
 
     const container = document.getElementById("searches");
@@ -38,15 +38,15 @@ async function searchBooks(query) {
             <td>${b.genre}</td>
         `;
 
-        document.getElementById("searches").appendChild(row);
+        container.appendChild(row);
     });
 }
 
-async function sortBooks(bool) {
+async function sortBooks(descending) {
     const response = await fetch(`http://localhost:5124/api/books/sorted?descending=${descending}`)
     const books = await response.json();
 
-    const container = document.getElementById("searches");
+    const container = document.getElementById("sorted");
     container.innerHTML = "";
 
     books.forEach(b => {
@@ -60,6 +60,6 @@ async function sortBooks(bool) {
             <td>${b.genre}</td>
         `;
 
-        document.getElementById("searches").appendChild(row);
+        container.appendChild(row);
     });
 }

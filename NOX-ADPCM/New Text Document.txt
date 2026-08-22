@@ -1,1 +1,0 @@
-Take a sample from the ghame recoridng and find differences between the decoded
