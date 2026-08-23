@@ -33,7 +33,7 @@ public interface IBorrowRepository {
     List<BorrowRecord> GetAll();
     BorrowRecord? GetById(int id);
     void Add(BorrowRecord record);
-    bool Return(int id);
+    bool Return(int id, DateTime returnedAt);
 }
 
 public class BorrowRepository : IBorrowRepository {
@@ -55,11 +55,11 @@ public class BorrowRepository : IBorrowRepository {
         _ctx.BorrowRecords.Add(record);
     }
 
-    public bool Return(int id) {
+    public bool Return(int id, DateTime returnedAt) {
         var record = GetById(id);
         if (record == null) return false;
 
-        record.ReturnedAt = DateTime.Now;
+        record.ReturnedAt = returnedAt;
         return true;
     }
 }
@@ -86,8 +86,6 @@ public class BorrowService : IBorrowService {
     public BorrowRecord Borrow(BorrowRequestDto dto) {
         // does the book exist?
         Book? book = _bookService.GetById(dto.BookId);
-        if (book == null) 
-            throw new BookNotFoundException($"Book {dto.BookId} not found");
         
         // check if we are trying to borrow and already borrowed book
         BorrowRecord? record = _repo.GetAll().FirstOrDefault(r => r.BookId == dto.BookId && r.ReturnedAt == null);
@@ -111,11 +109,9 @@ public class BorrowService : IBorrowService {
     }
     
     public void Return(ReturnRequestDto dto) {
-        BorrowRecord? record = _repo.GetById(dto.BorrowId);
-        if (record == null)
+        if (!_repo.Return(dto.BorrowId, DateTime.Now))
             throw new BorrowNotFoundException($"Borrow {dto.BorrowId} not found");
 
-        record.ReturnedAt = DateTime.Now;
     }
 }
 
@@ -133,8 +129,16 @@ public class BorrowController : ControllerBase {
 
     [HttpPost]
     public IActionResult Borrow([FromBody] BorrowRequestDto dto) {
-        var record = _service.Borrow(dto);
-        return Ok(record);
+        try {
+            var record = _service.Borrow(dto);
+            return Ok(record);
+        }
+        catch (BookNotFoundException ex) {
+            return NotFound(ex.Message);
+        }
+        catch (BookNotAvailableException ex) {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("return")]

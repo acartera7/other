@@ -75,11 +75,12 @@ async function borrowBook(bookId, borrower){
         body: JSON.stringify({ bookId, borrower})
     });
     
-    const result = await response.json();
     if (!response.ok) {
         console.error("Borrow failed:", response.status, response.statusText);
         return;
     }
+    
+    const result = await response.json();
     // Save the API-generated borrowId
     borrowedBooks[bookId] = result.id;
 
