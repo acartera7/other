@@ -26,68 +26,35 @@ public interface IBookRepository {
 }
 
 public class BookRepository : IBookRepository {
-    private List<Book> _booklist { get; } = new() {
-        new Book { Id = 1, Title = "1984", Author = "George Orwell", Year = 1949, Genre = "Dystopian" },
-        new Book { Id = 2, Title = "To Kill a Mockingbird", Author = "Harper Lee", Year = 1960, Genre = "Classic Fiction" },
-        new Book { Id = 3, Title = "The Da Vinci Code", Author = "Dan Brown", Year = 2003, Genre = "Mystery Thriller" },
-        new Book { Id = 4, Title = "The Great Gatsby", Author = "F. Scott Fitzgerald", Year = 1925, Genre = "Classic Fiction" },
-        new Book { Id = 5, Title = "Lord of the Flies", Author = "William Golding", Year = 1954, Genre = "Allegorical Fiction" },
-        new Book { Id = 6, Title = "Animal Farm", Author = "George Orwell", Year = 1945, Genre = "Political Satire" },
-        new Book { Id = 7, Title = "Homage to Catalonia", Author = "George Orwell", Year = 1938, Genre = "Memoir / History" },
-        new Book { Id = 8, Title = "Go Set a Watchman", Author = "Harper Lee", Year = 2015, Genre = "Classic Fiction" },
-        new Book { Id = 9, Title = "Angels & Demons", Author = "Dan Brown", Year = 2000, Genre = "Mystery Thriller" },
-        new Book { Id = 10, Title = "Inferno", Author = "Dan Brown", Year = 2013, Genre = "Mystery Thriller" },
-        new Book { Id = 11, Title = "The Lost Symbol", Author = "Dan Brown", Year = 2009, Genre = "Mystery Thriller" },
-        new Book { Id = 12, Title = "Digital Fortress", Author = "Dan Brown", Year = 1998, Genre = "Techno-thriller" },
-        new Book { Id = 13, Title = "This Side of Paradise", Author = "F. Scott Fitzgerald", Year = 1920, Genre = "Classic Fiction" },
-        new Book { Id = 14, Title = "Tender Is the Night", Author = "F. Scott Fitzgerald", Year = 1934, Genre = "Classic Fiction" },
-        new Book { Id = 15, Title = "The Inheritors", Author = "William Golding", Year = 1955, Genre = "Historical Fiction" },
-        new Book { Id = 16, Title = "The War of the Worlds", Author = "H. G. Wells", Year = 1898, Genre = "Science Fiction" },
-        new Book { Id = 17, Title = "The Hobbit", Author = "J. R. R. Tolkien", Year = 1937, Genre = "Fantasy" },
-        new Book { Id = 18, Title = "The Fellowship of the Ring", Author = "J. R. R. Tolkien", Year = 1954, Genre = "Fantasy" },
-        new Book { Id = 19, Title = "The Two Towers", Author = "J. R. R. Tolkien", Year = 1954, Genre = "Fantasy" },
-        new Book { Id = 20, Title = "The Return of the King", Author = "J. R. R. Tolkien", Year = 1955, Genre = "Fantasy" },
-        new Book { Id = 21, Title = "The Silmarillion", Author = "J. R. R. Tolkien", Year = 1977, Genre = "Fantasy" },
-        new Book { Id = 22, Title = "The Call of Cthulhu", Author = "H. P. Lovecraft", Year = 1928, Genre = "Horror" },
-        new Book { Id = 23, Title = "At the Mountains of Madness", Author = "H. P. Lovecraft", Year = 1936, Genre = "Horror" },
-        new Book { Id = 24, Title = "The Shadow over Innsmouth", Author = "H. P. Lovecraft", Year = 1936, Genre = "Horror" },
-        new Book { Id = 25, Title = "The Dunwich Horror", Author = "H. P. Lovecraft", Year = 1929, Genre = "Horror" },
-        new Book { Id = 26, Title = "The Colour Out of Space", Author = "H. P. Lovecraft", Year = 1927, Genre = "Horror" },
-        new Book { Id = 27, Title = "Dracula", Author = "Bram Stoker", Year = 1897, Genre = "Gothic Horror" },
-        new Book { Id = 28, Title = "Frankenstein", Author = "Mary Shelley", Year = 1818, Genre = "Gothic Horror / Sci-Fi" },
-        new Book { Id = 29, Title = "The Picture of Dorian Gray", Author = "Oscar Wilde", Year = 1890, Genre = "Philosophical Fiction" },
-        new Book { Id = 30, Title = "The Count of Monte Cristo", Author = "Alexandre Dumas", Year = 1844, Genre = "Adventure / Historical" },
-        new Book { Id = 31, Title = "Treasure Island", Author = "Robert Louis Stevenson", Year = 1883, Genre = "Adventure" },
-        new Book { Id = 32, Title = "Moby-Dick", Author = "Herman Melville", Year = 1851, Genre = "Classic Fiction / Adventure" },
-        new Book { Id = 33, Title = "Pride and Prejudice", Author = "Jane Austen", Year = 1813, Genre = "Classic Romance" },
-        new Book { Id = 34, Title = "Jane Eyre", Author = "Charlotte Brontë", Year = 1847, Genre = "Gothic Romance" },
-        new Book { Id = 35, Title = "The Time Machine", Author = "H. G. Wells", Year = 1895, Genre = "Science Fiction" },
-        new Book { Id = 36, Title = "The Invisible Man", Author = "H. G. Wells", Year = 1897, Genre = "Science Fiction" }
-    };
+    private readonly LibraryDb _ctx;
+    
+    public BookRepository(LibraryDb ctx) {
+        _ctx = ctx;
+    }
     
     public List<Book> GetAll() {
-        return _booklist;
+        return _ctx.Books;
     }
 
     public Book? GetById(int id) {
-        return _booklist.FirstOrDefault(book => book.Id == id);
+        return _ctx.Books.FirstOrDefault(book => book.Id == id);
     }
 
     public void Add(Book book) {
-        _booklist.Add(book);
+        _ctx.Books.Add(book);
     }
 
     public void Update(Book book) {
-        var index = _booklist.FindIndex(b => b.Id == book.Id);
+        var index = _ctx.Books.FindIndex(b => b.Id == book.Id);
         if (index != -1) {
-            _booklist[index] = book;
+            _ctx.Books[index] = book;
         }
     }
 
     public bool Delete(int id) {
         Book? result = GetById(id);
         if (result != null) {
-            return _booklist.Remove(result);
+            return _ctx.Books.Remove(result);
             
         }
         return false;
