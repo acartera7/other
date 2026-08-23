@@ -7,6 +7,8 @@
 <body>
 
 <script src="books.js"></script>
+
+<!--
 <script>
     sortBooks("true");
     loadBooks();
@@ -22,7 +24,18 @@
 
 <h2> Sorted Books Descending </h2>
 <table id="sorted"></table>
+-->
 
+<button onclick="borrowBook(5, 'Andrei')">Borrow Book #5</button>
+<button onclick="borrowBook(10, 'Andrei')">Borrow Book #10</button>
+<button onclick="returnBook(5)">Return Book #5</button>
+
+<h2>Borrowed books:</h2>
+<div id="borrowed"></div>
+
+<script>
+    loadBorrowed();
+</script>
 
 </body>
 </html>

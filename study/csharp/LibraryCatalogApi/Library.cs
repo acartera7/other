@@ -73,7 +73,7 @@ public interface IBookService {
 
 public class BookService : IBookService {
     
-    private IBookRepository  _repo { get; set; }
+    private IBookRepository _repo { get; set; }
 
     public BookService(IBookRepository  bookRepository) {
         _repo = bookRepository;
@@ -82,7 +82,7 @@ public class BookService : IBookService {
     public List<Book> GetAll() => _repo.GetAll();
     
     public Book GetById(int id) {
-        var book = _repo.GetById(id);
+        Book? book = _repo.GetById(id);
         if (book == null) {
             throw new BookNotFoundException($"Book {id} not found"); 
         }
