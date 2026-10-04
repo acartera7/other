@@ -11,6 +11,10 @@ public class Box<T> {
         this.value = value;
     }
 
+    public Box(T value) {
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         return "Box {" + value + "}";

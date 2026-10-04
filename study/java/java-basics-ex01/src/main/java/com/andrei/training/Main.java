@@ -30,6 +30,8 @@ public class Main {
 
         StreamExercise exercise4 = new StreamExercise();
         exercise4.run();
+
+        GenericUtils.run();
         */
     }
 }
